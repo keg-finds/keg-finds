@@ -252,9 +252,7 @@
     </div>
   </footer>
 
-  <!-- ========================================================================= -->
-  <!-- FLOATING QUICK CHAT BUTTON FOR MESSENGER (BOTTOM RIGHT) -->
-  <!-- ========================================================================= -->
+  <!-- Floating Quick Chat Button for Messenger (Bottom Right) -->
   <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 group flex items-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#00C6FF] hover:from-[#0074E0] hover:to-[#00B4F0] text-white font-bold text-xs py-3 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
     <span class="relative flex h-2.5 w-2.5">
       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -310,14 +308,15 @@
       return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
     }
 
+    // Formats condition into readable standard thrift ratings
     function formatCondition(val) {
       if (!val) return 'Pre-loved';
       const clean = String(val).trim();
       
-      if (clean === '10') return '10/10 (Pristine / Like New)';
-      if (clean === '9.5' || clean === '9') return `${clean}/10 (Excellent)`;
-      if (clean === '8.5' || clean === '8') return `${clean}/10 (Very Good)`;
-      if (clean === '7.5' || clean === '7') return `${clean}/10 (Good Condition)`;
+      if (clean === '10' || clean === '10/10' || clean === '10 / 10') return '10/10 (Pristine / Like New)';
+      if (clean === '9.5' || clean === '9' || clean === '9/10') return `${clean} (Excellent)`;
+      if (clean === '8.5' || clean === '8' || clean === '8/10') return `${clean} (Very Good)`;
+      if (clean === '7.5' || clean === '7' || clean === '7/10') return `${clean} (Good Condition)`;
       
       return clean;
     }
@@ -372,7 +371,7 @@
                 
                 <!-- Clear Condition Badge -->
                 <div class="flex items-center gap-1.5 mt-2">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Condition:</span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
                   <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
                     ${formatCondition(item.condition)}
                   </span>
