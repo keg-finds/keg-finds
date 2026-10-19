@@ -98,11 +98,9 @@
         <p class="text-xs text-stone-500 mt-0.5">Click thumbnails or arrows to view multiple photos. Have questions? Click "Inquire" to chat with us!</p>
       </div>
 
-      <!-- Filter Buttons -->
-      <div class="flex gap-2 text-xs font-semibold">
-        <button onclick="filterCatalog('all')" class="cat-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
-        <button onclick="filterCatalog('shirts')" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">Dress Shirts</button>
-        <button onclick="filterCatalog('housewares')" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">Housewares</button>
+      <!-- Dynamic Category Filter Buttons (Generated from Google Sheet) -->
+      <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
+        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
       </div>
     </div>
 
@@ -252,9 +250,7 @@
     </div>
   </footer>
 
-  <!-- ========================================================================= -->
-  <!-- FLOATING QUICK CHAT BUTTON FOR MESSENGER (BOTTOM RIGHT) -->
-  <!-- ========================================================================= -->
+  <!-- Floating Quick Chat Button for Messenger (Bottom Right) -->
   <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 group flex items-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#00C6FF] hover:from-[#0074E0] hover:to-[#00B4F0] text-white font-bold text-xs py-3 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
     <span class="relative flex h-2.5 w-2.5">
       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -294,6 +290,7 @@
         const data = await res.json();
         if (Array.isArray(data)) {
           inventory = data;
+          renderCategoryFilters(inventory);
           renderProducts(inventory);
         } else {
           grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
@@ -304,13 +301,68 @@
       }
     }
 
+    // Automatically extracts unique categories from Google Sheets and builds filter buttons
+    function renderCategoryFilters(items) {
+      const bar = document.getElementById('category-filter-bar');
+      if (!bar) return;
+
+      // Extract unique categories (ignoring empty or undefined)
+      const categories = Array.from(new Set(
+        items.map(i => (i.category || '').trim()).filter(c => c.length > 0)
+      ));
+
+      let buttonsHtml = `
+        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">
+          All Items (${items.length})
+        </button>
+      `;
+
+      categories.forEach(cat => {
+        // Format label nicely: capitalize each word
+        const label = cat.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const count = items.filter(i => (i.category || '').trim().toLowerCase() === cat.toLowerCase()).length;
+        buttonsHtml += `
+          <button onclick="filterCatalog('${cat.replace(/'/g, "\\'")}', this)" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">
+            ${label} (${count})
+          </button>
+        `;
+      });
+
+      bar.innerHTML = buttonsHtml;
+    }
+
+    function filterCatalog(category, clickedBtn) {
+      const cards = document.querySelectorAll('.item-card');
+      const btns = document.querySelectorAll('.cat-btn');
+
+      btns.forEach(b => {
+        b.classList.remove('bg-stone-900', 'text-white');
+        b.classList.add('bg-stone-100', 'text-stone-600');
+      });
+
+      if (clickedBtn) {
+        clickedBtn.classList.add('bg-stone-900', 'text-white');
+        clickedBtn.classList.remove('bg-stone-100', 'text-stone-600');
+      }
+
+      cards.forEach(card => {
+        const cardCat = (card.dataset.category || '').trim().toLowerCase();
+        const targetCat = category.trim().toLowerCase();
+        if (targetCat === 'all' || cardCat === targetCat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
     function parseImages(imgString) {
       if (!imgString) return ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
       const urls = imgString.split(',').map(s => s.trim()).filter(s => s.length > 0);
       return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
     }
 
-    
+    // Formats condition into clear, descriptive thrift ratings & prevents date glitches
     function formatCondition(val) {
       if (!val) return 'Pre-loved';
       const clean = String(val).trim();
@@ -368,6 +420,8 @@
               <div>
                 <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
                 <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
+                
+                <!-- Explicit Condition Label and Green Badge -->
                 <div class="flex items-center gap-1.5 mt-2">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
                   <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
@@ -588,26 +642,6 @@
 
     function openCart() { document.getElementById('checkout-modal').classList.remove('hidden'); }
     function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
-
-    function filterCatalog(category) {
-      const cards = document.querySelectorAll('.item-card');
-      const btns = document.querySelectorAll('.cat-btn');
-
-      btns.forEach(b => {
-        b.classList.remove('bg-stone-900', 'text-white');
-        b.classList.add('bg-stone-100', 'text-stone-600');
-      });
-      event.target.classList.add('bg-stone-900', 'text-white');
-      event.target.classList.remove('bg-stone-100', 'text-stone-600');
-
-      cards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
 
     document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
     selectPaymentTab('gcash');
