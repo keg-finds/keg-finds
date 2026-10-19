@@ -3,617 +3,230 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KEG Finds | Pre-loved Closet & Housewares</title>
+  <title>KEG Finds — Seller Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            serif: ['"Playfair Display"', 'serif'],
-          },
-          colors: {
-            brand: {
-              700: '#344c3d',
-              800: '#283b2f',
-              900: '#1b2921',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
-<body class="bg-stone-50 text-stone-800 font-sans antialiased selection:bg-brand-800 selection:text-white">
+<body class="bg-stone-100 text-stone-800 min-h-screen">
 
-  <!-- Top Announcement Bar -->
-  <div class="bg-brand-900 text-stone-200 text-xs py-2 px-4 text-center font-medium tracking-wide">
-    📍 Rosario, Pasig &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; QR Ph
-  </div>
-
-  <!-- Header -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-stone-200">
-    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-      <a href="#" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-brand-800 text-white font-serif font-bold text-xl flex items-center justify-center shadow-sm">K</div>
-        <div>
-          <span class="font-serif font-bold text-lg tracking-tight text-stone-900 block leading-tight">KEG FINDS</span>
-          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Closet &amp; Housewares &bull; Pasig</span>
-        </div>
-      </a>
-
-      <div class="flex items-center gap-2.5">
-        <!-- Header Quick Chat Link -->
-        <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-blue-600 bg-stone-100 hover:bg-blue-50 px-3 py-2 rounded-full transition border border-stone-200">
-          <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-          <span>Ask Seller</span>
-        </a>
-
-        <!-- Cart Bag Button -->
-        <button onclick="openCart()" class="relative bg-brand-800 hover:bg-brand-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition flex items-center gap-2 shadow-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          <span>Bag</span>
-          <span id="cart-badge" class="bg-amber-400 text-stone-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
-        </button>
+  <header class="bg-stone-900 text-white py-4 px-6 sticky top-0 z-30 shadow-sm flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">K</span>
+      <div>
+        <h1 class="font-bold text-sm leading-tight">KEG Finds — Seller Dashboard</h1>
+        <p class="text-[11px] text-stone-400">Order verification &amp; 1-click stock deduction</p>
       </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="logoutAdmin()" id="logout-btn" class="hidden text-xs text-stone-400 hover:text-white px-2 py-1">Log out</button>
+      <a href="index.html" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-3 py-1.5 rounded-lg">View Storefront &rarr;</a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="py-12 md:py-16 bg-white border-b border-stone-200">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="max-w-2xl">
-        <span class="inline-block px-3 py-1 bg-stone-100 text-brand-800 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-          Curated Pre-Loved &bull; Rosario, Pasig
-        </span>
-        <h1 class="font-serif text-3xl md:text-5xl font-bold text-stone-900 leading-tight">
-          Quality closet pieces and houseware essentials.
-        </h1>
-        <p class="mt-4 text-stone-600 text-sm md:text-base leading-relaxed">
-          Gently worn dress shirts and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
-        </p>
+  <main class="max-w-4xl mx-auto p-4 md:p-6">
 
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="#items" class="bg-brand-800 text-white text-xs font-bold px-5 py-3 rounded-xl hover:bg-brand-900 transition shadow-sm">
-            Browse Available Items
-          </a>
-          <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-bold px-5 py-3 rounded-xl transition flex items-center gap-2 shadow-sm">
-            <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-            <span>Chat on Messenger</span>
-          </a>
+    <div id="login-card" class="max-w-sm mx-auto mt-16 bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center">
+      <div class="w-12 h-12 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      </div>
+      <h2 class="font-bold text-lg text-stone-900">Seller Verification</h2>
+      <p class="text-xs text-stone-500 mt-1">Enter your admin PIN to manage orders.</p>
+
+      <div class="mt-6">
+        <input type="password" id="admin-pin-input" placeholder="Enter PIN (e.g. 1234)" class="w-full text-center text-lg tracking-widest font-mono border border-stone-300 rounded-xl py-3 px-4 focus:ring-2 focus:ring-stone-900 outline-none">
+        <button onclick="loginAdmin()" class="w-full mt-3 bg-stone-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl transition">
+          Unlock Dashboard
+        </button>
+      </div>
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="font-extrabold text-xl text-stone-900">Incoming Orders</h2>
+          <p class="text-xs text-stone-500">Verify customer GCash/Maya transfer before clicking confirm.</p>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Catalog Section -->
-  <main id="items" class="max-w-5xl mx-auto px-4 py-12">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 gap-4">
-      <div>
-        <h2 class="font-serif text-2xl font-bold text-stone-900">Available Listings</h2>
-        <p class="text-xs text-stone-500 mt-0.5">Click thumbnails or arrows to view multiple photos. Have questions? Click "Inquire" to chat with us!</p>
+        <button onclick="loadOrders()" class="bg-white border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span>Refresh</span>
+        </button>
       </div>
 
-      <!-- Filter Buttons -->
-      <div class="flex gap-2 text-xs font-semibold">
-        <button onclick="filterCatalog('all')" class="cat-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
-        <button onclick="filterCatalog('shirts')" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">Dress Shirts</button>
-        <button onclick="filterCatalog('housewares')" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">Housewares</button>
+      <div id="orders-container" class="space-y-4">
+        <div class="text-center py-12 text-stone-400 text-sm">Loading orders...</div>
       </div>
     </div>
 
-    <!-- Product Grid -->
-    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="col-span-full py-16 text-center text-stone-400 text-sm">
-        Loading inventory from database...
-      </div>
-    </div>
   </main>
 
-  <!-- How It Works Section -->
-  <section id="how-it-works" class="bg-stone-100/70 border-t border-b border-stone-200 py-12">
-    <div class="max-w-5xl mx-auto px-4">
-      <h3 class="font-serif text-xl font-bold text-stone-900 mb-6 text-center">Fast QR Ordering</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-          <div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs mb-3">1</div>
-          <h4 class="font-bold text-stone-900 text-sm">Inspect Photos &amp; Bag</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Swipe through photos of tags, fabrics, and measurements to verify condition.</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-          <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-3">2</div>
-          <h4 class="font-bold text-stone-900 text-sm">Scan GCash or Maya QR</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Scan the QR code directly from checkout or copy the mobile number. Zero transaction fees.</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-          <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
-          <h4 class="font-bold text-stone-900 text-sm">Automated Email Receipts</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Receive pending and confirmed confirmation emails as soon as payment is verified.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Slide-Over Checkout Drawer -->
-  <div id="checkout-modal" class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-sm hidden flex justify-end">
-    <div class="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
-      
-      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
-        <div>
-          <h2 class="font-serif text-xl font-bold text-stone-900">Your Order Bag</h2>
-          <p class="text-xs text-stone-500">Scan QR &bull; Receive email confirmation</p>
-        </div>
-        <button onclick="closeCart()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold p-1 leading-none">&times;</button>
-      </div>
-
-      <!-- 2-Hour Policy Notice -->
-      <div class="my-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 leading-relaxed flex items-start gap-2.5">
-        <span class="text-base leading-none">⏱️</span>
-        <div>
-          <strong class="font-bold">2-Hour Reservation Hold:</strong> Submitting an order reserves your items for <b>2 hours</b>. Please send your GCash/Maya payment screenshot via Messenger or Viber within 2 hours. Unpaid reservations automatically expire so other buyers get a fair chance.
-        </div>
-      </div>
-
-      <div class="py-2 border-b border-stone-200">
-        <div id="cart-list" class="space-y-2"></div>
-        <div class="mt-4 pt-3 border-t border-stone-100 flex justify-between items-center text-sm font-bold text-stone-900">
-          <span>Items Total:</span>
-          <span id="items-total-display" class="text-base text-brand-800 font-extrabold">₱0</span>
-        </div>
-      </div>
-
-      <!-- Buyer Details Form with Email Input -->
-      <div class="py-4 space-y-3.5 border-b border-stone-200">
-        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500">Buyer Information</h4>
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Full Name *</label>
-          <input type="text" id="buyer-name" placeholder="e.g. Juan Dela Cruz" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Email Address * <span class="text-stone-400 font-normal">(for confirmation receipts)</span></label>
-          <input type="email" id="buyer-email" placeholder="juan.delacruz@gmail.com" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Mobile / Viber Number *</label>
-          <input type="text" id="buyer-contact" placeholder="09XXXXXXXXX" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Fulfillment Option</label>
-          <select id="buyer-fulfillment" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none">
-            <option value="Meet-up / Pickup (Rosario, Pasig)">Meet-up / Pickup in Rosario, Pasig (Free)</option>
-            <option value="Courier Delivery (Lalamove / Grab / J&T)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- QR Payment Section -->
-      <div class="py-4 flex-1">
-        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500 mb-2">Scan QR Code to Pay</h4>
-        
-        <div class="flex gap-2 mb-3">
-          <button onclick="selectPaymentTab('gcash')" id="tab-btn-gcash" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition">GCash QR</button>
-          <button onclick="selectPaymentTab('maya')" id="tab-btn-maya" class="flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">Maya QR</button>
-        </div>
-
-        <!-- Account & QR Box -->
-        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
-          <div id="payment-amount-display" class="text-2xl font-black text-brand-800 mt-0.5 mb-3">₱0</div>
-
-          <!-- QR Image Container -->
-          <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
-            <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
-          </div>
-          <p class="text-[10px] text-stone-400 mt-1.5">Take a screenshot to scan from your photo gallery</p>
-
-          <div class="mt-3 pt-3 border-t border-stone-200 text-left space-y-1.5 text-xs">
-            <div class="flex justify-between">
-              <span class="text-stone-500">Account:</span>
-              <span id="pay-account-name" class="font-bold text-stone-800">M. DIVINA</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <span class="text-stone-500">Mobile Number:</span>
-              <div class="flex items-center gap-1.5">
-                <span id="pay-account-number" class="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">0917-611-8382</span>
-                <button onclick="copyAccountNumber()" class="text-[11px] font-bold text-brand-700 hover:underline">Copy</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit & Message Buttons -->
-        <div class="mt-4 space-y-2">
-          <button id="submit-messenger-btn" onclick="processOrder('messenger')" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
-            <span>Submit Order &amp; Send Receipt on Messenger</span>
-          </button>
-          <button id="submit-viber-btn" onclick="processOrder('viber')" class="w-full py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
-            <span>Submit Order &amp; Send Receipt on Viber</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <footer class="bg-stone-900 text-stone-400 text-xs py-10 border-t border-stone-800 mb-16 sm:mb-0">
-    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-      <div>
-        <span class="font-serif font-bold text-white text-sm tracking-wide block">KEG FINDS</span>
-        <span class="text-[11px] text-stone-500">Curated Pre-Loved Clothing &amp; Housewares &bull; Rosario, Pasig</span>
-      </div>
-      <div class="text-[11px] text-stone-500">
-        &copy; 2026 KEG Finds. All rights reserved.
-      </div>
-    </div>
-  </footer>
-
-  <!-- Floating Quick Chat Button for Messenger (Bottom Right) -->
-  <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 group flex items-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#00C6FF] hover:from-[#0074E0] hover:to-[#00B4F0] text-white font-bold text-xs py-3 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-    <span class="relative flex h-2.5 w-2.5">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
-    </span>
-    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-    <span class="tracking-wide">Chat with Us</span>
-  </a>
-
   <script>
-    // =========================================================================
-    // VERIFIED GOOGLE APPS SCRIPT URL & CONFIGURATION
-    // =========================================================================
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
 
-    const SELLER_CONFIG = {
-      gcashNumber: "0917-611-8382",
-      mayaNumber: "0915-750-4596",
-      accountName: "M. DIVINA",
-      messengerUsername: "Kegfinds",
-      viberNumber: "+639176118382",
+    let savedPin = localStorage.getItem("keg_admin_pin") || "";
 
-      // Clean Google Drive Direct QR Images
-      gcashQrImage: "https://lh3.googleusercontent.com/d/1SzKWTCYFO07SjKZLD6bZdNibzaaC-c6w",
-      mayaQrImage: "https://lh3.googleusercontent.com/d/1x51q2b6iwXEK1kcFtBHF_Yj5gvW1O0kL"
-    };
+    function loginAdmin() {
+      const pin = document.getElementById("admin-pin-input").value.trim();
+      if (!pin) {
+        alert("Please enter your PIN.");
+        return;
+      }
+      savedPin = pin;
+      localStorage.setItem("keg_admin_pin", pin);
+      loadOrders();
+    }
 
-    let inventory = [];
-    let cart = [];
-    let currentPaymentMethod = 'GCASH';
-    let currentPhotoIndices = {};
+    function logoutAdmin() {
+      localStorage.removeItem("keg_admin_pin");
+      savedPin = "";
+      location.reload();
+    }
 
-    async function fetchInventory() {
-      const grid = document.getElementById('product-grid');
+    async function loadOrders() {
+      document.getElementById("login-card").classList.add("hidden");
+      document.getElementById("dashboard-content").classList.remove("hidden");
+      document.getElementById("logout-btn").classList.remove("hidden");
+
+      const container = document.getElementById("orders-container");
+      container.innerHTML = '<div class="text-center py-12 text-stone-400 text-sm">Fetching orders from Google Sheets...</div>';
+
       try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(savedPin)}`);
         const data = await res.json();
-        if (Array.isArray(data)) {
-          inventory = data;
-          renderProducts(inventory);
-        } else {
-          grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
+
+        if (data.status === "error") {
+          alert("Incorrect PIN! Access denied.");
+          logoutAdmin();
+          return;
         }
+
+        renderOrders(data);
       } catch (err) {
-        console.error("Error fetching inventory:", err);
-        grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check Google Apps Script deployment permissions.</div>';
+        console.error(err);
+        container.innerHTML = '<div class="text-center py-12 text-red-600 text-sm">Failed to connect to Google Sheets. Check script deployment.</div>';
       }
     }
 
-    function parseImages(imgString) {
-      if (!imgString) return ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
-      const urls = imgString.split(',').map(s => s.trim()).filter(s => s.length > 0);
-      return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
-    }
+    function renderOrders(orders) {
+      const container = document.getElementById("orders-container");
 
-    // Formats condition into clear, descriptive thrift ratings
-    function formatCondition(val) {
-      if (!val) return 'Pre-loved';
-      const clean = String(val).trim();
-      
-      if (clean === '10' || clean === '10/10' || clean === '10 / 10') return '10/10 (Pristine / Like New)';
-      if (clean === '9.5' || clean === '9' || clean === '9/10') return `${clean} (Excellent)`;
-      if (clean === '8.5' || clean === '8' || clean === '8/10') return `${clean} (Very Good)`;
-      if (clean === '7.5' || clean === '7' || clean === '7/10') return `${clean} (Good Condition)`;
-      
-      return clean;
-    }
-
-    function renderProducts(items) {
-      const grid = document.getElementById('product-grid');
-      if (items.length === 0) {
-        grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available in inventory.</div>';
+      if (!orders || orders.length === 0) {
+        container.innerHTML = '<div class="bg-white p-8 rounded-2xl border border-stone-200 text-center text-stone-400 text-sm">No orders yet.</div>';
         return;
       }
 
-      grid.innerHTML = items.map(item => {
-        const isSoldOut = item.stock <= 0;
-        const images = parseImages(item.image);
-        const currentIdx = currentPhotoIndices[item.id] || 0;
-        const hasMultiple = images.length > 1;
+      container.innerHTML = orders.map(order => {
+        const isConfirmed = order.status === "CONFIRMED";
+        const isExpired = order.status === "EXPIRED_CANCELLED";
+
+        let parsedItems = [];
+        try {
+          parsedItems = JSON.parse(order.itemsJson);
+        } catch (e) {
+          parsedItems = [{ id: "-", name: order.itemsJson, qty: 1, price: order.total }];
+        }
+
+        let badgeHtml = '';
+        if (isConfirmed) {
+          badgeHtml = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800">✔ Paid &amp; Confirmed</span>';
+        } else if (isExpired) {
+          badgeHtml = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-stone-200 text-stone-600">⏱️ Expired &bull; Stock Returned</span>';
+        } else {
+          badgeHtml = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 animate-pulse">⏳ 2-Hr Hold (Pending)</span>';
+        }
 
         return `
-          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}">
-            <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
-              <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
-              
-              <div class="absolute top-3 left-3 flex gap-1.5 z-10">
-                <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
-                <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm ${isSoldOut ? 'bg-red-600 text-white' : 'bg-white/90 text-stone-800'}">
-                  ${isSoldOut ? 'SOLD OUT' : `${item.stock} in stock`}
-                </span>
+          <div class="bg-white rounded-2xl border ${isExpired ? 'border-stone-200 opacity-60' : isConfirmed ? 'border-stone-200 bg-stone-50/50' : 'border-amber-200 ring-1 ring-amber-100'} p-5 shadow-sm">
+            
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-100 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-bold text-stone-900">${order.orderId}</span>
+                <span class="text-stone-400">&bull;</span>
+                <span class="text-stone-500">${order.date}</span>
               </div>
+              ${badgeHtml}
+            </div>
 
-              ${hasMultiple ? `
-                <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
-                  ${currentIdx + 1} / ${images.length}
-                </span>
-                <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                </button>
-                <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
-                  ${images.map((_, i) => `
-                    <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+              <div>
+                <h4 class="text-[10px] uppercase font-bold tracking-wider text-stone-400 mb-1">Purchased Items</h4>
+                <div class="space-y-1.5">
+                  ${parsedItems.map(item => `
+                    <div class="text-xs font-semibold text-stone-800 flex items-center justify-between bg-stone-50 p-2 rounded-lg border border-stone-100">
+                      <div class="flex items-center gap-2">
+                        <span class="bg-stone-900 text-white font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">ID #${item.id || '-'}</span>
+                        <span>${item.name}</span>
+                      </div>
+                      <span class="text-stone-500 font-mono font-bold">${item.qty}x</span>
+                    </div>
                   `).join('')}
                 </div>
-              ` : ''}
-            </div>
-
-            <div class="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
-                <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
-                
-                <!-- Explicit Condition Label and Green Badge -->
-                <div class="flex items-center gap-1.5 mt-2">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
-                  <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                    ${formatCondition(item.condition)}
-                  </span>
+                <div class="mt-3 text-sm font-extrabold text-stone-900">
+                  Total: ₱${Number(order.total).toLocaleString()}
                 </div>
               </div>
 
-              <div class="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
-                <span class="text-lg font-bold text-stone-900">₱${Number(item.price).toLocaleString()}</span>
-                
-                ${isSoldOut ? `
-                  <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
-                ` : `
-                  <div class="flex items-center gap-1.5">
-                    <!-- Quick Inquire Button for this item -->
-                    <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
-                      <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-                      <span class="hidden sm:inline">Inquire</span>
-                    </button>
-                    <!-- Add to Bag -->
-                    <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap">+ Add to Bag</button>
-                  </div>
-                `}
+              <div class="text-xs space-y-1 bg-stone-50 p-3 rounded-xl border border-stone-100">
+                <h4 class="text-[10px] uppercase font-bold tracking-wider text-stone-400 mb-1">Buyer Details</h4>
+                <div><span class="text-stone-500">Name:</span> <strong class="text-stone-800">${order.buyerName}</strong></div>
+                <div><span class="text-stone-500">Email:</span> <strong class="text-stone-800">${order.buyerEmail || 'None'}</strong></div>
+                <div><span class="text-stone-500">Contact:</span> <strong class="text-stone-800 font-mono">${order.buyerContact}</strong></div>
+                <div><span class="text-stone-500">Method:</span> <strong class="text-stone-800">${order.paymentMethod}</strong></div>
+                <div><span class="text-stone-500">Fulfillment:</span> <span class="text-stone-700">${order.fulfillment}</span></div>
               </div>
             </div>
+
+            <div class="pt-3 border-t border-stone-100 flex justify-end">
+              ${isConfirmed ? `
+                <span class="text-xs text-stone-400 font-semibold italic">Stock confirmed &amp; receipt sent</span>
+              ` : isExpired ? `
+                <span class="text-xs text-stone-400 font-semibold italic">Unpaid after 2 hours — stock returned to shop</span>
+              ` : `
+                <button onclick="confirmOrder('${order.orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Confirm Payment &amp; Mark Sold</span>
+                </button>
+              `}
+            </div>
+
           </div>
         `;
       }).join('');
     }
 
-    // Quick Item Inquiry on Messenger
-    function inquireItem(id, name, price) {
-      const msg = `Hi KEG Finds! I have an inquiry about [ID #${id}] ${name} (₱${Number(price).toLocaleString()}). Is this still available? Can I ask a question about its sizing/condition?`;
-      const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
-    }
-
-    function nextPhoto(itemId, total) {
-      const current = currentPhotoIndices[itemId] || 0;
-      setPhoto(itemId, (current + 1) % total);
-    }
-
-    function prevPhoto(itemId, total) {
-      const current = currentPhotoIndices[itemId] || 0;
-      setPhoto(itemId, (current - 1 + total) % total);
-    }
-
-    function setPhoto(itemId, index) {
-      currentPhotoIndices[itemId] = index;
-      const item = inventory.find(i => String(i.id) === String(itemId));
-      if (!item) return;
-
-      const images = parseImages(item.image);
-      const imgEl = document.getElementById(`item-img-${itemId}`);
-      const counterEl = document.getElementById(`photo-counter-${itemId}`);
-
-      if (imgEl && images[index]) imgEl.src = images[index];
-      if (counterEl) counterEl.innerText = `${index + 1} / ${images.length}`;
-      renderProducts(inventory);
-    }
-
-    function addToBag(id) {
-      const item = inventory.find(i => String(i.id) === String(id));
-      if (!item || item.stock <= 0) return;
-
-      const existing = cart.find(c => String(c.id) === String(id));
-      if (existing) {
-        if (existing.qty < item.stock) {
-          existing.qty += 1;
-        } else {
-          alert(`Only ${item.stock} item(s) available for this piece.`);
-          return;
-        }
-      } else {
-        cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
-      }
-
-      updateCartUI();
-      openCart();
-    }
-
-    function updateCartUI() {
-      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
-      document.getElementById('cart-badge').innerText = totalQty;
-      const list = document.getElementById('cart-list');
-      const totalDisplay = document.getElementById('items-total-display');
-      const paymentDisplay = document.getElementById('payment-amount-display');
-
-      if (cart.length === 0) {
-        list.innerHTML = '<p class="text-xs text-stone-400 py-4 text-center">Your bag is currently empty.</p>';
-        totalDisplay.innerText = '₱0';
-        paymentDisplay.innerText = '₱0';
-        return;
-      }
-
-      list.innerHTML = cart.map((item, idx) => `
-        <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-100 text-xs">
-          <div>
-            <div class="font-bold text-stone-800"><span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}</div>
-            <div class="text-stone-500">₱${Number(item.price).toLocaleString()} &times; ${item.qty}</div>
-          </div>
-          <button onclick="cart.splice(${idx}, 1); updateCartUI();" class="text-red-500 hover:text-red-700 font-bold px-2 py-1">Remove</button>
-        </div>
-      `).join('');
-
-      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      totalDisplay.innerText = `₱${total.toLocaleString()}`;
-      paymentDisplay.innerText = `₱${total.toLocaleString()}`;
-    }
-
-    async function processOrder(channel) {
-      if (cart.length === 0) {
-        alert('Your bag is empty.');
-        return;
-      }
-
-      const buyerName = document.getElementById('buyer-name').value.trim();
-      const buyerEmail = document.getElementById('buyer-email').value.trim();
-      const buyerContact = document.getElementById('buyer-contact').value.trim();
-      const fulfillment = document.getElementById('buyer-fulfillment').value;
-
-      if (!buyerName || !buyerEmail || !buyerContact) {
-        alert('Please fill in your Name, Email Address, and Mobile / Viber number.');
-        return;
-      }
-
-      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const itemsListText = cart.map(i => `• [ID #${i.id}] ${i.name} (${i.qty}x @ ₱${i.price})`).join('\n');
-
-      const submitBtn = event.currentTarget;
-      const originalText = submitBtn.innerText;
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Reserving & generating Order ID...";
+    async function confirmOrder(orderId) {
+      const ok = confirm(`Did you check your GCash/Maya app and verify the money arrived for Order ${orderId}?`);
+      if (!ok) return;
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({
-            action: "createOrder",
-            buyerName,
-            buyerEmail,
-            buyerContact,
-            fulfillment,
-            paymentMethod: currentPaymentMethod,
-            total,
-            items: cart
+            action: "confirmPayment",
+            pin: savedPin,
+            orderId: orderId
           })
         });
-
         const result = await res.json();
 
-        // If another buyer claimed the item first
-        if (result.status === "out_of_stock") {
-          alert(result.message + "\n\nPlease review your bag; claimed items cannot be checked out.");
-          fetchInventory();
-          submitBtn.disabled = false;
-          submitBtn.innerText = originalText;
-          return;
-        }
-
-        // Official Order ID from Google Sheets
-        const orderId = result.orderId || ("KEG-" + Date.now().toString().slice(-6));
-
-        // Format message with ORDER ID at the very top
-        const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${currentPaymentMethod} QR\n\n(Sending payment screenshot receipt now!)`;
-
-        if (channel === 'messenger') {
-          const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
-          window.open(url, '_blank');
-        } else if (channel === 'viber') {
-          const cleanViber = SELLER_CONFIG.viberNumber.replace(/[^0-9]/g, '');
-          const url = `viber://chat?number=%2B${cleanViber}`;
-          window.open(url, '_blank');
-        }
-
-        alert(`Order reserved! Your Order ID is ${orderId}.\n\nItems are held for 2 hours. A confirmation email was sent to ${buyerEmail}. Please send your QR payment screenshot now.`);
-        cart = [];
-        updateCartUI();
-        closeCart();
-        fetchInventory(); // Immediately greys out the item
-
-      } catch (e) {
-        console.error("Order error:", e);
-        alert("There was an issue processing your order. Please try again.");
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = originalText;
-      }
-    }
-
-    function selectPaymentTab(method) {
-      currentPaymentMethod = method.toUpperCase();
-      const btnGcash = document.getElementById('tab-btn-gcash');
-      const btnMaya = document.getElementById('tab-btn-maya');
-      const qrImg = document.getElementById('qr-image-display');
-      const accountNum = document.getElementById('pay-account-number');
-
-      if (method === 'gcash') {
-        btnGcash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition';
-        btnMaya.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
-        qrImg.src = SELLER_CONFIG.gcashQrImage;
-        accountNum.innerText = SELLER_CONFIG.gcashNumber;
-      } else {
-        btnMaya.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition';
-        btnGcash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
-        qrImg.src = SELLER_CONFIG.mayaQrImage;
-        accountNum.innerText = SELLER_CONFIG.mayaNumber;
-      }
-    }
-
-    function copyAccountNumber() {
-      const num = document.getElementById('pay-account-number').innerText.replace(/[^0-9]/g, '');
-      navigator.clipboard.writeText(num);
-      alert(`Account number ${num} copied to clipboard!`);
-    }
-
-    function openCart() { document.getElementById('checkout-modal').classList.remove('hidden'); }
-    function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
-
-    function filterCatalog(category) {
-      const cards = document.querySelectorAll('.item-card');
-      const btns = document.querySelectorAll('.cat-btn');
-
-      btns.forEach(b => {
-        b.classList.remove('bg-stone-900', 'text-white');
-        b.classList.add('bg-stone-100', 'text-stone-600');
-      });
-      event.target.classList.add('bg-stone-900', 'text-white');
-      event.target.classList.remove('bg-stone-100', 'text-stone-600');
-
-      cards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
-          card.style.display = 'flex';
+        if (result.status === "success") {
+          alert(`Order ${orderId} confirmed! Marked officially sold.`);
+          loadOrders();
         } else {
-          card.style.display = 'none';
+          alert(`Error: ${result.message}`);
         }
-      });
+      } catch (err) {
+        console.error(err);
+        alert("Failed to confirm order. Please try again.");
+      }
     }
 
-    document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
-    selectPaymentTab('gcash');
-    fetchInventory();
+    if (savedPin) {
+      loadOrders();
+    }
   </script>
 </body>
 </html>
