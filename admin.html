@@ -308,7 +308,7 @@
       return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
     }
 
-    // Formats condition into readable standard thrift ratings
+    // Formats condition into clear, descriptive thrift ratings
     function formatCondition(val) {
       if (!val) return 'Pre-loved';
       const clean = String(val).trim();
@@ -369,7 +369,7 @@
                 <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
                 <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
                 
-                <!-- Clear Condition Badge -->
+                <!-- Explicit Condition Label and Green Badge -->
                 <div class="flex items-center gap-1.5 mt-2">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
                   <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
