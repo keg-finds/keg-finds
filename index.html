@@ -310,6 +310,17 @@
       return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
     }
 
+    
+    function formatCondition(val) {
+      if (!val) return 'Pre-loved';
+      const clean = String(val).trim();
+      if (clean.includes('Oct 10') || clean === '10' || clean === '10/10' || clean === '10 / 10') return '10/10 (Pristine / Like New)';
+      if (clean.includes('Sep') || clean === '9.5' || clean === '9' || clean === '9/10') return `${clean} (Excellent)`;
+      if (clean.includes('Aug') || clean === '8.5' || clean === '8' || clean === '8/10') return `${clean} (Very Good)`;
+      if (clean.includes('Jul') || clean === '7.5' || clean === '7' || clean === '7/10') return `${clean} (Good Condition)`;
+      return clean;
+    }
+
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
       if (items.length === 0) {
@@ -357,7 +368,12 @@
               <div>
                 <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
                 <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
-                <p class="text-xs text-stone-500 mt-1">${item.condition}</p>
+                <div class="flex items-center gap-1.5 mt-2">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
+                  <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                    ${formatCondition(item.condition)}
+                  </span>
+                </div>
               </div>
 
               <div class="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
