@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1b2921">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KEG Finds">
+  <link rel="apple-touch-icon" href="./icon-192.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>KEG Finds | Pre-loved Closet & Housewares</title>
@@ -47,6 +55,12 @@
       </a>
 
       <div class="flex items-center gap-2.5">
+        <!-- Install App Button (Visible on mobile & desktop if installable) -->
+        <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-full transition shadow-sm animate-pulse">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Install App</span>
+        </button>
+
         <!-- Header Quick Chat Link -->
         <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-blue-600 bg-stone-100 hover:bg-blue-50 px-3 py-2 rounded-full transition border border-stone-200">
           <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
@@ -260,6 +274,39 @@
     <span class="tracking-wide">Chat with Us</span>
   </a>
 
+  <!-- iOS Step-by-Step Install Guide Modal -->
+  <div id="ios-install-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 text-center relative">
+      <button onclick="closeIosInstallModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="w-12 h-12 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      </div>
+
+      <h3 class="font-serif text-lg font-bold text-stone-900">Install KEG Finds App</h3>
+      <p class="text-xs text-stone-500 mt-1">Install on your iPhone home screen for fast full-screen shopping:</p>
+
+      <div class="mt-5 space-y-3 text-left text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">1</span>
+          <span>Tap the <b class="text-stone-900">Share button</b> at the bottom of Safari (<svg class="w-4 h-4 inline text-blue-600 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>).</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">2</span>
+          <span>Scroll down and tap <b class="text-stone-900">"Add to Home Screen"</b> (<span class="font-bold text-stone-700">＋</span>).</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">3</span>
+          <span>Tap <b class="text-stone-900">Add</b> in the top right corner.</span>
+        </div>
+      </div>
+
+      <button onclick="closeIosInstallModal()" class="w-full mt-5 py-3 bg-brand-800 text-white font-bold text-xs rounded-xl hover:bg-brand-900 transition">
+        Got it!
+      </button>
+    </div>
+  </div>
+
   <script>
     // =========================================================================
     // VERIFIED GOOGLE APPS SCRIPT URL & CONFIGURATION
@@ -306,7 +353,6 @@
       const bar = document.getElementById('category-filter-bar');
       if (!bar) return;
 
-      // Extract unique categories (ignoring empty or undefined)
       const categories = Array.from(new Set(
         items.map(i => (i.category || '').trim()).filter(c => c.length > 0)
       ));
@@ -318,7 +364,6 @@
       `;
 
       categories.forEach(cat => {
-        // Format label nicely: capitalize each word
         const label = cat.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         const count = items.filter(i => (i.category || '').trim().toLowerCase() === cat.toLowerCase()).length;
         buttonsHtml += `
@@ -362,7 +407,6 @@
       return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
     }
 
-    // Formats condition into clear, descriptive thrift ratings & prevents date glitches
     function formatCondition(val) {
       if (!val) return 'Pre-loved';
       const clean = String(val).trim();
@@ -437,12 +481,10 @@
                   <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
                 ` : `
                   <div class="flex items-center gap-1.5">
-                    <!-- Quick Inquire Button for this item -->
                     <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
                       <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
                       <span class="hidden sm:inline">Inquire</span>
                     </button>
-                    <!-- Add to Bag -->
                     <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap">+ Add to Bag</button>
                   </div>
                 `}
@@ -453,7 +495,6 @@
       }).join('');
     }
 
-    // Quick Item Inquiry on Messenger
     function inquireItem(id, name, price) {
       const msg = `Hi KEG Finds! I have an inquiry about [ID #${id}] ${name} (₱${Number(price).toLocaleString()}). Is this still available? Can I ask a question about its sizing/condition?`;
       const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(msg)}`;
@@ -575,7 +616,6 @@
 
         const result = await res.json();
 
-        // If another buyer claimed the item first
         if (result.status === "out_of_stock") {
           alert(result.message + "\n\nPlease review your bag; claimed items cannot be checked out.");
           fetchInventory();
@@ -584,10 +624,8 @@
           return;
         }
 
-        // Official Order ID from Google Sheets
         const orderId = result.orderId || ("KEG-" + Date.now().toString().slice(-6));
 
-        // Format message with ORDER ID at the very top
         const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${currentPaymentMethod} QR\n\n(Sending payment screenshot receipt now!)`;
 
         if (channel === 'messenger') {
@@ -603,7 +641,7 @@
         cart = [];
         updateCartUI();
         closeCart();
-        fetchInventory(); // Immediately greys out the item
+        fetchInventory();
 
       } catch (e) {
         console.error("Order error:", e);
@@ -642,6 +680,61 @@
 
     function openCart() { document.getElementById('checkout-modal').classList.remove('hidden'); }
     function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
+
+    // =========================================================================
+    // PWA INSTALLATION LOGIC (1-TAP FOR ANDROID, GUIDED MODAL FOR IOS)
+    // =========================================================================
+    let deferredPrompt = null;
+    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isStandalone = () => ('standalone' in window.navigator && window.navigator.standalone) || window.matchMedia('(display-mode: standalone)').matches;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn && !isStandalone()) {
+        btn.classList.remove('hidden');
+        btn.classList.add('flex');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn && !isStandalone()) {
+        if (isIos()) {
+          btn.classList.remove('hidden');
+          btn.classList.add('flex');
+        }
+      }
+    });
+
+    function triggerPWAInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User installed KEG Finds');
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.add('hidden');
+          }
+          deferredPrompt = null;
+        });
+      } else if (isIos()) {
+        document.getElementById('ios-install-modal').classList.remove('hidden');
+      } else {
+        alert("To install, tap your browser's menu (⋮ or Share) and select 'Install app' or 'Add to Home screen'.");
+      }
+    }
+
+    function closeIosInstallModal() {
+      document.getElementById('ios-install-modal').classList.add('hidden');
+    }
+
+    window.addEventListener('appinstalled', () => {
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.classList.add('hidden');
+      deferredPrompt = null;
+    });
 
     document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
     selectPaymentTab('gcash');
