@@ -40,7 +40,7 @@
 
   <!-- Top Announcement Bar -->
   <div class="bg-brand-900 text-stone-200 text-xs py-2 px-4 text-center font-medium tracking-wide">
-    📍 Rosario, Pasig &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; QR Ph
+    📍 Hubs: Rosario, Pasig &amp; Santa Maria, Ilocos Sur &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; Cash on Meet-up
   </div>
 
   <!-- Header -->
@@ -50,12 +50,12 @@
         <div class="w-10 h-10 rounded-xl bg-brand-800 text-white font-serif font-bold text-xl flex items-center justify-center shadow-sm">K</div>
         <div>
           <span class="font-serif font-bold text-lg tracking-tight text-stone-900 block leading-tight">KEG FINDS</span>
-          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Closet &amp; Housewares &bull; Pasig</span>
+          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Pasig &bull; Santa Maria, Ilocos Sur</span>
         </div>
       </a>
 
       <div class="flex items-center gap-2.5">
-        <!-- Install App Button (Visible on mobile & desktop if installable) -->
+        <!-- Install App Button -->
         <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-full transition shadow-sm animate-pulse">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
           <span>Install App</span>
@@ -82,7 +82,7 @@
     <div class="max-w-5xl mx-auto px-4">
       <div class="max-w-2xl">
         <span class="inline-block px-3 py-1 bg-stone-100 text-brand-800 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-          Curated Pre-Loved &bull; Rosario, Pasig
+          Curated Pre-Loved &bull; Pasig &bull; Santa Maria, Ilocos Sur
         </span>
         <h1 class="font-serif text-3xl md:text-5xl font-bold text-stone-900 leading-tight">
           Quality closet pieces and houseware essentials.
@@ -106,9 +106,28 @@
 
   <!-- Catalog Section -->
   <main id="items" class="max-w-5xl mx-auto px-4 py-12">
+    <!-- Location Switcher Tabs (All, Pasig, Santa Maria) -->
+    <div class="mb-8 p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>Select Location / Dispatch Hub:</span>
+      </div>
+      <div id="location-filter-bar" class="flex flex-wrap gap-2 text-xs font-bold">
+        <button onclick="switchLocation('all', this)" class="loc-btn bg-brand-800 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
+          🌐 All Locations (<span id="count-all">0</span>)
+        </button>
+        <button onclick="switchLocation('pasig', this)" class="loc-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2.5 rounded-xl transition">
+          📍 Pasig, Metro Manila (<span id="count-pasig">0</span>)
+        </button>
+        <button onclick="switchLocation('santa maria', this)" class="loc-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2.5 rounded-xl transition">
+          📍 Santa Maria, Ilocos Sur (<span id="count-santamaria">0</span>)
+        </button>
+      </div>
+    </div>
+
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 gap-4">
       <div>
-        <h2 class="font-serif text-2xl font-bold text-stone-900">Available Listings</h2>
+        <h2 id="catalog-title" class="font-serif text-2xl font-bold text-stone-900">Available Listings</h2>
         <p class="text-xs text-stone-500 mt-0.5">Click thumbnails or arrows to view multiple photos. Have questions? Click "Inquire" to chat with us!</p>
       </div>
 
@@ -129,7 +148,7 @@
   <!-- How It Works Section -->
   <section id="how-it-works" class="bg-stone-100/70 border-t border-b border-stone-200 py-12">
     <div class="max-w-5xl mx-auto px-4">
-      <h3 class="font-serif text-xl font-bold text-stone-900 mb-6 text-center">Fast QR Ordering</h3>
+      <h3 class="font-serif text-xl font-bold text-stone-900 mb-6 text-center">Fast QR &amp; Meet-up Ordering</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
           <div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs mb-3">1</div>
@@ -138,13 +157,13 @@
         </div>
         <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
           <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-3">2</div>
-          <h4 class="font-bold text-stone-900 text-sm">Scan GCash or Maya QR</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Scan the QR code directly from checkout or copy the mobile number. Zero transaction fees.</p>
+          <h4 class="font-bold text-stone-900 text-sm">Scan QR or Cash Meet-up</h4>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Scan GCash/Maya QR or choose Cash on Meet-up for free local pickup.</p>
         </div>
         <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
           <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
           <h4 class="font-bold text-stone-900 text-sm">Automated Email Receipts</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Receive pending and confirmed confirmation emails as soon as payment is verified.</p>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Receive reservation and confirmation emails as soon as your order is logged.</p>
         </div>
       </div>
     </div>
@@ -157,16 +176,16 @@
       <div class="flex items-center justify-between pb-4 border-b border-stone-200">
         <div>
           <h2 class="font-serif text-xl font-bold text-stone-900">Your Order Bag</h2>
-          <p class="text-xs text-stone-500">Scan QR &bull; Receive email confirmation</p>
+          <p class="text-xs text-stone-500">Scan QR or Cash on Meet-up &bull; Receive email confirmation</p>
         </div>
         <button onclick="closeCart()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <!-- 2-Hour Policy Notice -->
+      <!-- Policy Notice -->
       <div class="my-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 leading-relaxed flex items-start gap-2.5">
         <span class="text-base leading-none">⏱️</span>
         <div>
-          <strong class="font-bold">2-Hour Reservation Hold:</strong> Submitting an order reserves your items for <b>2 hours</b>. Please send your GCash/Maya payment screenshot via Messenger or Viber within 2 hours. Unpaid reservations automatically expire so other buyers get a fair chance.
+          <strong class="font-bold">Reservation Policy:</strong> Submitting an order reserves your items for <b>2 hours</b>. For QR orders, please send your GCash/Maya payment screenshot via Messenger or Viber within 2 hours. For Cash on Meet-up, coordinate your meetup schedule.
         </div>
       </div>
 
@@ -196,44 +215,62 @@
 
         <div>
           <label class="text-xs font-semibold text-stone-700 block mb-1">Fulfillment Option</label>
-          <select id="buyer-fulfillment" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none">
-            <option value="Meet-up / Pickup (Rosario, Pasig)">Meet-up / Pickup in Rosario, Pasig (Free)</option>
-            <option value="Courier Delivery (Lalamove / Grab / J&T)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+          <select id="buyer-fulfillment" onchange="onFulfillmentChange()" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none">
+            <!-- Dynamically populated based on cart item location -->
+            <option value="Pickup / Meet-up in Rosario, Pasig (Free)">Pickup / Meet-up in Rosario, Pasig (Free)</option>
+            <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
           </select>
         </div>
       </div>
 
-      <!-- QR Payment Section -->
+      <!-- Payment Section -->
       <div class="py-4 flex-1">
-        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500 mb-2">Scan QR Code to Pay</h4>
+        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500 mb-2">Select Payment Method</h4>
         
         <div class="flex gap-2 mb-3">
           <button onclick="selectPaymentTab('gcash')" id="tab-btn-gcash" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition">GCash QR</button>
           <button onclick="selectPaymentTab('maya')" id="tab-btn-maya" class="flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">Maya QR</button>
+          <!-- Cash button is dynamically shown ONLY when Meetup is selected -->
+          <button onclick="selectPaymentTab('cash')" id="tab-btn-cash" class="hidden flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">💵 Cash (Meet-up)</button>
         </div>
 
         <!-- Account & QR Box -->
         <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
+          <span id="payment-amount-label" class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
           <div id="payment-amount-display" class="text-2xl font-black text-brand-800 mt-0.5 mb-3">₱0</div>
 
-          <!-- QR Image Container -->
-          <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
-            <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
-          </div>
-          <p class="text-[10px] text-stone-400 mt-1.5">Take a screenshot to scan from your photo gallery</p>
-
-          <div class="mt-3 pt-3 border-t border-stone-200 text-left space-y-1.5 text-xs">
-            <div class="flex justify-between">
-              <span class="text-stone-500">Account:</span>
-              <span id="pay-account-name" class="font-bold text-stone-800">M. DIVINA</span>
+          <!-- QR Image Container (Hidden when Cash is selected) -->
+          <div id="qr-payment-container">
+            <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
+              <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
             </div>
-            <div class="flex justify-between items-center">
-              <span class="text-stone-500">Mobile Number:</span>
-              <div class="flex items-center gap-1.5">
-                <span id="pay-account-number" class="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">0917-611-8382</span>
-                <button onclick="copyAccountNumber()" class="text-[11px] font-bold text-brand-700 hover:underline">Copy</button>
+            <p class="text-[10px] text-stone-400 mt-1.5">Take a screenshot to scan from your photo gallery</p>
+
+            <div class="mt-3 pt-3 border-t border-stone-200 text-left space-y-1.5 text-xs">
+              <div class="flex justify-between">
+                <span class="text-stone-500">Account:</span>
+                <span id="pay-account-name" class="font-bold text-stone-800">M. DIVINA</span>
               </div>
+              <div class="flex justify-between items-center">
+                <span class="text-stone-500">Mobile Number:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="pay-account-number" class="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">0917-611-8382</span>
+                  <button onclick="copyAccountNumber()" class="text-[11px] font-bold text-brand-700 hover:underline">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cash On Meet-up / Pickup Info Box (Shown when Cash is selected) -->
+          <div id="cash-payment-container" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left space-y-2 text-xs text-emerald-950">
+            <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm">
+              <span>🤝 Cash on Meet-up / Pick-up</span>
+            </div>
+            <p class="text-[11px] text-emerald-800 leading-relaxed">
+              Pay upon item inspection. Please prepare the exact cash amount of <b id="cash-amount-text" class="font-extrabold text-emerald-900">₱0</b> upon meeting.
+            </p>
+            <div class="text-[11px] text-emerald-700 pt-1 border-t border-emerald-200/60">
+              📍 Coordinate meeting spot &amp; time via Messenger or Viber after reserving.
             </div>
           </div>
         </div>
@@ -241,10 +278,10 @@
         <!-- Submit & Message Buttons -->
         <div class="mt-4 space-y-2">
           <button id="submit-messenger-btn" onclick="processOrder('messenger')" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
-            <span>Submit Order &amp; Send Receipt on Messenger</span>
+            <span>Submit Order &amp; Message on Messenger</span>
           </button>
           <button id="submit-viber-btn" onclick="processOrder('viber')" class="w-full py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
-            <span>Submit Order &amp; Send Receipt on Viber</span>
+            <span>Submit Order &amp; Message on Viber</span>
           </button>
         </div>
       </div>
@@ -256,7 +293,7 @@
     <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
       <div>
         <span class="font-serif font-bold text-white text-sm tracking-wide block">KEG FINDS</span>
-        <span class="text-[11px] text-stone-500">Curated Pre-Loved Clothing &amp; Housewares &bull; Rosario, Pasig</span>
+        <span class="text-[11px] text-stone-500">Pasig, Metro Manila &bull; Santa Maria, Ilocos Sur</span>
       </div>
       <div class="text-[11px] text-stone-500">
         &copy; 2026 KEG Finds. All rights reserved.
@@ -329,6 +366,15 @@
     let cart = [];
     let currentPaymentMethod = 'GCASH';
     let currentPhotoIndices = {};
+    let selectedLocation = 'all'; // 'all', 'pasig', or 'santa maria'
+    let selectedCategory = 'all';
+
+    function normalizeLocation(loc) {
+      if (!loc) return 'Pasig';
+      const clean = String(loc).trim().toLowerCase();
+      if (clean.includes('santa') || clean.includes('ilocos') || clean.includes('maria')) return 'Santa Maria';
+      return 'Pasig';
+    }
 
     async function fetchInventory() {
       const grid = document.getElementById('product-grid');
@@ -336,9 +382,13 @@
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
         const data = await res.json();
         if (Array.isArray(data)) {
-          inventory = data;
-          renderCategoryFilters(inventory);
-          renderProducts(inventory);
+          inventory = data.map(item => ({
+            ...item,
+            location: normalizeLocation(item.location)
+          }));
+          updateLocationCounts();
+          renderCategoryFilters(getFilteredByLocationItems());
+          renderProducts(getDisplayedItems());
         } else {
           grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
         }
@@ -348,7 +398,59 @@
       }
     }
 
-    // Automatically extracts unique categories from Google Sheets and builds filter buttons
+    function updateLocationCounts() {
+      const pasigCount = inventory.filter(i => i.location === 'Pasig').length;
+      const smCount = inventory.filter(i => i.location === 'Santa Maria').length;
+      const allCount = inventory.length;
+
+      const elAll = document.getElementById('count-all');
+      const elPasig = document.getElementById('count-pasig');
+      const elSm = document.getElementById('count-santamaria');
+
+      if (elAll) elAll.innerText = allCount;
+      if (elPasig) elPasig.innerText = pasigCount;
+      if (elSm) elSm.innerText = smCount;
+    }
+
+    function switchLocation(loc, btn) {
+      selectedLocation = loc.toLowerCase();
+      selectedCategory = 'all';
+
+      // Update location tabs UI
+      document.querySelectorAll('.loc-btn').forEach(b => {
+        b.classList.remove('bg-brand-800', 'text-white', 'shadow-sm');
+        b.classList.add('bg-stone-100', 'text-stone-700');
+      });
+      if (btn) {
+        btn.classList.add('bg-brand-800', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-stone-100', 'text-stone-700');
+      }
+
+      // Update Title
+      const titleEl = document.getElementById('catalog-title');
+      if (titleEl) {
+        if (selectedLocation === 'pasig') titleEl.innerText = "Available in Pasig, Metro Manila";
+        else if (selectedLocation === 'santa maria') titleEl.innerText = "Available in Santa Maria, Ilocos Sur";
+        else titleEl.innerText = "All Available Listings";
+      }
+
+      // Re-render categories & products
+      renderCategoryFilters(getFilteredByLocationItems());
+      renderProducts(getDisplayedItems());
+    }
+
+    function getFilteredByLocationItems() {
+      if (selectedLocation === 'all') return inventory;
+      return inventory.filter(i => i.location.toLowerCase() === selectedLocation);
+    }
+
+    function getDisplayedItems() {
+      const locFiltered = getFilteredByLocationItems();
+      if (selectedCategory === 'all') return locFiltered;
+      return locFiltered.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
+    }
+
+    // Automatically extracts unique categories based on current location and builds filter buttons
     function renderCategoryFilters(items) {
       const bar = document.getElementById('category-filter-bar');
       if (!bar) return;
@@ -359,7 +461,7 @@
 
       let buttonsHtml = `
         <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">
-          All Items (${items.length})
+          All (${items.length})
         </button>
       `;
 
@@ -377,7 +479,7 @@
     }
 
     function filterCatalog(category, clickedBtn) {
-      const cards = document.querySelectorAll('.item-card');
+      selectedCategory = category;
       const btns = document.querySelectorAll('.cat-btn');
 
       btns.forEach(b => {
@@ -390,15 +492,7 @@
         clickedBtn.classList.remove('bg-stone-100', 'text-stone-600');
       }
 
-      cards.forEach(card => {
-        const cardCat = (card.dataset.category || '').trim().toLowerCase();
-        const targetCat = category.trim().toLowerCase();
-        if (targetCat === 'all' || cardCat === targetCat) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      renderProducts(getDisplayedItems());
     }
 
     function parseImages(imgString) {
@@ -420,7 +514,7 @@
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
       if (items.length === 0) {
-        grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available in inventory.</div>';
+        grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available for this selection.</div>';
         return;
       }
 
@@ -429,16 +523,23 @@
         const images = parseImages(item.image);
         const currentIdx = currentPhotoIndices[item.id] || 0;
         const hasMultiple = images.length > 1;
+        const isPasig = item.location === 'Pasig';
 
         return `
-          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}">
+          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
             <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
               <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
               
-              <div class="absolute top-3 left-3 flex gap-1.5 z-10">
-                <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
-                <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm ${isSoldOut ? 'bg-red-600 text-white' : 'bg-white/90 text-stone-800'}">
-                  ${isSoldOut ? 'SOLD OUT' : `${item.stock} in stock`}
+              <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                <div class="flex gap-1.5">
+                  <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm ${isSoldOut ? 'bg-red-600 text-white' : 'bg-white/90 text-stone-800'}">
+                    ${isSoldOut ? 'SOLD OUT' : `${item.stock} in stock`}
+                  </span>
+                </div>
+                <!-- Location Tag on Image -->
+                <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
+                  📍 ${item.location} Hub
                 </span>
               </div>
 
@@ -462,7 +563,10 @@
 
             <div class="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
+                  <span class="text-[10px] font-semibold text-stone-500">📍 ${item.location}</span>
+                </div>
                 <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
                 
                 <!-- Explicit Condition Label and Green Badge -->
@@ -481,10 +585,12 @@
                   <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
                 ` : `
                   <div class="flex items-center gap-1.5">
-                    <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
+                    <!-- Quick Inquire Button -->
+                    <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}', '${item.location}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
                       <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
                       <span class="hidden sm:inline">Inquire</span>
                     </button>
+                    <!-- Add to Bag -->
                     <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap">+ Add to Bag</button>
                   </div>
                 `}
@@ -495,8 +601,8 @@
       }).join('');
     }
 
-    function inquireItem(id, name, price) {
-      const msg = `Hi KEG Finds! I have an inquiry about [ID #${id}] ${name} (₱${Number(price).toLocaleString()}). Is this still available? Can I ask a question about its sizing/condition?`;
+    function inquireItem(id, name, price, location) {
+      const msg = `Hi KEG Finds! I have an inquiry about [ID #${id}] ${name} (₱${Number(price).toLocaleString()} - ${location} Hub). Is this still available? Can I ask about its sizing/pickup?`;
       const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
@@ -522,7 +628,7 @@
 
       if (imgEl && images[index]) imgEl.src = images[index];
       if (counterEl) counterEl.innerText = `${index + 1} / ${images.length}`;
-      renderProducts(inventory);
+      renderProducts(getDisplayedItems());
     }
 
     function addToBag(id) {
@@ -538,11 +644,62 @@
           return;
         }
       } else {
-        cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
+        cart.push({ id: item.id, name: item.name, price: item.price, location: normalizeLocation(item.location), qty: 1 });
       }
 
       updateCartUI();
       openCart();
+    }
+
+    // Dynamically updates fulfillment dropdown options depending on where the cart items are located
+    function updateFulfillmentOptions(items) {
+      const select = document.getElementById('buyer-fulfillment');
+      if (!select) return;
+
+      const locations = Array.from(new Set(items.map(i => i.location || 'Pasig')));
+      const prevVal = select.value;
+      let optionsHtml = '';
+
+      if (locations.length === 0 || (locations.length === 1 && locations[0] === 'Pasig')) {
+        optionsHtml = `
+          <option value="Pickup / Meet-up in Rosario, Pasig (Free)">Pickup / Meet-up in Rosario, Pasig (Free)</option>
+          <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+        `;
+      } else if (locations.length === 1 && locations[0] === 'Santa Maria') {
+        optionsHtml = `
+          <option value="Pickup / Meet-up in Santa Maria, Ilocos Sur (Free)">Pickup / Meet-up in Santa Maria, Ilocos Sur (Free)</option>
+          <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+        `;
+      } else {
+        // Items from both locations
+        optionsHtml = `
+          <option value="Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)">Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)</option>
+        `;
+      }
+
+      select.innerHTML = optionsHtml;
+      // Retain previous value if still valid
+      if ([...select.options].some(o => o.value === prevVal)) {
+        select.value = prevVal;
+      }
+      onFulfillmentChange();
+    }
+
+    function onFulfillmentChange() {
+      const fulfillEl = document.getElementById('buyer-fulfillment');
+      const cashBtn = document.getElementById('tab-btn-cash');
+      if (!fulfillEl) return;
+
+      const isMeetup = fulfillEl.value.includes('Pickup') || fulfillEl.value.includes('Meet-up');
+      
+      if (isMeetup) {
+        if (cashBtn) cashBtn.classList.remove('hidden');
+      } else {
+        if (cashBtn) cashBtn.classList.add('hidden');
+        if (currentPaymentMethod === 'CASH') {
+          selectPaymentTab('gcash');
+        }
+      }
     }
 
     function updateCartUI() {
@@ -556,13 +713,21 @@
         list.innerHTML = '<p class="text-xs text-stone-400 py-4 text-center">Your bag is currently empty.</p>';
         totalDisplay.innerText = '₱0';
         paymentDisplay.innerText = '₱0';
+        updateFulfillmentOptions([]);
         return;
       }
+
+      updateFulfillmentOptions(cart);
 
       list.innerHTML = cart.map((item, idx) => `
         <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-100 text-xs">
           <div>
-            <div class="font-bold text-stone-800"><span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}</div>
+            <div class="font-bold text-stone-800">
+              <span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}
+              <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">
+                ${item.location}
+              </span>
+            </div>
             <div class="text-stone-500">₱${Number(item.price).toLocaleString()} &times; ${item.qty}</div>
           </div>
           <button onclick="cart.splice(${idx}, 1); updateCartUI();" class="text-red-500 hover:text-red-700 font-bold px-2 py-1">Remove</button>
@@ -572,6 +737,59 @@
       const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       totalDisplay.innerText = `₱${total.toLocaleString()}`;
       paymentDisplay.innerText = `₱${total.toLocaleString()}`;
+      
+      const cashText = document.getElementById('cash-amount-text');
+      if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
+    }
+
+    function selectPaymentTab(method) {
+      currentPaymentMethod = method.toUpperCase();
+      const btnGcash = document.getElementById('tab-btn-gcash');
+      const btnMaya = document.getElementById('tab-btn-maya');
+      const btnCash = document.getElementById('tab-btn-cash');
+      const qrBox = document.getElementById('qr-payment-container');
+      const cashBox = document.getElementById('cash-payment-container');
+      const qrImg = document.getElementById('qr-image-display');
+      const accountNum = document.getElementById('pay-account-number');
+      const amountLabel = document.getElementById('payment-amount-label');
+
+      // Reset all buttons to inactive neutral style
+      [btnGcash, btnMaya, btnCash].forEach(b => {
+        if (b) b.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
+      });
+
+      if (method === 'cash') {
+        if (btnCash) btnCash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-amber-600 text-white transition';
+        if (qrBox) qrBox.classList.add('hidden');
+        if (cashBox) cashBox.classList.remove('hidden');
+        if (amountLabel) amountLabel.innerText = 'Amount to Pay in Cash';
+
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const cashText = document.getElementById('cash-amount-text');
+        if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
+
+      } else {
+        // GCash or Maya
+        if (qrBox) qrBox.classList.remove('hidden');
+        if (cashBox) cashBox.classList.add('hidden');
+        if (amountLabel) amountLabel.innerText = 'Amount to Transfer';
+
+        if (method === 'gcash') {
+          if (btnGcash) btnGcash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition';
+          if (qrImg) qrImg.src = SELLER_CONFIG.gcashQrImage;
+          if (accountNum) accountNum.innerText = SELLER_CONFIG.gcashNumber;
+        } else {
+          if (btnMaya) btnMaya.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition';
+          if (qrImg) qrImg.src = SELLER_CONFIG.mayaQrImage;
+          if (accountNum) accountNum.innerText = SELLER_CONFIG.mayaNumber;
+        }
+      }
+    }
+
+    function copyAccountNumber() {
+      const num = document.getElementById('pay-account-number').innerText.replace(/[^0-9]/g, '');
+      navigator.clipboard.writeText(num);
+      alert(`Account number ${num} copied to clipboard!`);
     }
 
     async function processOrder(channel) {
@@ -591,7 +809,7 @@
       }
 
       const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const itemsListText = cart.map(i => `• [ID #${i.id}] ${i.name} (${i.qty}x @ ₱${i.price})`).join('\n');
+      const itemsListText = cart.map(i => `• [ID #${i.id}] ${i.name} (📍${i.location}) - ${i.qty}x @ ₱${i.price}`).join('\n');
 
       const submitBtn = event.currentTarget;
       const originalText = submitBtn.innerText;
@@ -608,7 +826,7 @@
             buyerEmail,
             buyerContact,
             fulfillment,
-            paymentMethod: currentPaymentMethod,
+            paymentMethod: currentPaymentMethod === 'CASH' ? 'CASH (Meet-up)' : (currentPaymentMethod + ' QR'),
             total,
             items: cart
           })
@@ -626,7 +844,12 @@
 
         const orderId = result.orderId || ("KEG-" + Date.now().toString().slice(-6));
 
-        const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${currentPaymentMethod} QR\n\n(Sending payment screenshot receipt now!)`;
+        const isCash = currentPaymentMethod === 'CASH';
+        const paymentNotice = isCash ? 
+          "(Payment: Cash upon Meet-up/Pickup - Coordinating schedule now!)" : 
+          "(Sending payment screenshot receipt now!)";
+
+        const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${isCash ? 'Cash on Meet-up' : currentPaymentMethod + ' QR'}\n\n${paymentNotice}`;
 
         if (channel === 'messenger') {
           const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
@@ -637,7 +860,7 @@
           window.open(url, '_blank');
         }
 
-        alert(`Order reserved! Your Order ID is ${orderId}.\n\nItems are held for 2 hours. A confirmation email was sent to ${buyerEmail}. Please send your QR payment screenshot now.`);
+        alert(`Order reserved! Your Order ID is ${orderId}.\n\n${isCash ? 'Please coordinate your meetup schedule on chat.' : 'Items held for 2 hours. A confirmation email was sent to ' + buyerEmail}`);
         cart = [];
         updateCartUI();
         closeCart();
@@ -650,32 +873,6 @@
         submitBtn.disabled = false;
         submitBtn.innerText = originalText;
       }
-    }
-
-    function selectPaymentTab(method) {
-      currentPaymentMethod = method.toUpperCase();
-      const btnGcash = document.getElementById('tab-btn-gcash');
-      const btnMaya = document.getElementById('tab-btn-maya');
-      const qrImg = document.getElementById('qr-image-display');
-      const accountNum = document.getElementById('pay-account-number');
-
-      if (method === 'gcash') {
-        btnGcash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition';
-        btnMaya.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
-        qrImg.src = SELLER_CONFIG.gcashQrImage;
-        accountNum.innerText = SELLER_CONFIG.gcashNumber;
-      } else {
-        btnMaya.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition';
-        btnGcash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
-        qrImg.src = SELLER_CONFIG.mayaQrImage;
-        accountNum.innerText = SELLER_CONFIG.mayaNumber;
-      }
-    }
-
-    function copyAccountNumber() {
-      const num = document.getElementById('pay-account-number').innerText.replace(/[^0-9]/g, '');
-      navigator.clipboard.writeText(num);
-      alert(`Account number ${num} copied to clipboard!`);
     }
 
     function openCart() { document.getElementById('checkout-modal').classList.remove('hidden'); }
