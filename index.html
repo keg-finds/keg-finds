@@ -71,7 +71,7 @@
         <button onclick="openCart()" class="relative bg-brand-800 hover:bg-brand-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition flex items-center gap-2 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
           <span>Bag</span>
-          <span id="cart-badge" class="bg-amber-400 text-stone-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
+          <span id="cart-badge" class="bg-amber-400 text-stone-900 text-[10px] font-black px-1.5 py-0.2 rounded-full transition-transform">0</span>
         </button>
       </div>
     </div>
@@ -342,6 +342,12 @@
     </div>
   </div>
 
+  <!-- Toast Notification (for Add to Bag) -->
+  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900/90 backdrop-blur text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 pointer-events-none translate-y-3 flex items-center gap-2">
+    <span class="text-emerald-400">✓</span>
+    <span id="toast-msg">Item added to Bag!</span>
+  </div>
+
   <script>
     // =========================================================================
     // VERIFIED GOOGLE APPS SCRIPT URL & CONFIGURATION
@@ -365,6 +371,17 @@
     let currentPhotoIndices = {};
     let selectedLocation = 'all';
     let selectedCategory = 'all';
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      if (!toast || !toastMsg) return;
+      toastMsg.innerText = msg;
+      toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+      }, 2500);
+    }
 
     function normalizeLocation(loc) {
       if (!loc) return 'Pasig';
@@ -580,7 +597,8 @@
                       <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
                       <span class="hidden sm:inline">Inquire</span>
                     </button>
-                    <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap">+ Add to Bag</button>
+                    <!-- Seamless Add to Bag -->
+                    <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
                   </div>
                 `}
               </div>
@@ -620,6 +638,7 @@
       renderProducts(getDisplayedItems());
     }
 
+    // Seamless Add to Bag: Adds item, updates badge, shows toast, does NOT open cart drawer
     function addToBag(id) {
       const item = inventory.find(i => String(i.id) === String(id));
       if (!item || item.stock <= 0) return;
@@ -637,7 +656,13 @@
       }
 
       updateCartUI();
-      openCart();
+      showToast(`Added "${item.name}" to Bag!`);
+      
+      const badge = document.getElementById('cart-badge');
+      if (badge) {
+        badge.classList.add('scale-150');
+        setTimeout(() => badge.classList.remove('scale-150'), 300);
+      }
     }
 
     function updateFulfillmentOptions(items) {
@@ -728,7 +753,7 @@
       if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
     }
 
-    // Fixed selectPaymentTab without stripping 'hidden' from Cash button
+    // Fixed selectPaymentTab: keeps 'hidden' intact on Cash button
     function selectPaymentTab(method) {
       currentPaymentMethod = method.toUpperCase();
       const btnGcash = document.getElementById('tab-btn-gcash');
@@ -790,6 +815,7 @@
       alert(`Account number ${num} copied to clipboard!`);
     }
 
+    // PWA-optimized processOrder: triggers native Messenger app directly without getting stuck on black screen
     async function processOrder(channel) {
       if (cart.length === 0) {
         alert('Your bag is empty.');
@@ -849,20 +875,19 @@
 
         const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${isCash ? 'Cash on Meet-up' : currentPaymentMethod + ' QR'}\n\n${paymentNotice}`;
 
-        if (channel === 'messenger') {
-          const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
-          window.open(url, '_blank');
-        } else if (channel === 'viber') {
-          const cleanViber = SELLER_CONFIG.viberNumber.replace(/[^0-9]/g, '');
-          const url = `viber://chat?number=%2B${cleanViber}`;
-          window.open(url, '_blank');
-        }
-
-        alert(`Order reserved! Your Order ID is ${orderId}.\n\n${isCash ? 'Please coordinate your meetup schedule on chat.' : 'Items held for 2 hours. A confirmation email was sent to ' + buyerEmail}`);
         cart = [];
         updateCartUI();
         closeCart();
         fetchInventory();
+
+        // Safe redirect that never shows a black screen in iOS PWA
+        if (channel === 'messenger') {
+          const messengerUrl = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
+          window.location.href = messengerUrl;
+        } else if (channel === 'viber') {
+          const cleanViber = SELLER_CONFIG.viberNumber.replace(/[^0-9]/g, '');
+          window.location.href = `viber://chat?number=%2B${cleanViber}`;
+        }
 
       } catch (e) {
         console.error("Order error:", e);
