@@ -40,7 +40,7 @@
 
   <!-- Top Announcement Bar -->
   <div class="bg-brand-900 text-stone-200 text-xs py-2 px-4 text-center font-medium tracking-wide">
-    📍 Hubs: Rosario, Pasig &amp; Santa Maria, Ilocos Sur &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; Cash on Meet-up
+    📍 Hubs: Pasig City &amp; Santa Maria, Ilocos Sur &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; Cash on Meet-up
   </div>
 
   <!-- Header -->
@@ -50,7 +50,7 @@
         <div class="w-10 h-10 rounded-xl bg-brand-800 text-white font-serif font-bold text-xl flex items-center justify-center shadow-sm">K</div>
         <div>
           <span class="font-serif font-bold text-lg tracking-tight text-stone-900 block leading-tight">KEG FINDS</span>
-          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Pasig &bull; Santa Maria, Ilocos Sur</span>
+          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Pasig City and Santa Maria, Ilocos Sur</span>
         </div>
       </a>
 
@@ -82,7 +82,7 @@
     <div class="max-w-5xl mx-auto px-4">
       <div class="max-w-2xl">
         <span class="inline-block px-3 py-1 bg-stone-100 text-brand-800 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-          Curated Pre-Loved &bull; Pasig &bull; Santa Maria, Ilocos Sur
+          Curated Pre-Loved &bull; Pasig City and Santa Maria, Ilocos Sur
         </span>
         <h1 class="font-serif text-3xl md:text-5xl font-bold text-stone-900 leading-tight">
           Quality closet pieces and houseware essentials.
@@ -216,8 +216,7 @@
         <div>
           <label class="text-xs font-semibold text-stone-700 block mb-1">Fulfillment Option</label>
           <select id="buyer-fulfillment" onchange="onFulfillmentChange()" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none">
-            <!-- Dynamically populated based on cart item location -->
-            <option value="Pickup / Meet-up in Rosario, Pasig (Free)">Pickup / Meet-up in Rosario, Pasig (Free)</option>
+            <option value="Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)">Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)</option>
             <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
           </select>
         </div>
@@ -230,7 +229,6 @@
         <div class="flex gap-2 mb-3">
           <button onclick="selectPaymentTab('gcash')" id="tab-btn-gcash" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition">GCash QR</button>
           <button onclick="selectPaymentTab('maya')" id="tab-btn-maya" class="flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">Maya QR</button>
-          <!-- Cash button is dynamically shown ONLY when Meetup is selected -->
           <button onclick="selectPaymentTab('cash')" id="tab-btn-cash" class="hidden flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">💵 Cash (Meet-up)</button>
         </div>
 
@@ -239,7 +237,7 @@
           <span id="payment-amount-label" class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
           <div id="payment-amount-display" class="text-2xl font-black text-brand-800 mt-0.5 mb-3">₱0</div>
 
-          <!-- QR Image Container (Hidden when Cash is selected) -->
+          <!-- QR Image Container -->
           <div id="qr-payment-container">
             <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
               <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
@@ -261,7 +259,7 @@
             </div>
           </div>
 
-          <!-- Cash On Meet-up / Pickup Info Box (Shown when Cash is selected) -->
+          <!-- Cash On Meet-up Info Box -->
           <div id="cash-payment-container" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left space-y-2 text-xs text-emerald-950">
             <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm">
               <span>🤝 Cash on Meet-up / Pick-up</span>
@@ -275,7 +273,7 @@
           </div>
         </div>
 
-        <!-- Submit & Message Buttons -->
+        <!-- Submit Buttons -->
         <div class="mt-4 space-y-2">
           <button id="submit-messenger-btn" onclick="processOrder('messenger')" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
             <span>Submit Order &amp; Message on Messenger</span>
@@ -293,7 +291,7 @@
     <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
       <div>
         <span class="font-serif font-bold text-white text-sm tracking-wide block">KEG FINDS</span>
-        <span class="text-[11px] text-stone-500">Pasig, Metro Manila &bull; Santa Maria, Ilocos Sur</span>
+        <span class="text-[11px] text-stone-500">Pasig City and Santa Maria, Ilocos Sur</span>
       </div>
       <div class="text-[11px] text-stone-500">
         &copy; 2026 KEG Finds. All rights reserved.
@@ -301,7 +299,7 @@
     </div>
   </footer>
 
-  <!-- Floating Quick Chat Button for Messenger (Bottom Right) -->
+  <!-- Floating Quick Chat Button for Messenger -->
   <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 group flex items-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#00C6FF] hover:from-[#0074E0] hover:to-[#00B4F0] text-white font-bold text-xs py-3 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
     <span class="relative flex h-2.5 w-2.5">
       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -357,7 +355,6 @@
       messengerUsername: "Kegfinds",
       viberNumber: "+639176118382",
 
-      // Clean Google Drive Direct QR Images
       gcashQrImage: "https://lh3.googleusercontent.com/d/1SzKWTCYFO07SjKZLD6bZdNibzaaC-c6w",
       mayaQrImage: "https://lh3.googleusercontent.com/d/1x51q2b6iwXEK1kcFtBHF_Yj5gvW1O0kL"
     };
@@ -366,7 +363,7 @@
     let cart = [];
     let currentPaymentMethod = 'GCASH';
     let currentPhotoIndices = {};
-    let selectedLocation = 'all'; // 'all', 'pasig', or 'santa maria'
+    let selectedLocation = 'all';
     let selectedCategory = 'all';
 
     function normalizeLocation(loc) {
@@ -394,7 +391,7 @@
         }
       } catch (err) {
         console.error("Error fetching inventory:", err);
-        grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check Google Apps Script deployment permissions.</div>';
+        grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check network or permissions.</div>';
       }
     }
 
@@ -416,7 +413,6 @@
       selectedLocation = loc.toLowerCase();
       selectedCategory = 'all';
 
-      // Update location tabs UI
       document.querySelectorAll('.loc-btn').forEach(b => {
         b.classList.remove('bg-brand-800', 'text-white', 'shadow-sm');
         b.classList.add('bg-stone-100', 'text-stone-700');
@@ -426,7 +422,6 @@
         btn.classList.remove('bg-stone-100', 'text-stone-700');
       }
 
-      // Update Title
       const titleEl = document.getElementById('catalog-title');
       if (titleEl) {
         if (selectedLocation === 'pasig') titleEl.innerText = "Available in Pasig, Metro Manila";
@@ -434,7 +429,6 @@
         else titleEl.innerText = "All Available Listings";
       }
 
-      // Re-render categories & products
       renderCategoryFilters(getFilteredByLocationItems());
       renderProducts(getDisplayedItems());
     }
@@ -450,7 +444,6 @@
       return locFiltered.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
     }
 
-    // Automatically extracts unique categories based on current location and builds filter buttons
     function renderCategoryFilters(items) {
       const bar = document.getElementById('category-filter-bar');
       if (!bar) return;
@@ -537,7 +530,6 @@
                     ${isSoldOut ? 'SOLD OUT' : `${item.stock} in stock`}
                   </span>
                 </div>
-                <!-- Location Tag on Image -->
                 <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
                   📍 ${item.location} Hub
                 </span>
@@ -569,7 +561,6 @@
                 </div>
                 <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
                 
-                <!-- Explicit Condition Label and Green Badge -->
                 <div class="flex items-center gap-1.5 mt-2">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
                   <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
@@ -585,12 +576,10 @@
                   <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
                 ` : `
                   <div class="flex items-center gap-1.5">
-                    <!-- Quick Inquire Button -->
                     <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}', '${item.location}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
                       <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
                       <span class="hidden sm:inline">Inquire</span>
                     </button>
-                    <!-- Add to Bag -->
                     <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap">+ Add to Bag</button>
                   </div>
                 `}
@@ -651,7 +640,6 @@
       openCart();
     }
 
-    // Dynamically updates fulfillment dropdown options depending on where the cart items are located
     function updateFulfillmentOptions(items) {
       const select = document.getElementById('buyer-fulfillment');
       if (!select) return;
@@ -662,7 +650,7 @@
 
       if (locations.length === 0 || (locations.length === 1 && locations[0] === 'Pasig')) {
         optionsHtml = `
-          <option value="Pickup / Meet-up in Rosario, Pasig (Free)">Pickup / Meet-up in Rosario, Pasig (Free)</option>
+          <option value="Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)">Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)</option>
           <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
         `;
       } else if (locations.length === 1 && locations[0] === 'Santa Maria') {
@@ -671,14 +659,12 @@
           <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
         `;
       } else {
-        // Items from both locations
         optionsHtml = `
           <option value="Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)">Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)</option>
         `;
       }
 
       select.innerHTML = optionsHtml;
-      // Retain previous value if still valid
       if ([...select.options].some(o => o.value === prevVal)) {
         select.value = prevVal;
       }
@@ -742,6 +728,7 @@
       if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
     }
 
+    // Fixed selectPaymentTab without stripping 'hidden' from Cash button
     function selectPaymentTab(method) {
       currentPaymentMethod = method.toUpperCase();
       const btnGcash = document.getElementById('tab-btn-gcash');
@@ -753,13 +740,19 @@
       const accountNum = document.getElementById('pay-account-number');
       const amountLabel = document.getElementById('payment-amount-label');
 
-      // Reset all buttons to inactive neutral style
-      [btnGcash, btnMaya, btnCash].forEach(b => {
-        if (b) b.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
-      });
+      const inactiveClass = 'bg-stone-100 text-stone-700 hover:bg-stone-200';
+      if (btnGcash) btnGcash.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition`;
+      if (btnMaya) btnMaya.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition`;
+      if (btnCash) {
+        const isHidden = btnCash.classList.contains('hidden');
+        btnCash.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition ${isHidden ? 'hidden' : ''}`;
+      }
 
       if (method === 'cash') {
-        if (btnCash) btnCash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-amber-600 text-white transition';
+        if (btnCash) {
+          btnCash.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+          btnCash.classList.add('bg-amber-600', 'text-white');
+        }
         if (qrBox) qrBox.classList.add('hidden');
         if (cashBox) cashBox.classList.remove('hidden');
         if (amountLabel) amountLabel.innerText = 'Amount to Pay in Cash';
@@ -769,17 +762,22 @@
         if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
 
       } else {
-        // GCash or Maya
         if (qrBox) qrBox.classList.remove('hidden');
         if (cashBox) cashBox.classList.add('hidden');
         if (amountLabel) amountLabel.innerText = 'Amount to Transfer';
 
         if (method === 'gcash') {
-          if (btnGcash) btnGcash.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition';
+          if (btnGcash) {
+            btnGcash.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+            btnGcash.classList.add('bg-blue-600', 'text-white');
+          }
           if (qrImg) qrImg.src = SELLER_CONFIG.gcashQrImage;
           if (accountNum) accountNum.innerText = SELLER_CONFIG.gcashNumber;
         } else {
-          if (btnMaya) btnMaya.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white transition';
+          if (btnMaya) {
+            btnMaya.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+            btnMaya.classList.add('bg-emerald-600', 'text-white');
+          }
           if (qrImg) qrImg.src = SELLER_CONFIG.mayaQrImage;
           if (accountNum) accountNum.innerText = SELLER_CONFIG.mayaNumber;
         }
@@ -879,7 +877,7 @@
     function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
 
     // =========================================================================
-    // PWA INSTALLATION LOGIC (1-TAP FOR ANDROID, GUIDED MODAL FOR IOS)
+    // PWA INSTALLATION LOGIC
     // =========================================================================
     let deferredPrompt = null;
     const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
