@@ -342,7 +342,7 @@
     </div>
   </div>
 
-  <!-- Toast Notification (for Add to Bag) -->
+  <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900/90 backdrop-blur text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 pointer-events-none translate-y-3 flex items-center gap-2">
     <span class="text-emerald-400">✓</span>
     <span id="toast-msg">Item added to Bag!</span>
@@ -380,7 +380,7 @@
       toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
-      }, 2500);
+      }, 2200);
     }
 
     function normalizeLocation(loc) {
@@ -400,9 +400,18 @@
             ...item,
             location: normalizeLocation(item.location)
           }));
+
+          // Reconcile cart if any item sold out or stock decreased in Google Sheet
+          cart = cart.map(c => {
+            const liveItem = inventory.find(i => String(i.id) === String(c.id));
+            if (!liveItem || liveItem.stock <= 0) return null;
+            return { ...c, qty: Math.min(c.qty, liveItem.stock) };
+          }).filter(Boolean);
+
           updateLocationCounts();
           renderCategoryFilters(getFilteredByLocationItems());
           renderProducts(getDisplayedItems());
+          updateCartUI();
         } else {
           grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
         }
@@ -529,11 +538,14 @@
       }
 
       grid.innerHTML = items.map(item => {
-        const isSoldOut = item.stock <= 0;
         const images = parseImages(item.image);
         const currentIdx = currentPhotoIndices[item.id] || 0;
         const hasMultiple = images.length > 1;
         const isPasig = item.location === 'Pasig';
+        const inCart = cart.find(c => String(c.id) === String(item.id));
+        const cartQty = inCart ? inCart.qty : 0;
+        const remainingStock = Math.max(0, item.stock - cartQty);
+        const isSoldOut = item.stock <= 0;
 
         return `
           <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
@@ -541,11 +553,21 @@
               <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
               
               <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-                <div class="flex gap-1.5">
+                <div class="flex gap-1.5 items-center">
                   <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
-                  <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm ${isSoldOut ? 'bg-red-600 text-white' : 'bg-white/90 text-stone-800'}">
-                    ${isSoldOut ? 'SOLD OUT' : `${item.stock} in stock`}
-                  </span>
+                  
+                  <!-- Dynamic Live Stock Badge -->
+                  ${isSoldOut ? `
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
+                  ` : cartQty > 0 ? (
+                    remainingStock === 0 ? `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
+                    ` : `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
+                    `
+                  ) : `
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
+                  `}
                 </div>
                 <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
                   📍 ${item.location} Hub
@@ -597,8 +619,17 @@
                       <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
                       <span class="hidden sm:inline">Inquire</span>
                     </button>
-                    <!-- Seamless Add to Bag -->
-                    <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
+
+                    <!-- Interactive +/- Quantity Stepper on Main Card -->
+                    ${cartQty > 0 ? `
+                      <div class="flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 shadow-sm">
+                        <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
+                        <span class="w-7 text-center font-bold text-xs text-brand-900">${cartQty}</span>
+                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max available stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
+                      </div>
+                    ` : `
+                      <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
+                    `}
                   </div>
                 `}
               </div>
@@ -638,30 +669,42 @@
       renderProducts(getDisplayedItems());
     }
 
-    // Seamless Add to Bag: Adds item, updates badge, shows toast, does NOT open cart drawer
     function addToBag(id) {
+      changeQty(id, 1);
+    }
+
+    function changeQty(id, delta) {
       const item = inventory.find(i => String(i.id) === String(id));
       if (!item || item.stock <= 0) return;
 
       const existing = cart.find(c => String(c.id) === String(id));
+
       if (existing) {
-        if (existing.qty < item.stock) {
-          existing.qty += 1;
-        } else {
-          alert(`Only ${item.stock} item(s) available for this piece.`);
+        const newQty = existing.qty + delta;
+        if (newQty <= 0) {
+          cart = cart.filter(c => String(c.id) !== String(id));
+          showToast(`Removed "${item.name}" from Bag`);
+        } else if (newQty > item.stock) {
+          alert(`Only ${item.stock} item(s) available in stock.`);
           return;
+        } else {
+          existing.qty = newQty;
+          if (delta > 0) showToast(`Added +1 "${item.name}" (Now: ${newQty})`);
         }
       } else {
-        cart.push({ id: item.id, name: item.name, price: item.price, location: normalizeLocation(item.location), qty: 1 });
+        if (delta > 0) {
+          cart.push({ id: item.id, name: item.name, price: item.price, location: normalizeLocation(item.location), qty: 1 });
+          showToast(`Added "${item.name}" to Bag!`);
+        }
       }
 
       updateCartUI();
-      showToast(`Added "${item.name}" to Bag!`);
-      
+      renderProducts(getDisplayedItems());
+
       const badge = document.getElementById('cart-badge');
       if (badge) {
         badge.classList.add('scale-150');
-        setTimeout(() => badge.classList.remove('scale-150'), 300);
+        setTimeout(() => badge.classList.remove('scale-150'), 250);
       }
     }
 
@@ -730,20 +773,35 @@
 
       updateFulfillmentOptions(cart);
 
-      list.innerHTML = cart.map((item, idx) => `
-        <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-100 text-xs">
-          <div>
-            <div class="font-bold text-stone-800">
-              <span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}
-              <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">
-                ${item.location}
-              </span>
+      list.innerHTML = cart.map(item => {
+        const liveItem = inventory.find(i => String(i.id) === String(item.id));
+        const maxStock = liveItem ? liveItem.stock : item.qty;
+
+        return `
+          <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-100 text-xs">
+            <div class="flex-1 mr-2">
+              <div class="font-bold text-stone-800">
+                <span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}
+                <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">
+                  ${item.location}
+                </span>
+              </div>
+              <div class="text-stone-500 mt-0.5">₱${Number(item.price).toLocaleString()} each &bull; Subtotal: <b class="text-stone-900">₱${Number(item.price * item.qty).toLocaleString()}</b></div>
             </div>
-            <div class="text-stone-500">₱${Number(item.price).toLocaleString()} &times; ${item.qty}</div>
+
+            <!-- Stepper inside Drawer -->
+            <div class="flex items-center gap-1.5">
+              <div class="flex items-center bg-white rounded-lg border border-stone-200 shadow-sm p-0.5">
+                <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition">&minus;</button>
+                <span class="w-6 text-center font-bold text-xs text-brand-900">${item.qty}</span>
+                <button onclick="changeQty('${item.id}', 1)" ${item.qty >= maxStock ? 'disabled' : ''} title="${item.qty >= maxStock ? 'Max stock reached' : 'Increase'}" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition ${item.qty >= maxStock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
+              </div>
+
+              <button onclick="changeQty('${item.id}', -9999)" title="Remove item" class="text-stone-400 hover:text-red-600 font-bold p-1 text-sm leading-none">&times;</button>
+            </div>
           </div>
-          <button onclick="cart.splice(${idx}, 1); updateCartUI();" class="text-red-500 hover:text-red-700 font-bold px-2 py-1">Remove</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       totalDisplay.innerText = `₱${total.toLocaleString()}`;
@@ -753,7 +811,6 @@
       if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
     }
 
-    // Fixed selectPaymentTab: keeps 'hidden' intact on Cash button
     function selectPaymentTab(method) {
       currentPaymentMethod = method.toUpperCase();
       const btnGcash = document.getElementById('tab-btn-gcash');
@@ -815,7 +872,6 @@
       alert(`Account number ${num} copied to clipboard!`);
     }
 
-    // PWA-optimized processOrder: triggers native Messenger app directly without getting stuck on black screen
     async function processOrder(channel) {
       if (cart.length === 0) {
         alert('Your bag is empty.');
@@ -880,7 +936,6 @@
         closeCart();
         fetchInventory();
 
-        // Safe redirect that never shows a black screen in iOS PWA
         if (channel === 'messenger') {
           const messengerUrl = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
           window.location.href = messengerUrl;
@@ -959,6 +1014,9 @@
     document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
     selectPaymentTab('gcash');
     fetchInventory();
+
+    // Live inventory polling: syncs stock silently with Google Sheets every 25 seconds
+    setInterval(fetchInventory, 25000);
   </script>
 </body>
 </html>
