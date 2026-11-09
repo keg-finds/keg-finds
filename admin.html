@@ -3,229 +3,441 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KEG Finds — Seller Admin</title>
+  <title>KEG Finds | Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          colors: {
+            brand: {
+              700: '#344c3d',
+              800: '#283b2f',
+              900: '#1b2921',
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="bg-stone-100 text-stone-800 min-h-screen">
+<body class="bg-stone-100 text-stone-800 font-sans antialiased min-h-screen">
 
-  <header class="bg-stone-900 text-white py-4 px-6 sticky top-0 z-30 shadow-sm flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">K</span>
-      <div>
-        <h1 class="font-bold text-sm leading-tight">KEG Finds — Seller Dashboard</h1>
-        <p class="text-[11px] text-stone-400">Order verification &amp; 1-click stock deduction</p>
+  <!-- Admin Login Screen -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-xl border border-stone-200 text-center">
+      <div class="w-14 h-14 bg-brand-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-serif font-bold text-2xl shadow-sm">
+        K
       </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <button onclick="logoutAdmin()" id="logout-btn" class="hidden text-xs text-stone-400 hover:text-white px-2 py-1">Log out</button>
-      <a href="index.html" class="text-xs bg-stone-800 hover:bg-stone-700 text-stone-300 px-3 py-1.5 rounded-lg">View Storefront &rarr;</a>
-    </div>
-  </header>
+      <h1 class="font-serif text-2xl font-bold text-stone-900">Seller Dashboard</h1>
+      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your 4-digit PIN to manage orders</p>
 
-  <main class="max-w-4xl mx-auto p-4 md:p-6">
-
-    <div id="login-card" class="max-w-sm mx-auto mt-16 bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center">
-      <div class="w-12 h-12 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center mx-auto mb-4">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-      </div>
-      <h2 class="font-bold text-lg text-stone-900">Seller Verification</h2>
-      <p class="text-xs text-stone-500 mt-1">Enter your admin PIN to manage orders.</p>
-
-      <div class="mt-6">
-        <input type="password" id="admin-pin-input" placeholder="Enter PIN (e.g. 1234)" class="w-full text-center text-lg tracking-widest font-mono border border-stone-300 rounded-xl py-3 px-4 focus:ring-2 focus:ring-stone-900 outline-none">
-        <button onclick="loginAdmin()" class="w-full mt-3 bg-stone-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl transition">
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" class="w-full text-center text-2xl tracking-widest font-mono font-bold border border-stone-200 rounded-2xl p-3 focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+        <button type="submit" id="login-btn" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm">
           Unlock Dashboard
         </button>
-      </div>
+      </form>
+      <div id="login-error" class="text-xs text-red-600 font-semibold mt-3 hidden">Invalid PIN. Please try again.</div>
     </div>
+  </div>
 
-    <div id="dashboard-content" class="hidden">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="font-extrabold text-xl text-stone-900">Incoming Orders</h2>
-          <p class="text-xs text-stone-500">Verify customer GCash/Maya transfer before clicking confirm.</p>
+  <!-- Admin Dashboard Screen (Hidden until login) -->
+  <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-brand-800 text-white font-serif font-bold text-lg flex items-center justify-center">K</div>
+          <div>
+            <span class="font-serif font-bold text-base text-stone-900 block leading-tight">KEG FINDS ADMIN</span>
+            <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Order Management</span>
+          </div>
         </div>
-        <button onclick="loadOrders()" class="bg-white border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          <span>Refresh</span>
+
+        <div class="flex items-center gap-2">
+          <button onclick="fetchOrders()" title="Refresh Orders" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span class="hidden sm:inline">Refresh</span>
+          </button>
+          <button onclick="handleLogout()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+      <!-- KPI Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+          <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
+          <div id="stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+          <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
+          <div id="stat-pending" class="text-2xl font-black text-amber-900 mt-1">0</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+          <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
+          <div id="stat-confirmed" class="text-2xl font-black text-emerald-900 mt-1">0</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+          <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
+          <div id="stat-cancelled" class="text-2xl font-black text-red-900 mt-1">0</div>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-stone-200">
+        <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+          <button onclick="filterOrders('ALL', this)" class="filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
+          <button onclick="filterOrders('PENDING_PAYMENT', this)" class="filter-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full transition">Pending</button>
+          <button onclick="filterOrders('CONFIRMED', this)" class="filter-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full transition">Confirmed</button>
+          <button onclick="filterOrders('CANCELLED', this)" class="filter-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full transition">Cancelled</button>
+        </div>
+
+        <div class="text-xs text-stone-500 font-medium">
+          Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
+        </div>
+      </div>
+
+      <!-- Orders List Container -->
+      <div id="orders-list" class="space-y-4">
+        <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
+          Loading orders from database...
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Cancel Order Modal with Comment Input -->
+  <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="w-12 h-12 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+
+      <h3 class="font-serif text-lg font-bold text-stone-900">Cancel Order</h3>
+      <p class="text-xs text-stone-500 mt-1">
+        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore the item stock</b> to the inventory sheet and notify the buyer.
+      </p>
+
+      <div class="mt-4">
+        <label class="text-xs font-bold text-stone-700 block mb-1">Reason / Comment *</label>
+        <textarea id="cancel-comment-input" rows="3" placeholder="e.g. Buyer did not show up at meetup location / Requested cancellation / Out of stock" class="w-full border border-stone-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
+      </div>
+
+      <div class="mt-5 flex gap-2">
+        <button onclick="closeCancelModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+          Dismiss
+        </button>
+        <button id="confirm-cancel-btn" onclick="submitCancelOrder()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition shadow-sm">
+          Confirm Cancel &amp; Restock
         </button>
       </div>
-
-      <div id="orders-container" class="space-y-4">
-        <div class="text-center py-12 text-stone-400 text-sm">Loading orders...</div>
-      </div>
     </div>
-
-  </main>
+  </div>
 
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
+    
+    let currentPin = sessionStorage.getItem('keg_admin_pin') || '';
+    let allOrders = [];
+    let currentFilter = 'ALL';
+    let pendingCancelOrderId = null;
 
-    let savedPin = localStorage.getItem("keg_admin_pin") || "";
-
-    function loginAdmin() {
-      const pin = document.getElementById("admin-pin-input").value.trim();
-      if (!pin) {
-        alert("Please enter your PIN.");
-        return;
-      }
-      savedPin = pin;
-      localStorage.setItem("keg_admin_pin", pin);
-      loadOrders();
+    if (currentPin) {
+      showDashboard();
     }
 
-    function logoutAdmin() {
-      localStorage.removeItem("keg_admin_pin");
-      savedPin = "";
-      location.reload();
+    function handleLogin(e) {
+      e.preventDefault();
+      const pin = document.getElementById('admin-pin-input').value.trim();
+      if (!pin) return;
+
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true;
+      btn.innerText = "Checking PIN...";
+
+      currentPin = pin;
+      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}`)
+        .then(res => res.json())
+        .then(data => {
+          btn.disabled = false;
+          btn.innerText = "Unlock Dashboard";
+          if (data && !data.error && Array.isArray(data)) {
+            sessionStorage.setItem('keg_admin_pin', currentPin);
+            allOrders = data;
+            showDashboard();
+          } else {
+            document.getElementById('login-error').classList.remove('hidden');
+          }
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerText = "Unlock Dashboard";
+          document.getElementById('login-error').classList.remove('hidden');
+        });
     }
 
-    async function loadOrders() {
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("dashboard-content").classList.remove("hidden");
-      document.getElementById("logout-btn").classList.remove("hidden");
+    function handleLogout() {
+      sessionStorage.removeItem('keg_admin_pin');
+      currentPin = '';
+      allOrders = [];
+      document.getElementById('dashboard-screen').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('admin-pin-input').value = '';
+    }
 
-      const container = document.getElementById("orders-container");
-      container.innerHTML = '<div class="text-center py-12 text-stone-400 text-sm">Fetching orders from Google Sheets...</div>';
+    function showDashboard() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('dashboard-screen').classList.remove('hidden');
+      fetchOrders();
+    }
+
+    async function fetchOrders() {
+      const container = document.getElementById('orders-list');
+      container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">Loading orders from database...</div>';
 
       try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(savedPin)}`);
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
         const data = await res.json();
-
-        if (data.status === "error") {
-          alert("Incorrect PIN! Access denied.");
-          logoutAdmin();
-          return;
+        if (Array.isArray(data)) {
+          allOrders = data;
+          updateStats();
+          renderOrders();
+        } else {
+          container.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Failed to fetch orders. Unauthorized PIN or network issue.</div>';
         }
-
-        renderOrders(data);
       } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="text-center py-12 text-red-600 text-sm">Failed to connect to Google Sheets. Check script deployment.</div>';
+        container.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Network error fetching orders.</div>';
       }
     }
 
-    function renderOrders(orders) {
-      const container = document.getElementById("orders-container");
+    function updateStats() {
+      const total = allOrders.length;
+      const pending = allOrders.filter(o => o.status === 'PENDING_PAYMENT').length;
+      const confirmed = allOrders.filter(o => o.status === 'CONFIRMED').length;
+      const cancelled = allOrders.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED')).length;
 
-      if (!orders || orders.length === 0) {
-        container.innerHTML = '<div class="bg-white p-8 rounded-2xl border border-stone-200 text-center text-stone-400 text-sm">No orders yet.</div>';
+      document.getElementById('stat-total').innerText = total;
+      document.getElementById('stat-pending').innerText = pending;
+      document.getElementById('stat-confirmed').innerText = confirmed;
+      document.getElementById('stat-cancelled').innerText = cancelled;
+    }
+
+    function filterOrders(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
+        b.classList.add('bg-stone-200', 'text-stone-700');
+      });
+      if (btn) {
+        btn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-stone-200', 'text-stone-700');
+      }
+      renderOrders();
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('orders-list');
+      let filtered = allOrders;
+
+      if (currentFilter === 'PENDING_PAYMENT') {
+        filtered = allOrders.filter(o => o.status === 'PENDING_PAYMENT');
+      } else if (currentFilter === 'CONFIRMED') {
+        filtered = allOrders.filter(o => o.status === 'CONFIRMED');
+      } else if (currentFilter === 'CANCELLED') {
+        filtered = allOrders.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
+      }
+
+      document.getElementById('orders-count-label').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">No orders found in this view.</div>';
         return;
       }
 
-      container.innerHTML = orders.map(order => {
-        const isConfirmed = order.status === "CONFIRMED";
-        const isExpired = order.status === "EXPIRED_CANCELLED";
+      container.innerHTML = filtered.map(order => {
+        let items = [];
+        try { items = JSON.parse(order.itemsJson); } catch (e) { items = []; }
 
-        let parsedItems = [];
-        try {
-          parsedItems = JSON.parse(order.itemsJson);
-        } catch (e) {
-          parsedItems = [{ id: "-", name: order.itemsJson, qty: 1, price: order.total }];
-        }
+        const isPending = order.status === 'PENDING_PAYMENT';
+        const isConfirmed = order.status === 'CONFIRMED';
+        const isCancelled = order.status.includes('CANCELLED') || order.status.includes('EXPIRED');
 
-        let badgeHtml = '';
+        const isMeetup = (order.paymentMethod || '').includes('CASH') || 
+                         (order.fulfillment || '').includes('Pickup') || 
+                         (order.fulfillment || '').includes('Meet-up');
+
+        let statusBadge = '';
         if (isConfirmed) {
-          badgeHtml = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800">✔ Paid &amp; Confirmed</span>';
-        } else if (isExpired) {
-          badgeHtml = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-stone-200 text-stone-600">⏱️ Expired &bull; Stock Returned</span>';
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">✔ CONFIRMED</span>';
+        } else if (isCancelled) {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-red-100 text-red-800 border border-red-200">✖ ${order.status}</span>`;
         } else {
-          badgeHtml = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 animate-pulse">⏳ 2-Hr Hold (Pending)</span>';
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">⏱️ PENDING</span>';
         }
+
+        const itemsListHtml = items.map(i => `
+          <div class="flex items-center justify-between text-xs py-1 border-b border-stone-100 last:border-0">
+            <div>
+              <span class="font-mono text-stone-500 font-bold">[ID #${i.id || '-'}]</span>
+              <span class="font-semibold text-stone-800 ml-1">${i.name}</span>
+              ${i.location ? `<span class="ml-1 text-[10px] px-1.5 py-0.2 rounded font-semibold ${i.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${i.location}</span>` : ''}
+            </div>
+            <div class="font-mono text-stone-600 font-medium">${i.qty} &times; ₱${Number(i.price).toLocaleString()}</div>
+          </div>
+        `).join('');
 
         return `
-          <div class="bg-white rounded-2xl border ${isExpired ? 'border-stone-200 opacity-60' : isConfirmed ? 'border-stone-200 bg-stone-50/50' : 'border-amber-200 ring-1 ring-amber-100'} p-5 shadow-sm">
-            
-            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-100 text-xs">
-              <div class="flex items-center gap-2">
-                <span class="font-mono font-bold text-stone-900">${order.orderId}</span>
-                <span class="text-stone-400">&bull;</span>
-                <span class="text-stone-500">${order.date}</span>
-              </div>
-              ${badgeHtml}
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 transition hover:shadow-md">
+            <!-- Order Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
               <div>
-                <h4 class="text-[10px] uppercase font-bold tracking-wider text-stone-400 mb-1">Purchased Items</h4>
-                <div class="space-y-1.5">
-                  ${parsedItems.map(item => `
-                    <div class="text-xs font-semibold text-stone-800 flex items-center justify-between bg-stone-50 p-2 rounded-lg border border-stone-100">
-                      <div class="flex items-center gap-2">
-                        <span class="bg-stone-900 text-white font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">ID #${item.id || '-'}</span>
-                        <span>${item.name}</span>
-                      </div>
-                      <span class="text-stone-500 font-mono font-bold">${item.qty}x</span>
-                    </div>
-                  `).join('')}
+                <div class="flex items-center gap-2">
+                  <span class="font-mono font-black text-sm text-stone-900">${order.orderId}</span>
+                  ${statusBadge}
+                  ${isMeetup ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">🤝 Meetup (No Timeout)</span>' : ''}
                 </div>
-                <div class="mt-3 text-sm font-extrabold text-stone-900">
-                  Total: ₱${Number(order.total).toLocaleString()}
-                </div>
+                <div class="text-[11px] text-stone-400 mt-0.5">${order.date}</div>
               </div>
 
-              <div class="text-xs space-y-1 bg-stone-50 p-3 rounded-xl border border-stone-100">
-                <h4 class="text-[10px] uppercase font-bold tracking-wider text-stone-400 mb-1">Buyer Details</h4>
-                <div><span class="text-stone-500">Name:</span> <strong class="text-stone-800">${order.buyerName}</strong></div>
-                <div><span class="text-stone-500">Email:</span> <strong class="text-stone-800">${order.buyerEmail || 'None'}</strong></div>
-                <div><span class="text-stone-500">Contact:</span> <strong class="text-stone-800 font-mono">${order.buyerContact}</strong></div>
-                <div><span class="text-stone-500">Method:</span> <strong class="text-stone-800">${order.paymentMethod}</strong></div>
-                <div><span class="text-stone-500">Fulfillment:</span> <span class="text-stone-700">${order.fulfillment}</span></div>
+              <div class="text-right">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Amount</span>
+                <div class="text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
               </div>
             </div>
 
-            <div class="pt-3 border-t border-stone-100 flex justify-end">
-              ${isConfirmed ? `
-                <span class="text-xs text-stone-400 font-semibold italic">Stock confirmed &amp; receipt sent</span>
-              ` : isExpired ? `
-                <span class="text-xs text-stone-400 font-semibold italic">Unpaid after 2 hours — stock returned to shop</span>
-              ` : `
-                <button onclick="confirmOrder('${order.orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-1.5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                  <span>Confirm Payment &amp; Mark Sold</span>
+            <!-- Buyer Details & Fulfillment -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-3.5 text-xs border-b border-stone-100">
+              <div class="space-y-1">
+                <div><span class="text-stone-400 font-medium">Buyer:</span> <b class="text-stone-800">${order.buyerName}</b></div>
+                <div><span class="text-stone-400 font-medium">Contact:</span> <b class="font-mono text-stone-800">${order.buyerContact}</b></div>
+                <div><span class="text-stone-400 font-medium">Email:</span> <a href="mailto:${order.buyerEmail}" class="text-brand-700 hover:underline">${order.buyerEmail}</a></div>
+              </div>
+              <div class="space-y-1">
+                <div><span class="text-stone-400 font-medium">Fulfillment:</span> <b class="text-stone-800">${order.fulfillment}</b></div>
+                <div><span class="text-stone-400 font-medium">Payment:</span> <b class="text-stone-800">${order.paymentMethod}</b></div>
+                ${order.comment ? `<div class="bg-stone-50 p-2 rounded-lg text-stone-600 text-[11px] border border-stone-200 mt-1"><b class="text-stone-700">Comment:</b> ${order.comment}</div>` : ''}
+              </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="py-3">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1.5">Ordered Items</span>
+              <div class="bg-stone-50 rounded-xl p-3 border border-stone-100">
+                ${itemsListHtml}
+              </div>
+            </div>
+
+            <!-- Actions Bar -->
+            ${isPending ? `
+              <div class="pt-3 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
+                <button onclick="openCancelModal('${order.orderId}')" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
+                  Cancel Order...
                 </button>
-              `}
-            </div>
-
+                <button onclick="confirmOrder('${order.orderId}')" class="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
+                  Mark Confirmed / Paid
+                </button>
+              </div>
+            ` : ''}
           </div>
         `;
       }).join('');
     }
 
     async function confirmOrder(orderId) {
-      const ok = confirm(`Did you check your GCash/Maya app and verify the money arrived for Order ${orderId}?`);
-      if (!ok) return;
+      if (!confirm(`Mark Order ${orderId} as CONFIRMED / PAID? An automated confirmation email will be sent to the buyer.`)) return;
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({
-            action: "confirmPayment",
-            pin: savedPin,
+            action: 'confirmPayment',
+            pin: currentPin,
             orderId: orderId
           })
         });
         const result = await res.json();
-
-        if (result.status === "success") {
-          alert(`Order ${orderId} confirmed! Marked officially sold.`);
-          loadOrders();
+        if (result.status === 'success') {
+          alert(`Order ${orderId} has been confirmed!`);
+          fetchOrders();
         } else {
-          alert(`Error: ${result.message}`);
+          alert('Error confirming order: ' + (result.message || 'Unauthorized'));
         }
       } catch (err) {
         console.error(err);
-        alert("Failed to confirm order. Please try again.");
+        alert('Error connecting to backend.');
       }
     }
 
-    if (savedPin) {
-      loadOrders();
+    function openCancelModal(orderId) {
+      pendingCancelOrderId = orderId;
+      document.getElementById('cancel-modal-order-id').innerText = orderId;
+      document.getElementById('cancel-comment-input').value = '';
+      document.getElementById('cancel-modal').classList.remove('hidden');
+    }
+
+    function closeCancelModal() {
+      pendingCancelOrderId = null;
+      document.getElementById('cancel-modal').classList.add('hidden');
+    }
+
+    async function submitCancelOrder() {
+      if (!pendingCancelOrderId) return;
+      const comment = document.getElementById('cancel-comment-input').value.trim();
+      if (!comment) {
+        alert('Please enter a cancellation reason/comment.');
+        return;
+      }
+
+      const btn = document.getElementById('confirm-cancel-btn');
+      btn.disabled = true;
+      btn.innerText = "Cancelling & Restocking...";
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'cancelOrder',
+            pin: currentPin,
+            orderId: pendingCancelOrderId,
+            comment: comment
+          })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Order ${pendingCancelOrderId} cancelled. Items restored to stock.`);
+          closeCancelModal();
+          fetchOrders();
+        } else {
+          alert('Error cancelling order: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Confirm Cancel & Restock";
+      }
     }
   </script>
 </body>
