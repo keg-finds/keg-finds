@@ -79,7 +79,7 @@
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
       <!-- KPI Stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
           <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
           <div id="stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
@@ -98,17 +98,31 @@
         </div>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-stone-200">
-        <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
-          <button onclick="filterOrders('ALL', this)" class="filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
-          <button onclick="filterOrders('PENDING_PAYMENT', this)" class="filter-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full transition">Pending</button>
-          <button onclick="filterOrders('CONFIRMED', this)" class="filter-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full transition">Confirmed</button>
-          <button onclick="filterOrders('CANCELLED', this)" class="filter-btn bg-stone-200 text-stone-700 hover:bg-stone-300 px-4 py-2 rounded-full transition">Cancelled</button>
+      <!-- Search Bar & Filter Controls -->
+      <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm mb-6 space-y-4">
+        <!-- Live Search Input -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input type="text" id="order-search-input" oninput="handleSearch(this.value)" placeholder="Search by Buyer Name, Order ID (e.g. KEG-...), Mobile Number, or Email..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+          <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+            &times;
+          </button>
         </div>
 
-        <div class="text-xs text-stone-500 font-medium">
-          Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
+        <!-- Filter Tabs & Result Count -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
+          <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+            <button onclick="filterOrders('ALL', this)" class="filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
+            <button onclick="filterOrders('PENDING_PAYMENT', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Pending</button>
+            <button onclick="filterOrders('CONFIRMED', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Confirmed</button>
+            <button onclick="filterOrders('CANCELLED', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Cancelled</button>
+          </div>
+
+          <div class="text-xs text-stone-500 font-medium">
+            Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
+          </div>
         </div>
       </div>
 
@@ -121,7 +135,7 @@
     </main>
   </div>
 
-  <!-- Cancel Order Modal with Comment Input -->
+  <!-- Cancel Order Modal with Reason Chips + Comment Input -->
   <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -132,12 +146,35 @@
 
       <h3 class="font-serif text-lg font-bold text-stone-900">Cancel Order</h3>
       <p class="text-xs text-stone-500 mt-1">
-        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore the item stock</b> to the inventory sheet and notify the buyer.
+        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore item stock</b> to your spreadsheet and send an email update to the buyer.
       </p>
 
+      <!-- 1-Tap Preset Comment Chips -->
       <div class="mt-4">
+        <label class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">Quick Select Reason:</label>
+        <div class="flex flex-wrap gap-1.5">
+          <button type="button" onclick="setPresetReason('Buyer requested cancellation')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+            Buyer requested
+          </button>
+          <button type="button" onclick="setPresetReason('Meet-up no-show / Unresponsive on chat')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+            Meet-up no-show
+          </button>
+          <button type="button" onclick="setPresetReason('Payment window expired (No payment received)')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+            Payment expired
+          </button>
+          <button type="button" onclick="setPresetReason('Item damaged during inspection / Unavailable')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+            Item unavailable
+          </button>
+          <button type="button" onclick="setPresetReason('Duplicate order submitted')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+            Duplicate order
+          </button>
+        </div>
+      </div>
+
+      <!-- Comment Textarea -->
+      <div class="mt-3.5">
         <label class="text-xs font-bold text-stone-700 block mb-1">Reason / Comment *</label>
-        <textarea id="cancel-comment-input" rows="3" placeholder="e.g. Buyer did not show up at meetup location / Requested cancellation / Out of stock" class="w-full border border-stone-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
+        <textarea id="cancel-comment-input" rows="3" placeholder="Select a chip above or type custom reason..." class="w-full border border-stone-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
       </div>
 
       <div class="mt-5 flex gap-2">
@@ -157,6 +194,7 @@
     let currentPin = sessionStorage.getItem('keg_admin_pin') || '';
     let allOrders = [];
     let currentFilter = 'ALL';
+    let searchQuery = '';
     let pendingCancelOrderId = null;
 
     if (currentPin) {
@@ -244,31 +282,79 @@
       currentFilter = filter;
       document.querySelectorAll('.filter-btn').forEach(b => {
         b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
-        b.classList.add('bg-stone-200', 'text-stone-700');
+        b.classList.add('bg-stone-100', 'text-stone-700');
       });
       if (btn) {
         btn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
-        btn.classList.remove('bg-stone-200', 'text-stone-700');
+        btn.classList.remove('bg-stone-100', 'text-stone-700');
       }
       renderOrders();
+    }
+
+    function handleSearch(val) {
+      searchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (searchQuery.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderOrders();
+    }
+
+    function clearSearch() {
+      document.getElementById('order-search-input').value = '';
+      searchQuery = '';
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      renderOrders();
+    }
+
+    function setPresetReason(reasonText) {
+      document.getElementById('cancel-comment-input').value = reasonText;
+      
+      // Highlight selected chip
+      document.querySelectorAll('.reason-chip').forEach(btn => {
+        if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
+          btn.className = 'reason-chip text-[11px] font-bold bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm border border-stone-900 active:scale-95';
+        } else {
+          btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
+        }
+      });
     }
 
     function renderOrders() {
       const container = document.getElementById('orders-list');
       let filtered = allOrders;
 
+      // Status Filter
       if (currentFilter === 'PENDING_PAYMENT') {
-        filtered = allOrders.filter(o => o.status === 'PENDING_PAYMENT');
+        filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
       } else if (currentFilter === 'CONFIRMED') {
-        filtered = allOrders.filter(o => o.status === 'CONFIRMED');
+        filtered = filtered.filter(o => o.status === 'CONFIRMED');
       } else if (currentFilter === 'CANCELLED') {
-        filtered = allOrders.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
+        filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
+      }
+
+      // Live Search Filter (Checks Order ID, Buyer Name, Contact, Email, Comment)
+      if (searchQuery.length > 0) {
+        filtered = filtered.filter(o => {
+          const id = (o.orderId || '').toLowerCase();
+          const name = (o.buyerName || '').toLowerCase();
+          const contact = (o.buyerContact || '').toLowerCase();
+          const email = (o.buyerEmail || '').toLowerCase();
+          const comment = (o.comment || '').toLowerCase();
+          return id.includes(searchQuery) || name.includes(searchQuery) || contact.includes(searchQuery) || email.includes(searchQuery) || comment.includes(searchQuery);
+        });
       }
 
       document.getElementById('orders-count-label').innerText = filtered.length;
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">No orders found in this view.</div>';
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">
+            ${searchQuery ? `No orders matching "<b>${searchQuery}</b>".` : 'No orders found in this view.'}
+          </div>
+        `;
         return;
       }
 
@@ -309,7 +395,7 @@
             <!-- Order Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
               <div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <span class="font-mono font-black text-sm text-stone-900">${order.orderId}</span>
                   ${statusBadge}
                   ${isMeetup ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">🤝 Meetup (No Timeout)</span>' : ''}
@@ -317,7 +403,7 @@
                 <div class="text-[11px] text-stone-400 mt-0.5">${order.date}</div>
               </div>
 
-              <div class="text-right">
+              <div class="text-left sm:text-right">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Amount</span>
                 <div class="text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
               </div>
@@ -333,7 +419,7 @@
               <div class="space-y-1">
                 <div><span class="text-stone-400 font-medium">Fulfillment:</span> <b class="text-stone-800">${order.fulfillment}</b></div>
                 <div><span class="text-stone-400 font-medium">Payment:</span> <b class="text-stone-800">${order.paymentMethod}</b></div>
-                ${order.comment ? `<div class="bg-stone-50 p-2 rounded-lg text-stone-600 text-[11px] border border-stone-200 mt-1"><b class="text-stone-700">Comment:</b> ${order.comment}</div>` : ''}
+                ${order.comment ? `<div class="bg-red-50 p-2 rounded-lg text-red-700 text-[11px] border border-red-200 mt-1"><b class="text-red-900">Reason / Comment:</b> ${order.comment}</div>` : ''}
               </div>
             </div>
 
@@ -391,6 +477,11 @@
       pendingCancelOrderId = orderId;
       document.getElementById('cancel-modal-order-id').innerText = orderId;
       document.getElementById('cancel-comment-input').value = '';
+      
+      document.querySelectorAll('.reason-chip').forEach(btn => {
+        btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
+      });
+
       document.getElementById('cancel-modal').classList.remove('hidden');
     }
 
@@ -403,7 +494,7 @@
       if (!pendingCancelOrderId) return;
       const comment = document.getElementById('cancel-comment-input').value.trim();
       if (!comment) {
-        alert('Please enter a cancellation reason/comment.');
+        alert('Please enter or select a cancellation reason/comment.');
         return;
       }
 
