@@ -77,6 +77,22 @@
     </div>
   </header>
 
+  <!-- Dynamic Announcement Banner (Loaded from Google Sheets 'Settings' tab) -->
+  <div id="dynamic-announcement-banner" class="hidden bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 text-white px-4 py-3 shadow-md relative transition-all duration-300">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center gap-2.5 flex-1">
+        <span class="text-base sm:text-lg animate-bounce shrink-0">📢</span>
+        <div class="leading-relaxed">
+          <span class="font-bold uppercase tracking-wider text-[10px] bg-black/25 text-amber-200 px-2 py-0.5 rounded-full mr-1.5 inline-block">Notice</span>
+          <span id="announcement-text" class="font-medium text-amber-50"></span>
+        </div>
+      </div>
+      <button onclick="dismissAnnouncement()" title="Close notice" class="text-amber-200 hover:text-white p-1 rounded-lg text-lg leading-none font-bold transition shrink-0">
+        &times;
+      </button>
+    </div>
+  </div>
+
   <!-- Hero Section -->
   <section class="py-12 md:py-16 bg-white border-b border-stone-200">
     <div class="max-w-5xl mx-auto px-4">
@@ -390,34 +406,76 @@
       return 'Pasig';
     }
 
-    async function fetchInventory() {
+    let dismissedAnnouncementText = sessionStorage.getItem('keg_dismissed_announcement') || '';
+
+    function handleAnnouncement(text, isActive) {
+      const banner = document.getElementById('dynamic-announcement-banner');
+      const textEl = document.getElementById('announcement-text');
+      if (!banner || !textEl) return;
+
+      const cleanText = (text || '').trim();
+      if (isActive && cleanText.length > 0 && cleanText !== dismissedAnnouncementText) {
+        textEl.innerText = cleanText;
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function dismissAnnouncement() {
+      const textEl = document.getElementById('announcement-text');
+      const banner = document.getElementById('dynamic-announcement-banner');
+      if (textEl && banner) {
+        dismissedAnnouncementText = textEl.innerText;
+        sessionStorage.setItem('keg_dismissed_announcement', dismissedAnnouncementText);
+        banner.classList.add('hidden');
+      }
+    }
+
+    async function fetchInventory(silent = false) {
       const grid = document.getElementById('product-grid');
       try {
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
         const data = await res.json();
+
+        // Handle both object payload with announcement and backwards-compatible array
+        let rawItems = [];
         if (Array.isArray(data)) {
-          inventory = data.map(item => ({
+          rawItems = data;
+        } else if (data && Array.isArray(data.items)) {
+          rawItems = data.items;
+          handleAnnouncement(data.announcement, data.showAnnouncement);
+        }
+
+        if (rawItems.length > 0 || Array.isArray(rawItems)) {
+          inventory = rawItems.map(item => ({
             ...item,
             location: normalizeLocation(item.location)
           }));
 
-          // Reconcile cart if any item sold out or stock decreased in Google Sheet
-          cart = cart.map(c => {
+          // Re-validate cart against updated live stock from Google Sheets
+          cart.forEach(c => {
             const liveItem = inventory.find(i => String(i.id) === String(c.id));
-            if (!liveItem || liveItem.stock <= 0) return null;
-            return { ...c, qty: Math.min(c.qty, liveItem.stock) };
-          }).filter(Boolean);
+            if (liveItem) {
+              if (c.qty > liveItem.stock) c.qty = liveItem.stock;
+            } else {
+              c.qty = 0;
+            }
+          });
+          cart = cart.filter(c => c.qty > 0);
 
           updateLocationCounts();
           renderCategoryFilters(getFilteredByLocationItems());
           renderProducts(getDisplayedItems());
           updateCartUI();
-        } else {
+        } else if (!silent) {
           grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
         }
       } catch (err) {
-        console.error("Error fetching inventory:", err);
-        grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check network or permissions.</div>';
+        if (!silent) {
+          console.error("Error fetching inventory:", err);
+          grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check Google Apps Script deployment permissions.</div>';
+        }
       }
     }
 
@@ -1015,8 +1073,10 @@
     selectPaymentTab('gcash');
     fetchInventory();
 
-    // Live inventory polling: syncs stock silently with Google Sheets every 25 seconds
-    setInterval(fetchInventory, 25000);
+    // Polling every 25 seconds
+    setInterval(() => {
+      fetchInventory(true);
+    }, 25000);
   </script>
 </body>
 </html>
