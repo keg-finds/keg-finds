@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#1b2921">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KEG Finds">
+  <link rel="apple-touch-icon" href="./icon-192.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KEG Finds | Admin Dashboard</title>
+  <title>KEG Finds | Pre-loved Closet & Housewares</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
@@ -28,508 +36,1047 @@
     }
   </script>
 </head>
-<body class="bg-stone-100 text-stone-800 font-sans antialiased min-h-screen">
+<body class="bg-stone-50 text-stone-800 font-sans antialiased selection:bg-brand-800 selection:text-white">
 
-  <!-- Admin Login Screen -->
-  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-xl border border-stone-200 text-center">
-      <div class="w-14 h-14 bg-brand-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-serif font-bold text-2xl shadow-sm">
-        K
-      </div>
-      <h1 class="font-serif text-2xl font-bold text-stone-900">Seller Dashboard</h1>
-      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your 4-digit PIN to manage orders</p>
+  <!-- Top Announcement Bar -->
+  <div class="bg-brand-900 text-stone-200 text-xs py-2 px-4 text-center font-medium tracking-wide">
+    📍 Hubs: Pasig City &amp; Santa Maria, Ilocos Sur &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; Cash on Meet-up
+  </div>
 
-      <form onsubmit="handleLogin(event)" class="space-y-4">
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-stone-200">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-800 text-white font-serif font-bold text-xl flex items-center justify-center shadow-sm">K</div>
         <div>
-          <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" class="w-full text-center text-2xl tracking-widest font-mono font-bold border border-stone-200 rounded-2xl p-3 focus:ring-2 focus:ring-brand-800 outline-none">
+          <span class="font-serif font-bold text-lg tracking-tight text-stone-900 block leading-tight">KEG FINDS</span>
+          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Pasig City and Santa Maria, Ilocos Sur</span>
         </div>
-        <button type="submit" id="login-btn" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm">
-          Unlock Dashboard
+      </a>
+
+      <div class="flex items-center gap-2.5">
+        <!-- Install App Button -->
+        <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-full transition shadow-sm animate-pulse">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Install App</span>
         </button>
-      </form>
-      <div id="login-error" class="text-xs text-red-600 font-semibold mt-3 hidden">Invalid PIN. Please try again.</div>
+
+        <!-- Header Quick Chat Link -->
+        <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-blue-600 bg-stone-100 hover:bg-blue-50 px-3 py-2 rounded-full transition border border-stone-200">
+          <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
+          <span>Ask Seller</span>
+        </a>
+
+        <!-- Cart Bag Button -->
+        <button onclick="openCart()" class="relative bg-brand-800 hover:bg-brand-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition flex items-center gap-2 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <span>Bag</span>
+          <span id="cart-badge" class="bg-amber-400 text-stone-900 text-[10px] font-black px-1.5 py-0.2 rounded-full transition-transform">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dynamic Announcement Banner (Loaded from Google Sheets 'Settings' tab) -->
+  <div id="dynamic-announcement-banner" class="hidden bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 text-white px-4 py-3 shadow-md relative transition-all duration-300">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center gap-2.5 flex-1">
+        <span class="text-base sm:text-lg animate-bounce shrink-0">📢</span>
+        <div class="leading-relaxed">
+          <span class="font-bold uppercase tracking-wider text-[10px] bg-black/25 text-amber-200 px-2 py-0.5 rounded-full mr-1.5 inline-block">Notice</span>
+          <span id="announcement-text" class="font-medium text-amber-50"></span>
+        </div>
+      </div>
+      <button onclick="dismissAnnouncement()" title="Close notice" class="text-amber-200 hover:text-white p-1 rounded-lg text-lg leading-none font-bold transition shrink-0">
+        &times;
+      </button>
     </div>
   </div>
 
-  <!-- Admin Dashboard Screen (Hidden until login) -->
-  <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-brand-800 text-white font-serif font-bold text-lg flex items-center justify-center">K</div>
-          <div>
-            <span class="font-serif font-bold text-base text-stone-900 block leading-tight">KEG FINDS ADMIN</span>
-            <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Order Management</span>
-          </div>
-        </div>
+  <!-- Hero Section -->
+  <section class="py-12 md:py-16 bg-white border-b border-stone-200">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="max-w-2xl">
+        <span class="inline-block px-3 py-1 bg-stone-100 text-brand-800 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+          Curated Pre-Loved &bull; Pasig City and Santa Maria, Ilocos Sur
+        </span>
+        <h1 class="font-serif text-3xl md:text-5xl font-bold text-stone-900 leading-tight">
+          Quality closet pieces and houseware essentials.
+        </h1>
+        <p class="mt-4 text-stone-600 text-sm md:text-base leading-relaxed">
+          Gently worn dress shirts and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
+        </p>
 
-        <div class="flex items-center gap-2">
-          <button onclick="fetchOrders()" title="Refresh Orders" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            <span class="hidden sm:inline">Refresh</span>
-          </button>
-          <button onclick="handleLogout()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200">
-            Logout
-          </button>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="#items" class="bg-brand-800 text-white text-xs font-bold px-5 py-3 rounded-xl hover:bg-brand-900 transition shadow-sm">
+            Browse Available Items
+          </a>
+          <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-bold px-5 py-3 rounded-xl transition flex items-center gap-2 shadow-sm">
+            <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
+            <span>Chat on Messenger</span>
+          </a>
         </div>
       </div>
-    </header>
+    </div>
+  </section>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
-      <!-- KPI Stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-          <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
-          <div id="stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
-          <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
-          <div id="stat-pending" class="text-2xl font-black text-amber-900 mt-1">0</div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
-          <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
-          <div id="stat-confirmed" class="text-2xl font-black text-emerald-900 mt-1">0</div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
-          <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
-          <div id="stat-cancelled" class="text-2xl font-black text-red-900 mt-1">0</div>
-        </div>
+  <!-- Catalog Section -->
+  <main id="items" class="max-w-5xl mx-auto px-4 py-12">
+    <!-- Location Switcher Tabs (All, Pasig, Santa Maria) -->
+    <div class="mb-8 p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>Select Location / Dispatch Hub:</span>
+      </div>
+      <div id="location-filter-bar" class="flex flex-wrap gap-2 text-xs font-bold">
+        <button onclick="switchLocation('all', this)" class="loc-btn bg-brand-800 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
+          🌐 All Locations (<span id="count-all">0</span>)
+        </button>
+        <button onclick="switchLocation('pasig', this)" class="loc-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2.5 rounded-xl transition">
+          📍 Pasig, Metro Manila (<span id="count-pasig">0</span>)
+        </button>
+        <button onclick="switchLocation('santa maria', this)" class="loc-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2.5 rounded-xl transition">
+          📍 Santa Maria, Ilocos Sur (<span id="count-santamaria">0</span>)
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 gap-4">
+      <div>
+        <h2 id="catalog-title" class="font-serif text-2xl font-bold text-stone-900">Available Listings</h2>
+        <p class="text-xs text-stone-500 mt-0.5">Click thumbnails or arrows to view multiple photos. Have questions? Click "Inquire" to chat with us!</p>
       </div>
 
-      <!-- Search Bar & Filter Controls -->
-      <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm mb-6 space-y-4">
-        <!-- Live Search Input -->
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-          <input type="text" id="order-search-input" oninput="handleSearch(this.value)" placeholder="Search by Buyer Name, Order ID (e.g. KEG-...), Mobile Number, or Email..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
-          <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
-            &times;
-          </button>
+      <!-- Dynamic Category Filter Buttons (Generated from Google Sheet) -->
+      <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
+        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="col-span-full py-16 text-center text-stone-400 text-sm">
+        Loading inventory from database...
+      </div>
+    </div>
+  </main>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="bg-stone-100/70 border-t border-b border-stone-200 py-12">
+    <div class="max-w-5xl mx-auto px-4">
+      <h3 class="font-serif text-xl font-bold text-stone-900 mb-6 text-center">Fast QR &amp; Meet-up Ordering</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs mb-3">1</div>
+          <h4 class="font-bold text-stone-900 text-sm">Inspect Photos &amp; Bag</h4>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Swipe through photos of tags, fabrics, and measurements to verify condition.</p>
         </div>
-
-        <!-- Filter Tabs & Result Count -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
-          <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
-            <button onclick="filterOrders('ALL', this)" class="filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
-            <button onclick="filterOrders('PENDING_PAYMENT', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Pending</button>
-            <button onclick="filterOrders('CONFIRMED', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Confirmed</button>
-            <button onclick="filterOrders('CANCELLED', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Cancelled</button>
-          </div>
-
-          <div class="text-xs text-stone-500 font-medium">
-            Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
-          </div>
+        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-3">2</div>
+          <h4 class="font-bold text-stone-900 text-sm">Scan QR or Cash Meet-up</h4>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Scan GCash/Maya QR or choose Cash on Meet-up for free local pickup.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+          <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
+          <h4 class="font-bold text-stone-900 text-sm">Automated Email Receipts</h4>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Receive reservation and confirmation emails as soon as your order is logged.</p>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Orders List Container -->
-      <div id="orders-list" class="space-y-4">
-        <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
-          Loading orders from database...
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Cancel Order Modal with Reason Chips + Comment Input -->
-  <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
-      <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+  <!-- Slide-Over Checkout Drawer -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-sm hidden flex justify-end">
+    <div class="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
       
-      <div class="w-12 h-12 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
+        <div>
+          <h2 class="font-serif text-xl font-bold text-stone-900">Your Order Bag</h2>
+          <p class="text-xs text-stone-500">Scan QR or Cash on Meet-up &bull; Receive email confirmation</p>
+        </div>
+        <button onclick="closeCart()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <h3 class="font-serif text-lg font-bold text-stone-900">Cancel Order</h3>
-      <p class="text-xs text-stone-500 mt-1">
-        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore item stock</b> to your spreadsheet and send an email update to the buyer.
-      </p>
+      <!-- Policy Notice -->
+      <div class="my-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 leading-relaxed flex items-start gap-2.5">
+        <span class="text-base leading-none">⏱️</span>
+        <div>
+          <strong class="font-bold">Reservation Policy:</strong> Submitting an order reserves your items for <b>2 hours</b>. For QR orders, please send your GCash/Maya payment screenshot via Messenger or Viber within 2 hours. For Cash on Meet-up, coordinate your meetup schedule.
+        </div>
+      </div>
 
-      <!-- 1-Tap Preset Comment Chips -->
-      <div class="mt-4">
-        <label class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">Quick Select Reason:</label>
-        <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="setPresetReason('Buyer requested cancellation')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Buyer requested
+      <div class="py-2 border-b border-stone-200">
+        <div id="cart-list" class="space-y-2"></div>
+        <div class="mt-4 pt-3 border-t border-stone-100 flex justify-between items-center text-sm font-bold text-stone-900">
+          <span>Items Total:</span>
+          <span id="items-total-display" class="text-base text-brand-800 font-extrabold">₱0</span>
+        </div>
+      </div>
+
+      <!-- Buyer Details Form with Email Input -->
+      <div class="py-4 space-y-3.5 border-b border-stone-200">
+        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500">Buyer Information</h4>
+        <div>
+          <label class="text-xs font-semibold text-stone-700 block mb-1">Full Name *</label>
+          <input type="text" id="buyer-name" placeholder="e.g. Juan Dela Cruz" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-stone-700 block mb-1">Email Address * <span class="text-stone-400 font-normal">(for confirmation receipts)</span></label>
+          <input type="email" id="buyer-email" placeholder="juan.delacruz@gmail.com" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-stone-700 block mb-1">Mobile / Viber Number *</label>
+          <input type="text" id="buyer-contact" placeholder="09XXXXXXXXX" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-stone-700 block mb-1">Fulfillment Option</label>
+          <select id="buyer-fulfillment" onchange="onFulfillmentChange()" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none">
+            <option value="Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)">Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)</option>
+            <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Payment Section -->
+      <div class="py-4 flex-1">
+        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500 mb-2">Select Payment Method</h4>
+        
+        <div class="flex gap-2 mb-3">
+          <button onclick="selectPaymentTab('gcash')" id="tab-btn-gcash" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition">GCash QR</button>
+          <button onclick="selectPaymentTab('maya')" id="tab-btn-maya" class="flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">Maya QR</button>
+          <button onclick="selectPaymentTab('cash')" id="tab-btn-cash" class="hidden flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">💵 Cash (Meet-up)</button>
+        </div>
+
+        <!-- Account & QR Box -->
+        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
+          <span id="payment-amount-label" class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
+          <div id="payment-amount-display" class="text-2xl font-black text-brand-800 mt-0.5 mb-3">₱0</div>
+
+          <!-- QR Image Container -->
+          <div id="qr-payment-container">
+            <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
+              <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
+            </div>
+            <p class="text-[10px] text-stone-400 mt-1.5">Take a screenshot to scan from your photo gallery</p>
+
+            <div class="mt-3 pt-3 border-t border-stone-200 text-left space-y-1.5 text-xs">
+              <div class="flex justify-between">
+                <span class="text-stone-500">Account:</span>
+                <span id="pay-account-name" class="font-bold text-stone-800">M. DIVINA</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-stone-500">Mobile Number:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="pay-account-number" class="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">0917-611-8382</span>
+                  <button onclick="copyAccountNumber()" class="text-[11px] font-bold text-brand-700 hover:underline">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cash On Meet-up Info Box -->
+          <div id="cash-payment-container" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left space-y-2 text-xs text-emerald-950">
+            <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm">
+              <span>🤝 Cash on Meet-up / Pick-up</span>
+            </div>
+            <p class="text-[11px] text-emerald-800 leading-relaxed">
+              Pay upon item inspection. Please prepare the exact cash amount of <b id="cash-amount-text" class="font-extrabold text-emerald-900">₱0</b> upon meeting.
+            </p>
+            <div class="text-[11px] text-emerald-700 pt-1 border-t border-emerald-200/60">
+              📍 Coordinate meeting spot &amp; time via Messenger or Viber after reserving.
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="mt-4 space-y-2">
+          <button id="submit-messenger-btn" onclick="processOrder('messenger')" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+            <span>Submit Order &amp; Message on Messenger</span>
           </button>
-          <button type="button" onclick="setPresetReason('Meet-up no-show / Unresponsive on chat')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Meet-up no-show
-          </button>
-          <button type="button" onclick="setPresetReason('Payment window expired (No payment received)')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Payment expired
-          </button>
-          <button type="button" onclick="setPresetReason('Item damaged during inspection / Unavailable')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Item unavailable
-          </button>
-          <button type="button" onclick="setPresetReason('Duplicate order submitted')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Duplicate order
+          <button id="submit-viber-btn" onclick="processOrder('viber')" class="w-full py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+            <span>Submit Order &amp; Message on Viber</span>
           </button>
         </div>
       </div>
 
-      <!-- Comment Textarea -->
-      <div class="mt-3.5">
-        <label class="text-xs font-bold text-stone-700 block mb-1">Reason / Comment *</label>
-        <textarea id="cancel-comment-input" rows="3" placeholder="Select a chip above or type custom reason..." class="w-full border border-stone-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
-      </div>
+    </div>
+  </div>
 
-      <div class="mt-5 flex gap-2">
-        <button onclick="closeCancelModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
-          Dismiss
-        </button>
-        <button id="confirm-cancel-btn" onclick="submitCancelOrder()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition shadow-sm">
-          Confirm Cancel &amp; Restock
-        </button>
+  <footer class="bg-stone-900 text-stone-400 text-xs py-10 border-t border-stone-800 mb-16 sm:mb-0">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+      <div>
+        <span class="font-serif font-bold text-white text-sm tracking-wide block">KEG FINDS</span>
+        <span class="text-[11px] text-stone-500">Pasig City and Santa Maria, Ilocos Sur</span>
+      </div>
+      <div class="text-[11px] text-stone-500">
+        &copy; 2026 KEG Finds. All rights reserved.
       </div>
     </div>
+  </footer>
+
+  <!-- Floating Quick Chat Button for Messenger -->
+  <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 group flex items-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#00C6FF] hover:from-[#0074E0] hover:to-[#00B4F0] text-white font-bold text-xs py-3 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+    <span class="relative flex h-2.5 w-2.5">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+    </span>
+    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
+    <span class="tracking-wide">Chat with Us</span>
+  </a>
+
+  <!-- iOS Step-by-Step Install Guide Modal -->
+  <div id="ios-install-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 text-center relative">
+      <button onclick="closeIosInstallModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="w-12 h-12 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      </div>
+
+      <h3 class="font-serif text-lg font-bold text-stone-900">Install KEG Finds App</h3>
+      <p class="text-xs text-stone-500 mt-1">Install on your iPhone home screen for fast full-screen shopping:</p>
+
+      <div class="mt-5 space-y-3 text-left text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">1</span>
+          <span>Tap the <b class="text-stone-900">Share button</b> at the bottom of Safari (<svg class="w-4 h-4 inline text-blue-600 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>).</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">2</span>
+          <span>Scroll down and tap <b class="text-stone-900">"Add to Home Screen"</b> (<span class="font-bold text-stone-700">＋</span>).</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">3</span>
+          <span>Tap <b class="text-stone-900">Add</b> in the top right corner.</span>
+        </div>
+      </div>
+
+      <button onclick="closeIosInstallModal()" class="w-full mt-5 py-3 bg-brand-800 text-white font-bold text-xs rounded-xl hover:bg-brand-900 transition">
+        Got it!
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900/90 backdrop-blur text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 pointer-events-none translate-y-3 flex items-center gap-2">
+    <span class="text-emerald-400">✓</span>
+    <span id="toast-msg">Item added to Bag!</span>
   </div>
 
   <script>
+    // =========================================================================
+    // VERIFIED GOOGLE APPS SCRIPT URL & CONFIGURATION
+    // =========================================================================
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
-    
-    let currentPin = sessionStorage.getItem('keg_admin_pin') || '';
-    let allOrders = [];
-    let currentFilter = 'ALL';
-    let searchQuery = '';
-    let pendingCancelOrderId = null;
 
-    if (currentPin) {
-      showDashboard();
+    const SELLER_CONFIG = {
+      gcashNumber: "0917-611-8382",
+      mayaNumber: "0915-750-4596",
+      accountName: "M. DIVINA",
+      messengerUsername: "Kegfinds",
+      viberNumber: "+639176118382",
+
+      gcashQrImage: "https://lh3.googleusercontent.com/d/1SzKWTCYFO07SjKZLD6bZdNibzaaC-c6w",
+      mayaQrImage: "https://lh3.googleusercontent.com/d/1x51q2b6iwXEK1kcFtBHF_Yj5gvW1O0kL"
+    };
+
+    let inventory = [];
+    let cart = [];
+    let currentPaymentMethod = 'GCASH';
+    let currentPhotoIndices = {};
+    let selectedLocation = 'all';
+    let selectedCategory = 'all';
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      if (!toast || !toastMsg) return;
+      toastMsg.innerText = msg;
+      toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+      }, 2200);
     }
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const pin = document.getElementById('admin-pin-input').value.trim();
-      if (!pin) return;
-
-      const btn = document.getElementById('login-btn');
-      btn.disabled = true;
-      btn.innerText = "Checking PIN...";
-
-      currentPin = pin;
-      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}`)
-        .then(res => res.json())
-        .then(data => {
-          btn.disabled = false;
-          btn.innerText = "Unlock Dashboard";
-          if (data && !data.error && Array.isArray(data)) {
-            sessionStorage.setItem('keg_admin_pin', currentPin);
-            allOrders = data;
-            showDashboard();
-          } else {
-            document.getElementById('login-error').classList.remove('hidden');
-          }
-        })
-        .catch(err => {
-          btn.disabled = false;
-          btn.innerText = "Unlock Dashboard";
-          document.getElementById('login-error').classList.remove('hidden');
-        });
+    function normalizeLocation(loc) {
+      if (!loc) return 'Pasig';
+      const clean = String(loc).trim().toLowerCase();
+      if (clean.includes('santa') || clean.includes('ilocos') || clean.includes('maria')) return 'Santa Maria';
+      return 'Pasig';
     }
 
-    function handleLogout() {
-      sessionStorage.removeItem('keg_admin_pin');
-      currentPin = '';
-      allOrders = [];
-      document.getElementById('dashboard-screen').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
-      document.getElementById('admin-pin-input').value = '';
-    }
+    let dismissedAnnouncementText = sessionStorage.getItem('keg_dismissed_announcement') || '';
 
-    function showDashboard() {
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('dashboard-screen').classList.remove('hidden');
-      fetchOrders();
-    }
+    function handleAnnouncement(text, isActive) {
+      const banner = document.getElementById('dynamic-announcement-banner');
+      const textEl = document.getElementById('announcement-text');
+      if (!banner || !textEl) return;
 
-    async function fetchOrders() {
-      const container = document.getElementById('orders-list');
-      container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">Loading orders from database...</div>';
-
-      try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          allOrders = data;
-          updateStats();
-          renderOrders();
-        } else {
-          container.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Failed to fetch orders. Unauthorized PIN or network issue.</div>';
-        }
-      } catch (err) {
-        console.error(err);
-        container.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Network error fetching orders.</div>';
+      const cleanText = (text || '').trim();
+      if (isActive && cleanText.length > 0 && cleanText !== dismissedAnnouncementText) {
+        textEl.innerText = cleanText;
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
       }
     }
 
-    function updateStats() {
-      const total = allOrders.length;
-      const pending = allOrders.filter(o => o.status === 'PENDING_PAYMENT').length;
-      const confirmed = allOrders.filter(o => o.status === 'CONFIRMED').length;
-      const cancelled = allOrders.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED')).length;
-
-      document.getElementById('stat-total').innerText = total;
-      document.getElementById('stat-pending').innerText = pending;
-      document.getElementById('stat-confirmed').innerText = confirmed;
-      document.getElementById('stat-cancelled').innerText = cancelled;
+    function dismissAnnouncement() {
+      const textEl = document.getElementById('announcement-text');
+      const banner = document.getElementById('dynamic-announcement-banner');
+      if (textEl && banner) {
+        dismissedAnnouncementText = textEl.innerText;
+        sessionStorage.setItem('keg_dismissed_announcement', dismissedAnnouncementText);
+        banner.classList.add('hidden');
+      }
     }
 
-    function filterOrders(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
+    async function fetchInventory(silent = false) {
+      const grid = document.getElementById('product-grid');
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
+        const data = await res.json();
+
+        // Handle both object payload with announcement and backwards-compatible array
+        let rawItems = [];
+        if (Array.isArray(data)) {
+          rawItems = data;
+        } else if (data && Array.isArray(data.items)) {
+          rawItems = data.items;
+          handleAnnouncement(data.announcement, data.showAnnouncement);
+        }
+
+        if (rawItems.length > 0 || Array.isArray(rawItems)) {
+          inventory = rawItems.map(item => ({
+            ...item,
+            location: normalizeLocation(item.location)
+          }));
+
+          // Re-validate cart against updated live stock from Google Sheets
+          cart.forEach(c => {
+            const liveItem = inventory.find(i => String(i.id) === String(c.id));
+            if (liveItem) {
+              if (c.qty > liveItem.stock) c.qty = liveItem.stock;
+            } else {
+              c.qty = 0;
+            }
+          });
+          cart = cart.filter(c => c.qty > 0);
+
+          updateLocationCounts();
+          renderCategoryFilters(getFilteredByLocationItems());
+          renderProducts(getDisplayedItems());
+          updateCartUI();
+        } else if (!silent) {
+          grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
+        }
+      } catch (err) {
+        if (!silent) {
+          console.error("Error fetching inventory:", err);
+          grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check Google Apps Script deployment permissions.</div>';
+        }
+      }
+    }
+
+    function updateLocationCounts() {
+      const pasigCount = inventory.filter(i => i.location === 'Pasig').length;
+      const smCount = inventory.filter(i => i.location === 'Santa Maria').length;
+      const allCount = inventory.length;
+
+      const elAll = document.getElementById('count-all');
+      const elPasig = document.getElementById('count-pasig');
+      const elSm = document.getElementById('count-santamaria');
+
+      if (elAll) elAll.innerText = allCount;
+      if (elPasig) elPasig.innerText = pasigCount;
+      if (elSm) elSm.innerText = smCount;
+    }
+
+    function switchLocation(loc, btn) {
+      selectedLocation = loc.toLowerCase();
+      selectedCategory = 'all';
+
+      document.querySelectorAll('.loc-btn').forEach(b => {
+        b.classList.remove('bg-brand-800', 'text-white', 'shadow-sm');
         b.classList.add('bg-stone-100', 'text-stone-700');
       });
       if (btn) {
-        btn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-brand-800', 'text-white', 'shadow-sm');
         btn.classList.remove('bg-stone-100', 'text-stone-700');
       }
-      renderOrders();
-    }
 
-    function handleSearch(val) {
-      searchQuery = (val || '').trim().toLowerCase();
-      const clearBtn = document.getElementById('clear-search-btn');
-      if (searchQuery.length > 0) {
-        clearBtn.classList.remove('hidden');
-      } else {
-        clearBtn.classList.add('hidden');
-      }
-      renderOrders();
-    }
-
-    function clearSearch() {
-      document.getElementById('order-search-input').value = '';
-      searchQuery = '';
-      document.getElementById('clear-search-btn').classList.add('hidden');
-      renderOrders();
-    }
-
-    function setPresetReason(reasonText) {
-      document.getElementById('cancel-comment-input').value = reasonText;
-      
-      // Highlight selected chip
-      document.querySelectorAll('.reason-chip').forEach(btn => {
-        if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
-          btn.className = 'reason-chip text-[11px] font-bold bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm border border-stone-900 active:scale-95';
-        } else {
-          btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
-        }
-      });
-    }
-
-    function renderOrders() {
-      const container = document.getElementById('orders-list');
-      let filtered = allOrders;
-
-      // Status Filter
-      if (currentFilter === 'PENDING_PAYMENT') {
-        filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
-      } else if (currentFilter === 'CONFIRMED') {
-        filtered = filtered.filter(o => o.status === 'CONFIRMED');
-      } else if (currentFilter === 'CANCELLED') {
-        filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
+      const titleEl = document.getElementById('catalog-title');
+      if (titleEl) {
+        if (selectedLocation === 'pasig') titleEl.innerText = "Available in Pasig, Metro Manila";
+        else if (selectedLocation === 'santa maria') titleEl.innerText = "Available in Santa Maria, Ilocos Sur";
+        else titleEl.innerText = "All Available Listings";
       }
 
-      // Live Search Filter (Checks Order ID, Buyer Name, Contact, Email, Comment)
-      if (searchQuery.length > 0) {
-        filtered = filtered.filter(o => {
-          const id = (o.orderId || '').toLowerCase();
-          const name = (o.buyerName || '').toLowerCase();
-          const contact = (o.buyerContact || '').toLowerCase();
-          const email = (o.buyerEmail || '').toLowerCase();
-          const comment = (o.comment || '').toLowerCase();
-          return id.includes(searchQuery) || name.includes(searchQuery) || contact.includes(searchQuery) || email.includes(searchQuery) || comment.includes(searchQuery);
-        });
-      }
+      renderCategoryFilters(getFilteredByLocationItems());
+      renderProducts(getDisplayedItems());
+    }
 
-      document.getElementById('orders-count-label').innerText = filtered.length;
+    function getFilteredByLocationItems() {
+      if (selectedLocation === 'all') return inventory;
+      return inventory.filter(i => i.location.toLowerCase() === selectedLocation);
+    }
 
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">
-            ${searchQuery ? `No orders matching "<b>${searchQuery}</b>".` : 'No orders found in this view.'}
-          </div>
+    function getDisplayedItems() {
+      const locFiltered = getFilteredByLocationItems();
+      if (selectedCategory === 'all') return locFiltered;
+      return locFiltered.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
+    }
+
+    function renderCategoryFilters(items) {
+      const bar = document.getElementById('category-filter-bar');
+      if (!bar) return;
+
+      const categories = Array.from(new Set(
+        items.map(i => (i.category || '').trim()).filter(c => c.length > 0)
+      ));
+
+      let buttonsHtml = `
+        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">
+          All (${items.length})
+        </button>
+      `;
+
+      categories.forEach(cat => {
+        const label = cat.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const count = items.filter(i => (i.category || '').trim().toLowerCase() === cat.toLowerCase()).length;
+        buttonsHtml += `
+          <button onclick="filterCatalog('${cat.replace(/'/g, "\\'")}', this)" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">
+            ${label} (${count})
+          </button>
         `;
+      });
+
+      bar.innerHTML = buttonsHtml;
+    }
+
+    function filterCatalog(category, clickedBtn) {
+      selectedCategory = category;
+      const btns = document.querySelectorAll('.cat-btn');
+
+      btns.forEach(b => {
+        b.classList.remove('bg-stone-900', 'text-white');
+        b.classList.add('bg-stone-100', 'text-stone-600');
+      });
+
+      if (clickedBtn) {
+        clickedBtn.classList.add('bg-stone-900', 'text-white');
+        clickedBtn.classList.remove('bg-stone-100', 'text-stone-600');
+      }
+
+      renderProducts(getDisplayedItems());
+    }
+
+    function parseImages(imgString) {
+      if (!imgString) return ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
+      const urls = imgString.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
+    }
+
+    function formatCondition(val) {
+      if (!val) return 'Pre-loved';
+      const clean = String(val).trim();
+      if (clean.includes('Oct 10') || clean === '10' || clean === '10/10' || clean === '10 / 10') return '10/10 (Pristine / Like New)';
+      if (clean.includes('Sep') || clean === '9.5' || clean === '9' || clean === '9/10') return `${clean} (Excellent)`;
+      if (clean.includes('Aug') || clean === '8.5' || clean === '8' || clean === '8/10') return `${clean} (Very Good)`;
+      if (clean.includes('Jul') || clean === '7.5' || clean === '7' || clean === '7/10') return `${clean} (Good Condition)`;
+      return clean;
+    }
+
+    function renderProducts(items) {
+      const grid = document.getElementById('product-grid');
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available for this selection.</div>';
         return;
       }
 
-      container.innerHTML = filtered.map(order => {
-        let items = [];
-        try { items = JSON.parse(order.itemsJson); } catch (e) { items = []; }
-
-        const isPending = order.status === 'PENDING_PAYMENT';
-        const isConfirmed = order.status === 'CONFIRMED';
-        const isCancelled = order.status.includes('CANCELLED') || order.status.includes('EXPIRED');
-
-        const isMeetup = (order.paymentMethod || '').includes('CASH') || 
-                         (order.fulfillment || '').includes('Pickup') || 
-                         (order.fulfillment || '').includes('Meet-up');
-
-        let statusBadge = '';
-        if (isConfirmed) {
-          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">✔ CONFIRMED</span>';
-        } else if (isCancelled) {
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-red-100 text-red-800 border border-red-200">✖ ${order.status}</span>`;
-        } else {
-          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">⏱️ PENDING</span>';
-        }
-
-        const itemsListHtml = items.map(i => `
-          <div class="flex items-center justify-between text-xs py-1 border-b border-stone-100 last:border-0">
-            <div>
-              <span class="font-mono text-stone-500 font-bold">[ID #${i.id || '-'}]</span>
-              <span class="font-semibold text-stone-800 ml-1">${i.name}</span>
-              ${i.location ? `<span class="ml-1 text-[10px] px-1.5 py-0.2 rounded font-semibold ${i.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${i.location}</span>` : ''}
-            </div>
-            <div class="font-mono text-stone-600 font-medium">${i.qty} &times; ₱${Number(i.price).toLocaleString()}</div>
-          </div>
-        `).join('');
+      grid.innerHTML = items.map(item => {
+        const images = parseImages(item.image);
+        const currentIdx = currentPhotoIndices[item.id] || 0;
+        const hasMultiple = images.length > 1;
+        const isPasig = item.location === 'Pasig';
+        const inCart = cart.find(c => String(c.id) === String(item.id));
+        const cartQty = inCart ? inCart.qty : 0;
+        const remainingStock = Math.max(0, item.stock - cartQty);
+        const isSoldOut = item.stock <= 0;
 
         return `
-          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 transition hover:shadow-md">
-            <!-- Order Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
-              <div>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-mono font-black text-sm text-stone-900">${order.orderId}</span>
-                  ${statusBadge}
-                  ${isMeetup ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">🤝 Meetup (No Timeout)</span>' : ''}
+          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
+            <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
+              <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
+              
+              <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                <div class="flex gap-1.5 items-center">
+                  <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
+                  
+                  <!-- Dynamic Live Stock Badge -->
+                  ${isSoldOut ? `
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
+                  ` : cartQty > 0 ? (
+                    remainingStock === 0 ? `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
+                    ` : `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
+                    `
+                  ) : `
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
+                  `}
                 </div>
-                <div class="text-[11px] text-stone-400 mt-0.5">${order.date}</div>
+                <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
+                  📍 ${item.location} Hub
+                </span>
               </div>
 
-              <div class="text-left sm:text-right">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Amount</span>
-                <div class="text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
-              </div>
-            </div>
-
-            <!-- Buyer Details & Fulfillment -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-3.5 text-xs border-b border-stone-100">
-              <div class="space-y-1">
-                <div><span class="text-stone-400 font-medium">Buyer:</span> <b class="text-stone-800">${order.buyerName}</b></div>
-                <div><span class="text-stone-400 font-medium">Contact:</span> <b class="font-mono text-stone-800">${order.buyerContact}</b></div>
-                <div><span class="text-stone-400 font-medium">Email:</span> <a href="mailto:${order.buyerEmail}" class="text-brand-700 hover:underline">${order.buyerEmail}</a></div>
-              </div>
-              <div class="space-y-1">
-                <div><span class="text-stone-400 font-medium">Fulfillment:</span> <b class="text-stone-800">${order.fulfillment}</b></div>
-                <div><span class="text-stone-400 font-medium">Payment:</span> <b class="text-stone-800">${order.paymentMethod}</b></div>
-                ${order.comment ? `<div class="bg-red-50 p-2 rounded-lg text-red-700 text-[11px] border border-red-200 mt-1"><b class="text-red-900">Reason / Comment:</b> ${order.comment}</div>` : ''}
-              </div>
-            </div>
-
-            <!-- Items List -->
-            <div class="py-3">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1.5">Ordered Items</span>
-              <div class="bg-stone-50 rounded-xl p-3 border border-stone-100">
-                ${itemsListHtml}
-              </div>
-            </div>
-
-            <!-- Actions Bar -->
-            ${isPending ? `
-              <div class="pt-3 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
-                <button onclick="openCancelModal('${order.orderId}')" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
-                  Cancel Order...
+              ${hasMultiple ? `
+                <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
+                  ${currentIdx + 1} / ${images.length}
+                </span>
+                <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                 </button>
-                <button onclick="confirmOrder('${order.orderId}')" class="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
-                  Mark Confirmed / Paid
+                <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </button>
+                <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
+                  ${images.map((_, i) => `
+                    <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-1">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
+                  <span class="text-[10px] font-semibold text-stone-500">📍 ${item.location}</span>
+                </div>
+                <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
+                
+                <div class="flex items-center gap-1.5 mt-2">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
+                  <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                    ${formatCondition(item.condition)}
+                  </span>
+                </div>
               </div>
-            ` : ''}
+
+              <div class="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
+                <span class="text-lg font-bold text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+                
+                ${isSoldOut ? `
+                  <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
+                ` : `
+                  <div class="flex items-center gap-1.5">
+                    <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}', '${item.location}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
+                      <span class="hidden sm:inline">Inquire</span>
+                    </button>
+
+                    <!-- Interactive +/- Quantity Stepper on Main Card -->
+                    ${cartQty > 0 ? `
+                      <div class="flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 shadow-sm">
+                        <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
+                        <span class="w-7 text-center font-bold text-xs text-brand-900">${cartQty}</span>
+                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max available stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
+                      </div>
+                    ` : `
+                      <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
+                    `}
+                  </div>
+                `}
+              </div>
+            </div>
           </div>
         `;
       }).join('');
     }
 
-    async function confirmOrder(orderId) {
-      if (!confirm(`Mark Order ${orderId} as CONFIRMED / PAID? An automated confirmation email will be sent to the buyer.`)) return;
+    function inquireItem(id, name, price, location) {
+      const msg = `Hi KEG Finds! I have an inquiry about [ID #${id}] ${name} (₱${Number(price).toLocaleString()} - ${location} Hub). Is this still available? Can I ask about its sizing/pickup?`;
+      const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
 
-      try {
-        const res = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'confirmPayment',
-            pin: currentPin,
-            orderId: orderId
-          })
-        });
-        const result = await res.json();
-        if (result.status === 'success') {
-          alert(`Order ${orderId} has been confirmed!`);
-          fetchOrders();
+    function nextPhoto(itemId, total) {
+      const current = currentPhotoIndices[itemId] || 0;
+      setPhoto(itemId, (current + 1) % total);
+    }
+
+    function prevPhoto(itemId, total) {
+      const current = currentPhotoIndices[itemId] || 0;
+      setPhoto(itemId, (current - 1 + total) % total);
+    }
+
+    function setPhoto(itemId, index) {
+      currentPhotoIndices[itemId] = index;
+      const item = inventory.find(i => String(i.id) === String(itemId));
+      if (!item) return;
+
+      const images = parseImages(item.image);
+      const imgEl = document.getElementById(`item-img-${itemId}`);
+      const counterEl = document.getElementById(`photo-counter-${itemId}`);
+
+      if (imgEl && images[index]) imgEl.src = images[index];
+      if (counterEl) counterEl.innerText = `${index + 1} / ${images.length}`;
+      renderProducts(getDisplayedItems());
+    }
+
+    function addToBag(id) {
+      changeQty(id, 1);
+    }
+
+    function changeQty(id, delta) {
+      const item = inventory.find(i => String(i.id) === String(id));
+      if (!item || item.stock <= 0) return;
+
+      const existing = cart.find(c => String(c.id) === String(id));
+
+      if (existing) {
+        const newQty = existing.qty + delta;
+        if (newQty <= 0) {
+          cart = cart.filter(c => String(c.id) !== String(id));
+          showToast(`Removed "${item.name}" from Bag`);
+        } else if (newQty > item.stock) {
+          alert(`Only ${item.stock} item(s) available in stock.`);
+          return;
         } else {
-          alert('Error confirming order: ' + (result.message || 'Unauthorized'));
+          existing.qty = newQty;
+          if (delta > 0) showToast(`Added +1 "${item.name}" (Now: ${newQty})`);
         }
-      } catch (err) {
-        console.error(err);
-        alert('Error connecting to backend.');
+      } else {
+        if (delta > 0) {
+          cart.push({ id: item.id, name: item.name, price: item.price, location: normalizeLocation(item.location), qty: 1 });
+          showToast(`Added "${item.name}" to Bag!`);
+        }
+      }
+
+      updateCartUI();
+      renderProducts(getDisplayedItems());
+
+      const badge = document.getElementById('cart-badge');
+      if (badge) {
+        badge.classList.add('scale-150');
+        setTimeout(() => badge.classList.remove('scale-150'), 250);
       }
     }
 
-    function openCancelModal(orderId) {
-      pendingCancelOrderId = orderId;
-      document.getElementById('cancel-modal-order-id').innerText = orderId;
-      document.getElementById('cancel-comment-input').value = '';
+    function updateFulfillmentOptions(items) {
+      const select = document.getElementById('buyer-fulfillment');
+      if (!select) return;
+
+      const locations = Array.from(new Set(items.map(i => i.location || 'Pasig')));
+      const prevVal = select.value;
+      let optionsHtml = '';
+
+      if (locations.length === 0 || (locations.length === 1 && locations[0] === 'Pasig')) {
+        optionsHtml = `
+          <option value="Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)">Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)</option>
+          <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+        `;
+      } else if (locations.length === 1 && locations[0] === 'Santa Maria') {
+        optionsHtml = `
+          <option value="Pickup / Meet-up in Santa Maria, Ilocos Sur (Free)">Pickup / Meet-up in Santa Maria, Ilocos Sur (Free)</option>
+          <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+        `;
+      } else {
+        optionsHtml = `
+          <option value="Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)">Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)</option>
+        `;
+      }
+
+      select.innerHTML = optionsHtml;
+      if ([...select.options].some(o => o.value === prevVal)) {
+        select.value = prevVal;
+      }
+      onFulfillmentChange();
+    }
+
+    function onFulfillmentChange() {
+      const fulfillEl = document.getElementById('buyer-fulfillment');
+      const cashBtn = document.getElementById('tab-btn-cash');
+      if (!fulfillEl) return;
+
+      const isMeetup = fulfillEl.value.includes('Pickup') || fulfillEl.value.includes('Meet-up');
       
-      document.querySelectorAll('.reason-chip').forEach(btn => {
-        btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
-      });
-
-      document.getElementById('cancel-modal').classList.remove('hidden');
+      if (isMeetup) {
+        if (cashBtn) cashBtn.classList.remove('hidden');
+      } else {
+        if (cashBtn) cashBtn.classList.add('hidden');
+        if (currentPaymentMethod === 'CASH') {
+          selectPaymentTab('gcash');
+        }
+      }
     }
 
-    function closeCancelModal() {
-      pendingCancelOrderId = null;
-      document.getElementById('cancel-modal').classList.add('hidden');
-    }
+    function updateCartUI() {
+      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+      document.getElementById('cart-badge').innerText = totalQty;
+      const list = document.getElementById('cart-list');
+      const totalDisplay = document.getElementById('items-total-display');
+      const paymentDisplay = document.getElementById('payment-amount-display');
 
-    async function submitCancelOrder() {
-      if (!pendingCancelOrderId) return;
-      const comment = document.getElementById('cancel-comment-input').value.trim();
-      if (!comment) {
-        alert('Please enter or select a cancellation reason/comment.');
+      if (cart.length === 0) {
+        list.innerHTML = '<p class="text-xs text-stone-400 py-4 text-center">Your bag is currently empty.</p>';
+        totalDisplay.innerText = '₱0';
+        paymentDisplay.innerText = '₱0';
+        updateFulfillmentOptions([]);
         return;
       }
 
-      const btn = document.getElementById('confirm-cancel-btn');
-      btn.disabled = true;
-      btn.innerText = "Cancelling & Restocking...";
+      updateFulfillmentOptions(cart);
+
+      list.innerHTML = cart.map(item => {
+        const liveItem = inventory.find(i => String(i.id) === String(item.id));
+        const maxStock = liveItem ? liveItem.stock : item.qty;
+
+        return `
+          <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-100 text-xs">
+            <div class="flex-1 mr-2">
+              <div class="font-bold text-stone-800">
+                <span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}
+                <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">
+                  ${item.location}
+                </span>
+              </div>
+              <div class="text-stone-500 mt-0.5">₱${Number(item.price).toLocaleString()} each &bull; Subtotal: <b class="text-stone-900">₱${Number(item.price * item.qty).toLocaleString()}</b></div>
+            </div>
+
+            <!-- Stepper inside Drawer -->
+            <div class="flex items-center gap-1.5">
+              <div class="flex items-center bg-white rounded-lg border border-stone-200 shadow-sm p-0.5">
+                <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition">&minus;</button>
+                <span class="w-6 text-center font-bold text-xs text-brand-900">${item.qty}</span>
+                <button onclick="changeQty('${item.id}', 1)" ${item.qty >= maxStock ? 'disabled' : ''} title="${item.qty >= maxStock ? 'Max stock reached' : 'Increase'}" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition ${item.qty >= maxStock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
+              </div>
+
+              <button onclick="changeQty('${item.id}', -9999)" title="Remove item" class="text-stone-400 hover:text-red-600 font-bold p-1 text-sm leading-none">&times;</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      totalDisplay.innerText = `₱${total.toLocaleString()}`;
+      paymentDisplay.innerText = `₱${total.toLocaleString()}`;
+      
+      const cashText = document.getElementById('cash-amount-text');
+      if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
+    }
+
+    function selectPaymentTab(method) {
+      currentPaymentMethod = method.toUpperCase();
+      const btnGcash = document.getElementById('tab-btn-gcash');
+      const btnMaya = document.getElementById('tab-btn-maya');
+      const btnCash = document.getElementById('tab-btn-cash');
+      const qrBox = document.getElementById('qr-payment-container');
+      const cashBox = document.getElementById('cash-payment-container');
+      const qrImg = document.getElementById('qr-image-display');
+      const accountNum = document.getElementById('pay-account-number');
+      const amountLabel = document.getElementById('payment-amount-label');
+
+      const inactiveClass = 'bg-stone-100 text-stone-700 hover:bg-stone-200';
+      if (btnGcash) btnGcash.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition`;
+      if (btnMaya) btnMaya.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition`;
+      if (btnCash) {
+        const isHidden = btnCash.classList.contains('hidden');
+        btnCash.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition ${isHidden ? 'hidden' : ''}`;
+      }
+
+      if (method === 'cash') {
+        if (btnCash) {
+          btnCash.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+          btnCash.classList.add('bg-amber-600', 'text-white');
+        }
+        if (qrBox) qrBox.classList.add('hidden');
+        if (cashBox) cashBox.classList.remove('hidden');
+        if (amountLabel) amountLabel.innerText = 'Amount to Pay in Cash';
+
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const cashText = document.getElementById('cash-amount-text');
+        if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
+
+      } else {
+        if (qrBox) qrBox.classList.remove('hidden');
+        if (cashBox) cashBox.classList.add('hidden');
+        if (amountLabel) amountLabel.innerText = 'Amount to Transfer';
+
+        if (method === 'gcash') {
+          if (btnGcash) {
+            btnGcash.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+            btnGcash.classList.add('bg-blue-600', 'text-white');
+          }
+          if (qrImg) qrImg.src = SELLER_CONFIG.gcashQrImage;
+          if (accountNum) accountNum.innerText = SELLER_CONFIG.gcashNumber;
+        } else {
+          if (btnMaya) {
+            btnMaya.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
+            btnMaya.classList.add('bg-emerald-600', 'text-white');
+          }
+          if (qrImg) qrImg.src = SELLER_CONFIG.mayaQrImage;
+          if (accountNum) accountNum.innerText = SELLER_CONFIG.mayaNumber;
+        }
+      }
+    }
+
+    function copyAccountNumber() {
+      const num = document.getElementById('pay-account-number').innerText.replace(/[^0-9]/g, '');
+      navigator.clipboard.writeText(num);
+      alert(`Account number ${num} copied to clipboard!`);
+    }
+
+    async function processOrder(channel) {
+      if (cart.length === 0) {
+        alert('Your bag is empty.');
+        return;
+      }
+
+      const buyerName = document.getElementById('buyer-name').value.trim();
+      const buyerEmail = document.getElementById('buyer-email').value.trim();
+      const buyerContact = document.getElementById('buyer-contact').value.trim();
+      const fulfillment = document.getElementById('buyer-fulfillment').value;
+
+      if (!buyerName || !buyerEmail || !buyerContact) {
+        alert('Please fill in your Name, Email Address, and Mobile / Viber number.');
+        return;
+      }
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const itemsListText = cart.map(i => `• [ID #${i.id}] ${i.name} (📍${i.location}) - ${i.qty}x @ ₱${i.price}`).join('\n');
+
+      const submitBtn = event.currentTarget;
+      const originalText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Reserving & generating Order ID...";
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({
-            action: 'cancelOrder',
-            pin: currentPin,
-            orderId: pendingCancelOrderId,
-            comment: comment
+            action: "createOrder",
+            buyerName,
+            buyerEmail,
+            buyerContact,
+            fulfillment,
+            paymentMethod: currentPaymentMethod === 'CASH' ? 'CASH (Meet-up)' : (currentPaymentMethod + ' QR'),
+            total,
+            items: cart
           })
         });
 
         const result = await res.json();
-        if (result.status === 'success') {
-          alert(`Order ${pendingCancelOrderId} cancelled. Items restored to stock.`);
-          closeCancelModal();
-          fetchOrders();
-        } else {
-          alert('Error cancelling order: ' + (result.message || 'Unauthorized'));
+
+        if (result.status === "out_of_stock") {
+          alert(result.message + "\n\nPlease review your bag; claimed items cannot be checked out.");
+          fetchInventory();
+          submitBtn.disabled = false;
+          submitBtn.innerText = originalText;
+          return;
         }
-      } catch (err) {
-        console.error(err);
-        alert('Error connecting to backend.');
+
+        const orderId = result.orderId || ("KEG-" + Date.now().toString().slice(-6));
+
+        const isCash = currentPaymentMethod === 'CASH';
+        const paymentNotice = isCash ? 
+          "(Payment: Cash upon Meet-up/Pickup - Coordinating schedule now!)" : 
+          "(Sending payment screenshot receipt now!)";
+
+        const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${isCash ? 'Cash on Meet-up' : currentPaymentMethod + ' QR'}\n\n${paymentNotice}`;
+
+        cart = [];
+        updateCartUI();
+        closeCart();
+        fetchInventory();
+
+        if (channel === 'messenger') {
+          const messengerUrl = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
+          window.location.href = messengerUrl;
+        } else if (channel === 'viber') {
+          const cleanViber = SELLER_CONFIG.viberNumber.replace(/[^0-9]/g, '');
+          window.location.href = `viber://chat?number=%2B${cleanViber}`;
+        }
+
+      } catch (e) {
+        console.error("Order error:", e);
+        alert("There was an issue processing your order. Please try again.");
       } finally {
-        btn.disabled = false;
-        btn.innerText = "Confirm Cancel & Restock";
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
       }
     }
+
+    function openCart() { document.getElementById('checkout-modal').classList.remove('hidden'); }
+    function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
+
+    // =========================================================================
+    // PWA INSTALLATION LOGIC
+    // =========================================================================
+    let deferredPrompt = null;
+    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isStandalone = () => ('standalone' in window.navigator && window.navigator.standalone) || window.matchMedia('(display-mode: standalone)').matches;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn && !isStandalone()) {
+        btn.classList.remove('hidden');
+        btn.classList.add('flex');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn && !isStandalone()) {
+        if (isIos()) {
+          btn.classList.remove('hidden');
+          btn.classList.add('flex');
+        }
+      }
+    });
+
+    function triggerPWAInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User installed KEG Finds');
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.add('hidden');
+          }
+          deferredPrompt = null;
+        });
+      } else if (isIos()) {
+        document.getElementById('ios-install-modal').classList.remove('hidden');
+      } else {
+        alert("To install, tap your browser's menu (⋮ or Share) and select 'Install app' or 'Add to Home screen'.");
+      }
+    }
+
+    function closeIosInstallModal() {
+      document.getElementById('ios-install-modal').classList.add('hidden');
+    }
+
+    window.addEventListener('appinstalled', () => {
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.classList.add('hidden');
+      deferredPrompt = null;
+    });
+
+    document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
+    selectPaymentTab('gcash');
+    fetchInventory();
+
+    // Polling every 25 seconds
+    setInterval(() => {
+      fetchInventory(true);
+    }, 25000);
   </script>
 </body>
 </html>
