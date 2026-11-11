@@ -37,7 +37,7 @@
         K
       </div>
       <h1 class="font-serif text-2xl font-bold text-stone-900">Seller Dashboard</h1>
-      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your 4-digit PIN to manage orders</p>
+      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your 4-digit PIN to manage store &amp; inventory</p>
 
       <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
@@ -60,14 +60,18 @@
           <div class="w-9 h-9 rounded-xl bg-brand-800 text-white font-serif font-bold text-lg flex items-center justify-center">K</div>
           <div>
             <span class="font-serif font-bold text-base text-stone-900 block leading-tight">KEG FINDS ADMIN</span>
-            <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Order Management</span>
+            <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Store Management</span>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Add Item Button -->
+          <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-brand-800 hover:bg-brand-900 text-white rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <span>Add Item</span>
+          </button>
           <button onclick="fetchOrders()" title="Refresh Orders" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            <span class="hidden sm:inline">Refresh</span>
           </button>
           <button onclick="handleLogout()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200">
             Lock
@@ -135,6 +139,92 @@
     </main>
   </div>
 
+  <!-- ADD ITEM MODAL (Direct Google Drive Upload & Sheets Integration) -->
+  <div id="add-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
+      <button onclick="closeAddItemModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-2xl bg-brand-800 text-white flex items-center justify-center font-bold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-lg font-bold text-stone-900">Add Item to Sell</h3>
+          <p class="text-[11px] text-stone-500">Auto-uploads to Google Drive &amp; syncs to your online shop</p>
+        </div>
+      </div>
+
+      <form id="add-item-form" onsubmit="submitNewItem(event)" class="space-y-4 text-xs">
+        <!-- Item Name -->
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Item Name *</label>
+          <input type="text" id="new-item-name" required placeholder="e.g. Brooks Brothers White Oxford Shirt" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Category -->
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Category *</label>
+            <input type="text" id="new-item-category" required placeholder="e.g. shirts, housewares, shoes" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          </div>
+          <!-- Hub Location -->
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Hub Location *</label>
+            <select id="new-item-location" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none font-semibold">
+              <option value="Pasig">📍 Pasig Hub (Rosario / Urban Deca)</option>
+              <option value="Santa Maria">📍 Santa Maria, Ilocos Sur Hub</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <!-- Price -->
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Price (₱) *</label>
+            <input type="number" id="new-item-price" required min="1" step="1" placeholder="350" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
+          </div>
+          <!-- Stock -->
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Stock Quantity *</label>
+            <input type="number" id="new-item-stock" required min="1" value="1" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
+          </div>
+          <!-- Condition -->
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Condition *</label>
+            <input type="text" id="new-item-condition" required value="10/10" placeholder="10/10 or Like New" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          </div>
+        </div>
+
+        <!-- Photos Upload Area -->
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">
+            Item Photos * <span class="text-stone-400 font-normal">(select 1 or multiple, no renaming needed)</span>
+          </label>
+          
+          <div class="border-2 border-dashed border-stone-200 hover:border-brand-800 rounded-2xl p-4 text-center cursor-pointer transition bg-stone-50/60" onclick="document.getElementById('new-item-files').click()">
+            <svg class="w-8 h-8 text-stone-400 mx-auto mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div class="text-xs font-bold text-stone-700">Click to choose photos from phone/computer</div>
+            <div class="text-[10px] text-stone-400 mt-0.5">JPEG, PNG, WebP &bull; Up to 5MB each</div>
+            <input type="file" id="new-item-files" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+          </div>
+
+          <!-- Selected Thumbnails Preview -->
+          <div id="photos-preview-container" class="mt-2.5 flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-3 border-t border-stone-100 flex gap-2">
+          <button type="button" onclick="closeAddItemModal()" class="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" id="submit-item-btn" class="flex-1 py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
+            <span>Publish to Store</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Cancel Order Modal with Reason Chips + Comment Input -->
   <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
@@ -149,7 +239,6 @@
         Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore item stock</b> to your spreadsheet and send an email update to the buyer.
       </p>
 
-      <!-- 1-Tap Preset Comment Chips -->
       <div class="mt-4">
         <label class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">Quick Select Reason:</label>
         <div class="flex flex-wrap gap-1.5">
@@ -171,7 +260,6 @@
         </div>
       </div>
 
-      <!-- Comment Textarea -->
       <div class="mt-3.5">
         <label class="text-xs font-bold text-stone-700 block mb-1">Reason / Comment *</label>
         <textarea id="cancel-comment-input" rows="3" placeholder="Select a chip above or type custom reason..." class="w-full border border-stone-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
@@ -191,13 +279,12 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
     
-    // STRICT NO-SAVE PIN: PIN is kept ONLY in active memory while viewing.
-    // Closing the app, closing the tab, or switching away locks the screen instantly.
     let currentPin = '';
     let allOrders = [];
     let currentFilter = 'ALL';
     let searchQuery = '';
     let pendingCancelOrderId = null;
+    let selectedImageFiles = []; // Array of base64 objects { data, type, name }
 
     function handleLogin(e) {
       e.preventDefault();
@@ -245,20 +332,11 @@
       document.getElementById('login-error').classList.add('hidden');
     }
 
-    // Auto-lock when user closes the app, locks phone, switches tabs, or minimizes browser
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        handleLogout();
-      }
+      if (document.visibilityState === 'hidden') handleLogout();
     });
-
-    window.addEventListener('pagehide', () => {
-      handleLogout();
-    });
-
-    window.addEventListener('beforeunload', () => {
-      handleLogout();
-    });
+    window.addEventListener('pagehide', () => handleLogout());
+    window.addEventListener('beforeunload', () => handleLogout());
 
     function showDashboard() {
       document.getElementById('login-screen').classList.add('hidden');
@@ -314,11 +392,8 @@
     function handleSearch(val) {
       searchQuery = (val || '').trim().toLowerCase();
       const clearBtn = document.getElementById('clear-search-btn');
-      if (searchQuery.length > 0) {
-        clearBtn.classList.remove('hidden');
-      } else {
-        clearBtn.classList.add('hidden');
-      }
+      if (searchQuery.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
       renderOrders();
     }
 
@@ -329,29 +404,13 @@
       renderOrders();
     }
 
-    function setPresetReason(reasonText) {
-      document.getElementById('cancel-comment-input').value = reasonText;
-      
-      document.querySelectorAll('.reason-chip').forEach(btn => {
-        if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
-          btn.className = 'reason-chip text-[11px] font-bold bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm border border-stone-900 active:scale-95';
-        } else {
-          btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
-        }
-      });
-    }
-
     function renderOrders() {
       const container = document.getElementById('orders-list');
       let filtered = allOrders;
 
-      if (currentFilter === 'PENDING_PAYMENT') {
-        filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
-      } else if (currentFilter === 'CONFIRMED') {
-        filtered = filtered.filter(o => o.status === 'CONFIRMED');
-      } else if (currentFilter === 'CANCELLED') {
-        filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
-      }
+      if (currentFilter === 'PENDING_PAYMENT') filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
+      else if (currentFilter === 'CONFIRMED') filtered = filtered.filter(o => o.status === 'CONFIRMED');
+      else if (currentFilter === 'CANCELLED') filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
 
       if (searchQuery.length > 0) {
         filtered = filtered.filter(o => {
@@ -388,13 +447,9 @@
                          (order.fulfillment || '').includes('Meet-up');
 
         let statusBadge = '';
-        if (isConfirmed) {
-          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">✔ CONFIRMED</span>';
-        } else if (isCancelled) {
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-red-100 text-red-800 border border-red-200">✖ ${order.status}</span>`;
-        } else {
-          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">⏱️ PENDING</span>';
-        }
+        if (isConfirmed) statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">✔ CONFIRMED</span>';
+        else if (isCancelled) statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-red-100 text-red-800 border border-red-200">✖ ${order.status}</span>`;
+        else statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">⏱️ PENDING</span>';
 
         const itemsListHtml = items.map(i => `
           <div class="flex items-center justify-between text-xs py-1 border-b border-stone-100 last:border-0">
@@ -418,7 +473,6 @@
                 </div>
                 <div class="text-[11px] text-stone-400 mt-0.5">${order.date}</div>
               </div>
-
               <div class="text-left sm:text-right">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Amount</span>
                 <div class="text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
@@ -460,6 +514,137 @@
       }).join('');
     }
 
+    // =========================================================================
+    // ADD NEW ITEM LOGIC (AUTO-RESIZE & DRIVE UPLOAD)
+    // =========================================================================
+    function openAddItemModal() {
+      selectedImageFiles = [];
+      document.getElementById('photos-preview-container').innerHTML = '';
+      document.getElementById('add-item-form').reset();
+      document.getElementById('add-item-modal').classList.remove('hidden');
+    }
+
+    function closeAddItemModal() {
+      document.getElementById('add-item-modal').classList.add('hidden');
+    }
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      files.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        
+        // Auto-scale client-side to ensure fast uploads
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxDim = 1200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            selectedImageFiles.push({
+              data: compressedBase64,
+              type: 'image/jpeg',
+              name: file.name
+            });
+            renderPhotoThumbnails();
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotoThumbnails() {
+      const container = document.getElementById('photos-preview-container');
+      container.innerHTML = selectedImageFiles.map((f, i) => `
+        <div class="relative w-16 h-16 rounded-xl overflow-hidden border border-stone-200 shadow-sm group">
+          <img src="${f.data}" class="w-full h-full object-cover">
+          <button type="button" onclick="removePhoto(${i})" class="absolute top-1 right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow leading-none">&times;</button>
+          <span class="absolute bottom-0 inset-x-0 bg-stone-900/70 text-white text-[8px] text-center font-mono py-0.5">${i + 1}</span>
+        </div>
+      `).join('');
+    }
+
+    function removePhoto(index) {
+      selectedImageFiles.splice(index, 1);
+      renderPhotoThumbnails();
+    }
+
+    async function submitNewItem(e) {
+      e.preventDefault();
+      if (!selectedImageFiles.length) {
+        alert("Please select at least 1 photo for this item.");
+        return;
+      }
+
+      const name = document.getElementById('new-item-name').value.trim();
+      const category = document.getElementById('new-item-category').value.trim();
+      const location = document.getElementById('new-item-location').value;
+      const price = Number(document.getElementById('new-item-price').value) || 0;
+      const stock = Number(document.getElementById('new-item-stock').value) || 1;
+      const condition = document.getElementById('new-item-condition').value.trim();
+
+      const btn = document.getElementById('submit-item-btn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Uploading to Drive &amp; Syncing...`;
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'addItem',
+            pin: currentPin,
+            name,
+            category,
+            location,
+            price,
+            stock,
+            condition,
+            images: selectedImageFiles
+          })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Item #${result.itemId} (${name}) successfully published with ${selectedImageFiles.length} photo(s)!`);
+          closeAddItemModal();
+        } else {
+          alert("Error adding item: " + (result.message || "Failed"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Network error communicating with Google Apps Script.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    // =========================================================================
+    // CONFIRM / CANCEL ORDER LOGIC
+    // =========================================================================
     async function confirmOrder(orderId) {
       if (!confirm(`Mark Order ${orderId} as CONFIRMED / PAID? An automated confirmation email will be sent to the buyer.`)) return;
 
@@ -467,11 +652,7 @@
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'confirmPayment',
-            pin: currentPin,
-            orderId: orderId
-          })
+          body: JSON.stringify({ action: 'confirmPayment', pin: currentPin, orderId })
         });
         const result = await res.json();
         if (result.status === 'success') {
@@ -490,17 +671,26 @@
       pendingCancelOrderId = orderId;
       document.getElementById('cancel-modal-order-id').innerText = orderId;
       document.getElementById('cancel-comment-input').value = '';
-      
       document.querySelectorAll('.reason-chip').forEach(btn => {
         btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
       });
-
       document.getElementById('cancel-modal').classList.remove('hidden');
     }
 
     function closeCancelModal() {
       pendingCancelOrderId = null;
       document.getElementById('cancel-modal').classList.add('hidden');
+    }
+
+    function setPresetReason(reasonText) {
+      document.getElementById('cancel-comment-input').value = reasonText;
+      document.querySelectorAll('.reason-chip').forEach(btn => {
+        if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
+          btn.className = 'reason-chip text-[11px] font-bold bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm border border-stone-900 active:scale-95';
+        } else {
+          btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
+        }
+      });
     }
 
     async function submitCancelOrder() {
@@ -519,14 +709,8 @@
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'cancelOrder',
-            pin: currentPin,
-            orderId: pendingCancelOrderId,
-            comment: comment
-          })
+          body: JSON.stringify({ action: 'cancelOrder', pin: currentPin, orderId: pendingCancelOrderId, comment })
         });
-
         const result = await res.json();
         if (result.status === 'success') {
           alert(`Order ${pendingCancelOrderId} cancelled. Items restored to stock.`);
