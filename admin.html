@@ -70,7 +70,7 @@
             <span class="hidden sm:inline">Refresh</span>
           </button>
           <button onclick="handleLogout()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200">
-            Logout
+            Lock
           </button>
         </div>
       </div>
@@ -191,54 +191,74 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
     
-    let currentPin = sessionStorage.getItem('keg_admin_pin') || '';
+    // STRICT NO-SAVE PIN: PIN is kept ONLY in active memory while viewing.
+    // Closing the app, closing the tab, or switching away locks the screen instantly.
+    let currentPin = '';
     let allOrders = [];
     let currentFilter = 'ALL';
     let searchQuery = '';
     let pendingCancelOrderId = null;
 
-    if (currentPin) {
-      showDashboard();
-    }
-
     function handleLogin(e) {
       e.preventDefault();
-      const pin = document.getElementById('admin-pin-input').value.trim();
+      const pinInput = document.getElementById('admin-pin-input');
+      const pin = pinInput.value.trim();
       if (!pin) return;
 
       const btn = document.getElementById('login-btn');
+      const errBox = document.getElementById('login-error');
+      errBox.classList.add('hidden');
       btn.disabled = true;
       btn.innerText = "Checking PIN...";
 
-      currentPin = pin;
-      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}`)
+      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(pin)}`)
         .then(res => res.json())
         .then(data => {
           btn.disabled = false;
           btn.innerText = "Unlock Dashboard";
           if (data && !data.error && Array.isArray(data)) {
-            sessionStorage.setItem('keg_admin_pin', currentPin);
+            currentPin = pin;
             allOrders = data;
+            pinInput.value = '';
             showDashboard();
           } else {
-            document.getElementById('login-error').classList.remove('hidden');
+            errBox.classList.remove('hidden');
+            pinInput.value = '';
+            pinInput.focus();
           }
         })
         .catch(err => {
           btn.disabled = false;
           btn.innerText = "Unlock Dashboard";
-          document.getElementById('login-error').classList.remove('hidden');
+          errBox.classList.remove('hidden');
+          pinInput.value = '';
         });
     }
 
     function handleLogout() {
-      sessionStorage.removeItem('keg_admin_pin');
       currentPin = '';
       allOrders = [];
       document.getElementById('dashboard-screen').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
-      document.getElementById('admin-pin-input').value = '';
+      const pinInput = document.getElementById('admin-pin-input');
+      pinInput.value = '';
+      document.getElementById('login-error').classList.add('hidden');
     }
+
+    // Auto-lock when user closes the app, locks phone, switches tabs, or minimizes browser
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        handleLogout();
+      }
+    });
+
+    window.addEventListener('pagehide', () => {
+      handleLogout();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      handleLogout();
+    });
 
     function showDashboard() {
       document.getElementById('login-screen').classList.add('hidden');
@@ -312,7 +332,6 @@
     function setPresetReason(reasonText) {
       document.getElementById('cancel-comment-input').value = reasonText;
       
-      // Highlight selected chip
       document.querySelectorAll('.reason-chip').forEach(btn => {
         if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
           btn.className = 'reason-chip text-[11px] font-bold bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm border border-stone-900 active:scale-95';
@@ -326,7 +345,6 @@
       const container = document.getElementById('orders-list');
       let filtered = allOrders;
 
-      // Status Filter
       if (currentFilter === 'PENDING_PAYMENT') {
         filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
       } else if (currentFilter === 'CONFIRMED') {
@@ -335,7 +353,6 @@
         filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
       }
 
-      // Live Search Filter (Checks Order ID, Buyer Name, Contact, Email, Comment)
       if (searchQuery.length > 0) {
         filtered = filtered.filter(o => {
           const id = (o.orderId || '').toLowerCase();
@@ -392,7 +409,6 @@
 
         return `
           <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 transition hover:shadow-md">
-            <!-- Order Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -409,7 +425,6 @@
               </div>
             </div>
 
-            <!-- Buyer Details & Fulfillment -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-3.5 text-xs border-b border-stone-100">
               <div class="space-y-1">
                 <div><span class="text-stone-400 font-medium">Buyer:</span> <b class="text-stone-800">${order.buyerName}</b></div>
@@ -423,7 +438,6 @@
               </div>
             </div>
 
-            <!-- Items List -->
             <div class="py-3">
               <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1.5">Ordered Items</span>
               <div class="bg-stone-50 rounded-xl p-3 border border-stone-100">
@@ -431,7 +445,6 @@
               </div>
             </div>
 
-            <!-- Actions Bar -->
             ${isPending ? `
               <div class="pt-3 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
                 <button onclick="openCancelModal('${order.orderId}')" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
