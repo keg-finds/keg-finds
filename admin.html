@@ -90,7 +90,7 @@
             <span class="text-xl">📢</span>
             <div>
               <h2 class="font-serif font-bold text-sm text-stone-900">Website Announcement Banner</h2>
-              <p class="text-[11px] text-stone-500">Updates the top banner on your store in real time without editing code</p>
+              <p class="text-[11px] text-stone-500">Post drop dates, sale alerts, and schedule changes in advance</p>
             </div>
           </div>
           <!-- Enable/Disable Switch -->
@@ -101,7 +101,7 @@
         </div>
 
         <div class="mt-3.5 flex flex-col sm:flex-row gap-2">
-          <input type="text" id="banner-text-input" placeholder="e.g. 📢 FLASH SALE: 20% off all items! Meetups available at Urban Deca Homes Ortigas." class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          <input type="text" id="banner-text-input" placeholder="e.g. 📢 DROP ALERT: 15 new dress shirts dropping this Friday @ 8:00 PM! Mark your calendars." class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
           <button onclick="saveAnnouncementBanner()" id="save-banner-btn" class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm whitespace-nowrap active:scale-95">
             Save Banner
           </button>
@@ -115,7 +115,7 @@
           <span id="nav-badge-orders" class="bg-amber-100 text-amber-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
         </button>
         <button id="nav-tab-inventory" onclick="switchMainView('inventory')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900">
-          <span>🏷️ Stocks &amp; Inventory</span>
+          <span>🏷️ Stocks &amp; Drops</span>
           <span id="nav-badge-inventory" class="bg-stone-300 text-stone-800 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
         </button>
       </div>
@@ -179,26 +179,30 @@
       </div>
 
       <!-- =================================================================== -->
-      <!-- VIEW 2: STOCKS & INVENTORY MANAGEMENT -->
+      <!-- VIEW 2: STOCKS, DRAFTS & SCHEDULED DROPS -->
       <!-- =================================================================== -->
       <div id="view-inventory" class="hidden space-y-6">
         <!-- Stock KPI Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-            <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Items</span>
-            <div id="inv-stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm">
+            <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Listed</span>
+            <div id="inv-stat-total" class="text-xl font-black text-stone-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
-            <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">In Stock (>1)</span>
-            <div id="inv-stat-instock" class="text-2xl font-black text-emerald-900 mt-1">0</div>
+          <div class="bg-white p-4 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+            <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Live on Shop</span>
+            <div id="inv-stat-live" class="text-xl font-black text-emerald-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
-            <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Low Stock (1 left)</span>
-            <div id="inv-stat-low" class="text-2xl font-black text-amber-900 mt-1">0</div>
+          <div class="bg-white p-4 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/40">
+            <span class="text-[10px] font-bold text-purple-800 uppercase tracking-wider block">Scheduled Drops</span>
+            <div id="inv-stat-scheduled" class="text-xl font-black text-purple-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
-            <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Out of Stock (0)</span>
-            <div id="inv-stat-out" class="text-2xl font-black text-red-900 mt-1">0</div>
+          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm bg-stone-100/70">
+            <span class="text-[10px] font-bold text-stone-600 uppercase tracking-wider block">Drafts (Hidden)</span>
+            <div id="inv-stat-draft" class="text-xl font-black text-stone-800 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+            <span class="text-[10px] font-bold text-red-800 uppercase tracking-wider block">Sold Out</span>
+            <div id="inv-stat-out" class="text-xl font-black text-red-900 mt-1">0</div>
           </div>
         </div>
 
@@ -216,13 +220,16 @@
 
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
             <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
-              <button onclick="filterInventory('ALL', this)" class="inv-filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All Items</button>
-              <button onclick="filterInventory('PASIG', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">📍 Pasig Hub</button>
-              <button onclick="filterInventory('SANTA MARIA', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">📍 Santa Maria Hub</button>
-              <button onclick="filterInventory('OUT_OF_STOCK', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">🚨 Out of Stock</button>
+              <button onclick="filterInventory('ALL', this)" class="inv-filter-btn active bg-stone-900 text-white px-3.5 py-2 rounded-full transition shadow-sm">All</button>
+              <button onclick="filterInventory('ACTIVE', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">🟢 Live</button>
+              <button onclick="filterInventory('SCHEDULED', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">⏰ Scheduled</button>
+              <button onclick="filterInventory('DRAFT', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">📝 Drafts</button>
+              <button onclick="filterInventory('PASIG', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">📍 Pasig</button>
+              <button onclick="filterInventory('SANTA MARIA', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">📍 Santa Maria</button>
+              <button onclick="filterInventory('OUT_OF_STOCK', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">🚨 Out of Stock</button>
             </div>
 
-            <div class="text-xs text-stone-500 font-medium">
+            <div class="text-xs text-stone-500 font-medium whitespace-nowrap">
               Showing <span id="inv-count-label" class="font-bold text-stone-900">0</span> listings
             </div>
           </div>
@@ -238,7 +245,7 @@
     </main>
   </div>
 
-  <!-- ADD ITEM MODAL -->
+  <!-- ADD ITEM MODAL (With Publishing & Scheduling Options) -->
   <div id="add-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
       <button onclick="closeAddItemModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -256,13 +263,13 @@
       <form id="add-item-form" onsubmit="submitNewItem(event)" class="space-y-4 text-xs">
         <div>
           <label class="font-bold text-stone-700 block mb-1">Item Name *</label>
-          <input type="text" id="new-item-name" required placeholder="e.g. Brooks Brothers White Oxford Shirt" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          <input type="text" id="new-item-name" required placeholder="e.g. Jordan 1 Retro High OG" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="font-bold text-stone-700 block mb-1">Category *</label>
-            <input type="text" id="new-item-category" required placeholder="e.g. shirts, housewares, shoes" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+            <input type="text" id="new-item-category" required placeholder="e.g. shoes, shirts, housewares" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
           </div>
           <div>
             <label class="font-bold text-stone-700 block mb-1">Hub Location *</label>
@@ -276,7 +283,7 @@
         <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="font-bold text-stone-700 block mb-1">Price (₱) *</label>
-            <input type="number" id="new-item-price" required min="1" step="1" placeholder="350" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
+            <input type="number" id="new-item-price" required min="1" step="1" placeholder="3500" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
           <div>
             <label class="font-bold text-stone-700 block mb-1">Stock Quantity *</label>
@@ -288,6 +295,38 @@
           </div>
         </div>
 
+        <!-- Publishing Status & Scheduling Box -->
+        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-3.5 space-y-2.5">
+          <label class="font-bold text-stone-800 block text-[11px] uppercase tracking-wider">
+            Publishing Status &amp; Drop Timing *
+          </label>
+
+          <div class="grid grid-cols-3 gap-2">
+            <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
+              <input type="radio" name="new-item-visibility" value="ACTIVE" checked onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
+              <span class="font-bold text-stone-800 text-[11px]">Publish Now</span>
+            </label>
+            <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
+              <input type="radio" name="new-item-visibility" value="SCHEDULED" onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
+              <span class="font-bold text-purple-900 text-[11px]">⏰ Schedule Drop</span>
+            </label>
+            <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
+              <input type="radio" name="new-item-visibility" value="DRAFT" onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
+              <span class="font-bold text-stone-600 text-[11px]">Save as Draft</span>
+            </label>
+          </div>
+
+          <!-- Schedule Drop Datetime Input -->
+          <div id="schedule-datetime-container" class="hidden pt-2 border-t border-stone-200/60">
+            <label class="font-semibold text-purple-900 block mb-1 text-[11px]">
+              Set Live Drop Date &amp; Time (UTC+8 / Manila Time):
+            </label>
+            <input type="datetime-local" id="new-item-publish-at" class="w-full border border-purple-200 rounded-xl p-2 text-xs bg-white focus:ring-2 focus:ring-purple-700 outline-none font-medium">
+            <p class="text-[10px] text-stone-400 mt-1">Item will automatically become visible to buyers on this exact date and time!</p>
+          </div>
+        </div>
+
+        <!-- Photos Upload Area -->
         <div>
           <label class="font-bold text-stone-700 block mb-1">
             Item Photos * <span class="text-stone-400 font-normal">(select 1 or multiple, no renaming needed)</span>
@@ -303,19 +342,20 @@
           <div id="photos-preview-container" class="mt-2.5 flex flex-wrap gap-2"></div>
         </div>
 
+        <!-- Submit Button -->
         <div class="pt-3 border-t border-stone-100 flex gap-2">
           <button type="button" onclick="closeAddItemModal()" class="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
             Cancel
           </button>
           <button type="submit" id="submit-item-btn" class="flex-1 py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
-            <span>Publish to Store</span>
+            <span>Save &amp; Upload</span>
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Cancel Order Modal -->
+  <!-- Cancel Order Modal with Reason Chips -->
   <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -679,12 +719,12 @@
     }
 
     // =========================================================================
-    // INVENTORY & LIVE STOCK CONTROLLER
+    // INVENTORY, DRAFTS & LIVE STOCKS CONTROLLER
     // =========================================================================
     async function fetchInventoryData() {
       const container = document.getElementById('inventory-grid');
       try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAdminInventory&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
         const data = await res.json();
 
         if (data && data.announcement !== undefined) {
@@ -706,14 +746,33 @@
     }
 
     function updateInvStats() {
+      const now = new Date().getTime();
       const total = allInventory.length;
-      const inStock = allInventory.filter(i => i.stock > 1).length;
-      const lowStock = allInventory.filter(i => i.stock === 1).length;
+      
+      const live = allInventory.filter(i => {
+        const status = (i.status || 'ACTIVE').toUpperCase();
+        if (status === 'DRAFT' || status === 'HIDDEN') return false;
+        if (status === 'SCHEDULED' && i.publishAt) {
+          const t = new Date(i.publishAt).getTime();
+          return !isNaN(t) && now >= t;
+        }
+        return true;
+      }).length;
+
+      const scheduled = allInventory.filter(i => {
+        const status = (i.status || '').toUpperCase();
+        if (status !== 'SCHEDULED' || !i.publishAt) return false;
+        const t = new Date(i.publishAt).getTime();
+        return !isNaN(t) && now < t;
+      }).length;
+
+      const drafts = allInventory.filter(i => (i.status || '').toUpperCase() === 'DRAFT').length;
       const outStock = allInventory.filter(i => i.stock <= 0).length;
 
       document.getElementById('inv-stat-total').innerText = total;
-      document.getElementById('inv-stat-instock').innerText = inStock;
-      document.getElementById('inv-stat-low').innerText = lowStock;
+      document.getElementById('inv-stat-live').innerText = live;
+      document.getElementById('inv-stat-scheduled').innerText = scheduled;
+      document.getElementById('inv-stat-draft').innerText = drafts;
       document.getElementById('inv-stat-out').innerText = outStock;
 
       const navBadge = document.getElementById('nav-badge-inventory');
@@ -751,10 +810,26 @@
     function renderInventory() {
       const container = document.getElementById('inventory-grid');
       let filtered = allInventory;
+      const now = new Date().getTime();
 
-      if (currentInvFilter === 'PASIG') filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('pasig'));
-      else if (currentInvFilter === 'SANTA MARIA') filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('santa'));
-      else if (currentInvFilter === 'OUT_OF_STOCK') filtered = filtered.filter(i => i.stock <= 0);
+      if (currentInvFilter === 'ACTIVE') {
+        filtered = filtered.filter(i => {
+          const status = (i.status || 'ACTIVE').toUpperCase();
+          if (status === 'DRAFT') return false;
+          if (status === 'SCHEDULED' && i.publishAt) return now >= new Date(i.publishAt).getTime();
+          return true;
+        });
+      } else if (currentInvFilter === 'SCHEDULED') {
+        filtered = filtered.filter(i => (i.status || '').toUpperCase() === 'SCHEDULED');
+      } else if (currentInvFilter === 'DRAFT') {
+        filtered = filtered.filter(i => (i.status || '').toUpperCase() === 'DRAFT');
+      } else if (currentInvFilter === 'PASIG') {
+        filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('pasig'));
+      } else if (currentInvFilter === 'SANTA MARIA') {
+        filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('santa'));
+      } else if (currentInvFilter === 'OUT_OF_STOCK') {
+        filtered = filtered.filter(i => i.stock <= 0);
+      }
 
       if (invSearchQuery.length > 0) {
         filtered = filtered.filter(i => {
@@ -780,38 +855,54 @@
       container.innerHTML = filtered.map(item => {
         const firstImg = (item.image || '').split(',')[0].trim() || 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=400&q=80';
         const isOutOfStock = item.stock <= 0;
-        const isLow = item.stock === 1;
+        const status = (item.status || 'ACTIVE').toUpperCase();
 
-        let stockBadge = '';
-        if (isOutOfStock) stockBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-800">SOLD OUT</span>';
-        else if (isLow) stockBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800">1 LEFT</span>';
-        else stockBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">${item.stock} IN STOCK</span>`;
+        let visibilityBadge = '';
+        if (status === 'DRAFT') {
+          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-200 text-stone-700">📝 Draft (Hidden)</span>';
+        } else if (status === 'SCHEDULED') {
+          const schedDate = item.publishAt ? new Date(item.publishAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) : 'Pending';
+          const isLiveNow = item.publishAt && now >= new Date(item.publishAt).getTime();
+          visibilityBadge = isLiveNow ? 
+            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live (Dropped ${schedDate})</span>` :
+            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-200">⏰ Drop: ${schedDate}</span>`;
+        } else {
+          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live on Store</span>';
+        }
 
         return `
-          <div class="bg-white rounded-2xl border border-stone-200 p-4 shadow-sm flex gap-3.5 items-center transition hover:shadow-md">
-            <!-- Thumbnail -->
-            <div class="w-20 h-20 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200 relative">
-              <img src="${firstImg}" alt="${item.name}" class="w-full h-full object-cover">
-              <span class="absolute top-1 left-1 bg-stone-900/80 text-white font-mono text-[9px] font-bold px-1.5 py-0.2 rounded">#${item.id}</span>
-            </div>
-
-            <!-- Item Info -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${item.location}</span>
-                ${stockBadge}
+          <div class="bg-white rounded-2xl border border-stone-200 p-4 shadow-sm flex flex-col justify-between transition hover:shadow-md gap-3">
+            <div class="flex gap-3.5 items-start">
+              <div class="w-20 h-20 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200 relative">
+                <img src="${firstImg}" alt="${item.name}" class="w-full h-full object-cover">
+                <span class="absolute top-1 left-1 bg-stone-900/80 text-white font-mono text-[9px] font-bold px-1.5 py-0.2 rounded">#${item.id}</span>
               </div>
 
-              <h3 class="font-bold text-stone-900 text-sm truncate mt-0.5" title="${item.name}">${item.name}</h3>
-              
-              <div class="flex items-center justify-between mt-2 pt-2 border-t border-stone-100">
-                <span class="font-black text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  ${visibilityBadge}
+                  <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${item.location}</span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
+                </div>
 
-                <!-- Live Stock Stepper (+/-) -->
+                <h3 class="font-bold text-stone-900 text-sm truncate mt-1" title="${item.name}">${item.name}</h3>
+                <div class="text-xs text-stone-500 mt-0.5 font-medium">Condition: <b class="text-stone-700">${item.condition || 'Pre-loved'}</b></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2.5 border-t border-stone-100 flex-wrap gap-2">
+              <span class="font-black text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+
+              <div class="flex items-center gap-2">
+                <select onchange="updateItemVisibility('${item.id}', this.value)" class="text-[11px] font-bold bg-stone-50 border border-stone-200 rounded-lg p-1.5 focus:ring-1 focus:ring-brand-800 outline-none">
+                  <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>🟢 Live</option>
+                  <option value="DRAFT" ${status === 'DRAFT' ? 'selected' : ''}>📝 Draft</option>
+                  <option value="SCHEDULED" ${status === 'SCHEDULED' ? 'selected' : ''}>⏰ Scheduled</option>
+                </select>
+
                 <div class="flex items-center bg-stone-100 rounded-xl border border-stone-200 p-0.5 shadow-sm">
                   <button onclick="adjustStock('${item.id}', -1)" title="Minus 1 stock" class="w-7 h-7 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
-                  <span id="stock-val-${item.id}" class="w-9 text-center font-mono font-bold text-xs text-brand-900 select-none">${item.stock}</span>
+                  <span id="stock-val-${item.id}" class="w-8 text-center font-mono font-bold text-xs text-brand-900 select-none">${item.stock}</span>
                   <button onclick="adjustStock('${item.id}', 1)" title="Add 1 stock" class="w-7 h-7 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&plus;</button>
                 </div>
               </div>
@@ -819,6 +910,38 @@
           </div>
         `;
       }).join('');
+    }
+
+    async function updateItemVisibility(itemId, newStatus) {
+      let publishAt = '';
+      if (newStatus === 'SCHEDULED') {
+        const input = prompt("Enter scheduled drop date and time (YYYY-MM-DDTHH:MM, e.g. 2025-02-28T20:00):", new Date().toISOString().slice(0, 16));
+        if (!input) return;
+        publishAt = input;
+      }
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateItemStatus',
+            pin: currentPin,
+            itemId: itemId,
+            status: newStatus,
+            publishAt: publishAt
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          fetchInventoryData();
+        } else {
+          alert('Failed to update status: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error communicating with Google Apps Script.');
+      }
     }
 
     async function adjustStock(itemId, delta) {
@@ -865,11 +988,28 @@
       selectedImageFiles = [];
       document.getElementById('photos-preview-container').innerHTML = '';
       document.getElementById('add-item-form').reset();
+      toggleScheduleInput();
       document.getElementById('add-item-modal').classList.remove('hidden');
     }
 
     function closeAddItemModal() {
       document.getElementById('add-item-modal').classList.add('hidden');
+    }
+
+    function toggleScheduleInput() {
+      const selected = document.querySelector('input[name="new-item-visibility"]:checked');
+      const schedBox = document.getElementById('schedule-datetime-container');
+      if (selected && selected.value === 'SCHEDULED') {
+        schedBox.classList.remove('hidden');
+        if (!document.getElementById('new-item-publish-at').value) {
+          const d = new Date();
+          d.setDate(d.getDate() + 1);
+          d.setHours(20, 0, 0, 0);
+          document.getElementById('new-item-publish-at').value = d.toISOString().slice(0, 16);
+        }
+      } else {
+        schedBox.classList.add('hidden');
+      }
     }
 
     function handleFileSelect(e) {
@@ -945,6 +1085,16 @@
       const price = Number(document.getElementById('new-item-price').value) || 0;
       const stock = Number(document.getElementById('new-item-stock').value) || 1;
       const condition = document.getElementById('new-item-condition').value.trim();
+      
+      const visibility = document.querySelector('input[name="new-item-visibility"]:checked').value;
+      let publishAt = '';
+      if (visibility === 'SCHEDULED') {
+        publishAt = document.getElementById('new-item-publish-at').value;
+        if (!publishAt) {
+          alert('Please pick a drop date and time for the scheduled release.');
+          return;
+        }
+      }
 
       const btn = document.getElementById('submit-item-btn');
       const originalText = btn.innerHTML;
@@ -964,13 +1114,15 @@
             price,
             stock,
             condition,
+            status: visibility,
+            publishAt: publishAt,
             images: selectedImageFiles
           })
         });
 
         const result = await res.json();
         if (result.status === 'success') {
-          alert(`Item #${result.itemId} (${name}) successfully published with ${selectedImageFiles.length} photo(s)!`);
+          alert(`Item #${result.itemId} (${name}) saved as [${visibility}] with ${selectedImageFiles.length} photo(s)!`);
           closeAddItemModal();
           refreshData();
           switchMainView('inventory');
