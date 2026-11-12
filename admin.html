@@ -70,7 +70,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
             <span>Add Item</span>
           </button>
-          <button onclick="fetchOrders()" title="Refresh Orders" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
+          <button onclick="refreshData()" title="Refresh All Data" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
           <button onclick="handleLogout()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200">
@@ -81,65 +81,164 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
-      <!-- KPI Stats -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-          <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
-          <div id="stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
-          <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
-          <div id="stat-pending" class="text-2xl font-black text-amber-900 mt-1">0</div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
-          <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
-          <div id="stat-confirmed" class="text-2xl font-black text-emerald-900 mt-1">0</div>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
-          <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
-          <div id="stat-cancelled" class="text-2xl font-black text-red-900 mt-1">0</div>
-        </div>
-      </div>
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
 
-      <!-- Search Bar & Filter Controls -->
-      <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm mb-6 space-y-4">
-        <!-- Live Search Input -->
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <!-- Dynamic Announcement Banner Manager Card -->
+      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📢</span>
+            <div>
+              <h2 class="font-serif font-bold text-sm text-stone-900">Website Announcement Banner</h2>
+              <p class="text-[11px] text-stone-500">Updates the top banner on your store in real time without editing code</p>
+            </div>
           </div>
-          <input type="text" id="order-search-input" oninput="handleSearch(this.value)" placeholder="Search by Buyer Name, Order ID (e.g. KEG-...), Mobile Number, or Email..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
-          <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
-            &times;
+          <!-- Enable/Disable Switch -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-bold text-stone-700">Display Banner:</label>
+            <input type="checkbox" id="banner-active-toggle" class="w-4 h-4 text-brand-800 rounded focus:ring-brand-800 cursor-pointer">
+          </div>
+        </div>
+
+        <div class="mt-3.5 flex flex-col sm:flex-row gap-2">
+          <input type="text" id="banner-text-input" placeholder="e.g. 📢 FLASH SALE: 20% off all items! Meetups available at Urban Deca Homes Ortigas." class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          <button onclick="saveAnnouncementBanner()" id="save-banner-btn" class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm whitespace-nowrap active:scale-95">
+            Save Banner
           </button>
         </div>
+      </div>
 
-        <!-- Filter Tabs & Result Count -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
-          <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
-            <button onclick="filterOrders('ALL', this)" class="filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
-            <button onclick="filterOrders('PENDING_PAYMENT', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Pending</button>
-            <button onclick="filterOrders('CONFIRMED', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Confirmed</button>
-            <button onclick="filterOrders('CANCELLED', this)" class="filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Cancelled</button>
+      <!-- Navigation Switcher: Orders vs Inventory -->
+      <div class="flex gap-2 p-1.5 bg-stone-200/80 rounded-2xl max-w-md">
+        <button id="nav-tab-orders" onclick="switchMainView('orders')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm">
+          <span>📦 Orders</span>
+          <span id="nav-badge-orders" class="bg-amber-100 text-amber-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+        <button id="nav-tab-inventory" onclick="switchMainView('inventory')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900">
+          <span>🏷️ Stocks &amp; Inventory</span>
+          <span id="nav-badge-inventory" class="bg-stone-300 text-stone-800 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- VIEW 1: ORDERS MANAGEMENT -->
+      <!-- =================================================================== -->
+      <div id="view-orders" class="space-y-6">
+        <!-- KPI Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+            <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
+            <div id="stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+            <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
+            <div id="stat-pending" class="text-2xl font-black text-amber-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+            <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
+            <div id="stat-confirmed" class="text-2xl font-black text-emerald-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+            <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
+            <div id="stat-cancelled" class="text-2xl font-black text-red-900 mt-1">0</div>
+          </div>
+        </div>
+
+        <!-- Search Bar & Filter Controls -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input type="text" id="order-search-input" oninput="handleOrderSearch(this.value)" placeholder="Search by Buyer Name, Order ID (e.g. KEG-...), Mobile Number, or Email..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+            <button id="clear-order-search-btn" onclick="clearOrderSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+              &times;
+            </button>
           </div>
 
-          <div class="text-xs text-stone-500 font-medium">
-            Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
+            <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+              <button onclick="filterOrders('ALL', this)" class="order-filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
+              <button onclick="filterOrders('PENDING_PAYMENT', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Pending</button>
+              <button onclick="filterOrders('CONFIRMED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Confirmed</button>
+              <button onclick="filterOrders('CANCELLED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Cancelled</button>
+            </div>
+
+            <div class="text-xs text-stone-500 font-medium">
+              Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders List Container -->
+        <div id="orders-list" class="space-y-4">
+          <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
+            Loading orders from database...
           </div>
         </div>
       </div>
 
-      <!-- Orders List Container -->
-      <div id="orders-list" class="space-y-4">
-        <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
-          Loading orders from database...
+      <!-- =================================================================== -->
+      <!-- VIEW 2: STOCKS & INVENTORY MANAGEMENT -->
+      <!-- =================================================================== -->
+      <div id="view-inventory" class="hidden space-y-6">
+        <!-- Stock KPI Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+            <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Items</span>
+            <div id="inv-stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+            <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">In Stock (>1)</span>
+            <div id="inv-stat-instock" class="text-2xl font-black text-emerald-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+            <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Low Stock (1 left)</span>
+            <div id="inv-stat-low" class="text-2xl font-black text-amber-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+            <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Out of Stock (0)</span>
+            <div id="inv-stat-out" class="text-2xl font-black text-red-900 mt-1">0</div>
+          </div>
+        </div>
+
+        <!-- Inventory Search & Filter Controls -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input type="text" id="inv-search-input" oninput="handleInvSearch(this.value)" placeholder="Search inventory by Item Name, ID (#1), Category, or Hub..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+            <button id="clear-inv-search-btn" onclick="clearInvSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+              &times;
+            </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
+            <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+              <button onclick="filterInventory('ALL', this)" class="inv-filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All Items</button>
+              <button onclick="filterInventory('PASIG', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">📍 Pasig Hub</button>
+              <button onclick="filterInventory('SANTA MARIA', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">📍 Santa Maria Hub</button>
+              <button onclick="filterInventory('OUT_OF_STOCK', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">🚨 Out of Stock</button>
+            </div>
+
+            <div class="text-xs text-stone-500 font-medium">
+              Showing <span id="inv-count-label" class="font-bold text-stone-900">0</span> listings
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Items Grid -->
+        <div id="inventory-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="col-span-full bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
+            Loading inventory from database...
+          </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- ADD ITEM MODAL (Direct Google Drive Upload & Sheets Integration) -->
+  <!-- ADD ITEM MODAL -->
   <div id="add-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
       <button onclick="closeAddItemModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -155,19 +254,16 @@
       </div>
 
       <form id="add-item-form" onsubmit="submitNewItem(event)" class="space-y-4 text-xs">
-        <!-- Item Name -->
         <div>
           <label class="font-bold text-stone-700 block mb-1">Item Name *</label>
           <input type="text" id="new-item-name" required placeholder="e.g. Brooks Brothers White Oxford Shirt" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <!-- Category -->
           <div>
             <label class="font-bold text-stone-700 block mb-1">Category *</label>
             <input type="text" id="new-item-category" required placeholder="e.g. shirts, housewares, shoes" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
           </div>
-          <!-- Hub Location -->
           <div>
             <label class="font-bold text-stone-700 block mb-1">Hub Location *</label>
             <select id="new-item-location" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none font-semibold">
@@ -178,24 +274,20 @@
         </div>
 
         <div class="grid grid-cols-3 gap-3">
-          <!-- Price -->
           <div>
             <label class="font-bold text-stone-700 block mb-1">Price (₱) *</label>
             <input type="number" id="new-item-price" required min="1" step="1" placeholder="350" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
-          <!-- Stock -->
           <div>
             <label class="font-bold text-stone-700 block mb-1">Stock Quantity *</label>
             <input type="number" id="new-item-stock" required min="1" value="1" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
-          <!-- Condition -->
           <div>
             <label class="font-bold text-stone-700 block mb-1">Condition *</label>
             <input type="text" id="new-item-condition" required value="10/10" placeholder="10/10 or Like New" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
           </div>
         </div>
 
-        <!-- Photos Upload Area -->
         <div>
           <label class="font-bold text-stone-700 block mb-1">
             Item Photos * <span class="text-stone-400 font-normal">(select 1 or multiple, no renaming needed)</span>
@@ -208,11 +300,9 @@
             <input type="file" id="new-item-files" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event)">
           </div>
 
-          <!-- Selected Thumbnails Preview -->
           <div id="photos-preview-container" class="mt-2.5 flex flex-wrap gap-2"></div>
         </div>
 
-        <!-- Submit Button -->
         <div class="pt-3 border-t border-stone-100 flex gap-2">
           <button type="button" onclick="closeAddItemModal()" class="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
             Cancel
@@ -225,7 +315,7 @@
     </div>
   </div>
 
-  <!-- Cancel Order Modal with Reason Chips + Comment Input -->
+  <!-- Cancel Order Modal -->
   <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -280,11 +370,15 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
     
     let currentPin = '';
+    let currentView = 'orders';
     let allOrders = [];
-    let currentFilter = 'ALL';
-    let searchQuery = '';
+    let allInventory = [];
+    let currentOrderFilter = 'ALL';
+    let currentInvFilter = 'ALL';
+    let orderSearchQuery = '';
+    let invSearchQuery = '';
     let pendingCancelOrderId = null;
-    let selectedImageFiles = []; // Array of base64 objects { data, type, name }
+    let selectedImageFiles = [];
 
     function handleLogin(e) {
       e.preventDefault();
@@ -325,10 +419,11 @@
     function handleLogout() {
       currentPin = '';
       allOrders = [];
+      allInventory = [];
       document.getElementById('dashboard-screen').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
       const pinInput = document.getElementById('admin-pin-input');
-      pinInput.value = '';
+      if (pinInput) pinInput.value = '';
       document.getElementById('login-error').classList.add('hidden');
     }
 
@@ -341,9 +436,75 @@
     function showDashboard() {
       document.getElementById('login-screen').classList.add('hidden');
       document.getElementById('dashboard-screen').classList.remove('hidden');
-      fetchOrders();
+      refreshData();
     }
 
+    function refreshData() {
+      fetchOrders();
+      fetchInventoryData();
+    }
+
+    function switchMainView(view) {
+      currentView = view;
+      const tabOrders = document.getElementById('nav-tab-orders');
+      const tabInv = document.getElementById('nav-tab-inventory');
+      const viewOrders = document.getElementById('view-orders');
+      const viewInv = document.getElementById('view-inventory');
+
+      if (view === 'orders') {
+        tabOrders.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm";
+        tabInv.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900";
+        viewOrders.classList.remove('hidden');
+        viewInv.classList.add('hidden');
+      } else {
+        tabInv.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm";
+        tabOrders.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900";
+        viewInv.classList.remove('hidden');
+        viewOrders.classList.add('hidden');
+      }
+    }
+
+    // =========================================================================
+    // ANNOUNCEMENT BANNER ACTIONS
+    // =========================================================================
+    async function saveAnnouncementBanner() {
+      const text = document.getElementById('banner-text-input').value.trim();
+      const isActive = document.getElementById('banner-active-toggle').checked;
+      const btn = document.getElementById('save-banner-btn');
+      const origText = btn.innerText;
+
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateAnnouncement',
+            pin: currentPin,
+            announcement: text,
+            showAnnouncement: isActive
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert('Announcement banner saved successfully and synced to your online shop!');
+        } else {
+          alert('Error saving announcement: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error communicating with Google Apps Script.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = origText;
+      }
+    }
+
+    // =========================================================================
+    // ORDERS CONTROLLER
+    // =========================================================================
     async function fetchOrders() {
       const container = document.getElementById('orders-list');
       container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">Loading orders from database...</div>';
@@ -353,7 +514,7 @@
         const data = await res.json();
         if (Array.isArray(data)) {
           allOrders = data;
-          updateStats();
+          updateOrderStats();
           renderOrders();
         } else {
           container.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Failed to fetch orders. Unauthorized PIN or network issue.</div>';
@@ -364,7 +525,7 @@
       }
     }
 
-    function updateStats() {
+    function updateOrderStats() {
       const total = allOrders.length;
       const pending = allOrders.filter(o => o.status === 'PENDING_PAYMENT').length;
       const confirmed = allOrders.filter(o => o.status === 'CONFIRMED').length;
@@ -374,11 +535,14 @@
       document.getElementById('stat-pending').innerText = pending;
       document.getElementById('stat-confirmed').innerText = confirmed;
       document.getElementById('stat-cancelled').innerText = cancelled;
+
+      const navBadge = document.getElementById('nav-badge-orders');
+      if (navBadge) navBadge.innerText = pending;
     }
 
     function filterOrders(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(b => {
+      currentOrderFilter = filter;
+      document.querySelectorAll('.order-filter-btn').forEach(b => {
         b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
         b.classList.add('bg-stone-100', 'text-stone-700');
       });
@@ -389,18 +553,18 @@
       renderOrders();
     }
 
-    function handleSearch(val) {
-      searchQuery = (val || '').trim().toLowerCase();
-      const clearBtn = document.getElementById('clear-search-btn');
-      if (searchQuery.length > 0) clearBtn.classList.remove('hidden');
+    function handleOrderSearch(val) {
+      orderSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-order-search-btn');
+      if (orderSearchQuery.length > 0) clearBtn.classList.remove('hidden');
       else clearBtn.classList.add('hidden');
       renderOrders();
     }
 
-    function clearSearch() {
+    function clearOrderSearch() {
       document.getElementById('order-search-input').value = '';
-      searchQuery = '';
-      document.getElementById('clear-search-btn').classList.add('hidden');
+      orderSearchQuery = '';
+      document.getElementById('clear-order-search-btn').classList.add('hidden');
       renderOrders();
     }
 
@@ -408,18 +572,18 @@
       const container = document.getElementById('orders-list');
       let filtered = allOrders;
 
-      if (currentFilter === 'PENDING_PAYMENT') filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
-      else if (currentFilter === 'CONFIRMED') filtered = filtered.filter(o => o.status === 'CONFIRMED');
-      else if (currentFilter === 'CANCELLED') filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
+      if (currentOrderFilter === 'PENDING_PAYMENT') filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
+      else if (currentOrderFilter === 'CONFIRMED') filtered = filtered.filter(o => o.status === 'CONFIRMED');
+      else if (currentOrderFilter === 'CANCELLED') filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
 
-      if (searchQuery.length > 0) {
+      if (orderSearchQuery.length > 0) {
         filtered = filtered.filter(o => {
           const id = (o.orderId || '').toLowerCase();
           const name = (o.buyerName || '').toLowerCase();
           const contact = (o.buyerContact || '').toLowerCase();
           const email = (o.buyerEmail || '').toLowerCase();
           const comment = (o.comment || '').toLowerCase();
-          return id.includes(searchQuery) || name.includes(searchQuery) || contact.includes(searchQuery) || email.includes(searchQuery) || comment.includes(searchQuery);
+          return id.includes(orderSearchQuery) || name.includes(orderSearchQuery) || contact.includes(orderSearchQuery) || email.includes(orderSearchQuery) || comment.includes(orderSearchQuery);
         });
       }
 
@@ -428,7 +592,7 @@
       if (filtered.length === 0) {
         container.innerHTML = `
           <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">
-            ${searchQuery ? `No orders matching "<b>${searchQuery}</b>".` : 'No orders found in this view.'}
+            ${orderSearchQuery ? `No orders matching "<b>${orderSearchQuery}</b>".` : 'No orders found in this view.'}
           </div>
         `;
         return;
@@ -515,7 +679,187 @@
     }
 
     // =========================================================================
-    // ADD NEW ITEM LOGIC (AUTO-RESIZE & DRIVE UPLOAD)
+    // INVENTORY & LIVE STOCK CONTROLLER
+    // =========================================================================
+    async function fetchInventoryData() {
+      const container = document.getElementById('inventory-grid');
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
+        const data = await res.json();
+
+        if (data && data.announcement !== undefined) {
+          document.getElementById('banner-text-input').value = data.announcement || '';
+          document.getElementById('banner-active-toggle').checked = !!data.showAnnouncement;
+        }
+
+        let items = [];
+        if (Array.isArray(data)) items = data;
+        else if (data && Array.isArray(data.items)) items = data.items;
+
+        allInventory = items;
+        updateInvStats();
+        renderInventory();
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div class="col-span-full bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Failed to fetch inventory.</div>';
+      }
+    }
+
+    function updateInvStats() {
+      const total = allInventory.length;
+      const inStock = allInventory.filter(i => i.stock > 1).length;
+      const lowStock = allInventory.filter(i => i.stock === 1).length;
+      const outStock = allInventory.filter(i => i.stock <= 0).length;
+
+      document.getElementById('inv-stat-total').innerText = total;
+      document.getElementById('inv-stat-instock').innerText = inStock;
+      document.getElementById('inv-stat-low').innerText = lowStock;
+      document.getElementById('inv-stat-out').innerText = outStock;
+
+      const navBadge = document.getElementById('nav-badge-inventory');
+      if (navBadge) navBadge.innerText = total;
+    }
+
+    function filterInventory(filter, btn) {
+      currentInvFilter = filter;
+      document.querySelectorAll('.inv-filter-btn').forEach(b => {
+        b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
+        b.classList.add('bg-stone-100', 'text-stone-700');
+      });
+      if (btn) {
+        btn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-stone-100', 'text-stone-700');
+      }
+      renderInventory();
+    }
+
+    function handleInvSearch(val) {
+      invSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-inv-search-btn');
+      if (invSearchQuery.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      renderInventory();
+    }
+
+    function clearInvSearch() {
+      document.getElementById('inv-search-input').value = '';
+      invSearchQuery = '';
+      document.getElementById('clear-inv-search-btn').classList.add('hidden');
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const container = document.getElementById('inventory-grid');
+      let filtered = allInventory;
+
+      if (currentInvFilter === 'PASIG') filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('pasig'));
+      else if (currentInvFilter === 'SANTA MARIA') filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('santa'));
+      else if (currentInvFilter === 'OUT_OF_STOCK') filtered = filtered.filter(i => i.stock <= 0);
+
+      if (invSearchQuery.length > 0) {
+        filtered = filtered.filter(i => {
+          const id = String(i.id || '').toLowerCase();
+          const name = String(i.name || '').toLowerCase();
+          const cat = String(i.category || '').toLowerCase();
+          const loc = String(i.location || '').toLowerCase();
+          return id.includes(invSearchQuery) || name.includes(invSearchQuery) || cat.includes(invSearchQuery) || loc.includes(invSearchQuery);
+        });
+      }
+
+      document.getElementById('inv-count-label').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">
+            ${invSearchQuery ? `No listings matching "<b>${invSearchQuery}</b>".` : 'No listings found in this filter.'}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const firstImg = (item.image || '').split(',')[0].trim() || 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=400&q=80';
+        const isOutOfStock = item.stock <= 0;
+        const isLow = item.stock === 1;
+
+        let stockBadge = '';
+        if (isOutOfStock) stockBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-800">SOLD OUT</span>';
+        else if (isLow) stockBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800">1 LEFT</span>';
+        else stockBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">${item.stock} IN STOCK</span>`;
+
+        return `
+          <div class="bg-white rounded-2xl border border-stone-200 p-4 shadow-sm flex gap-3.5 items-center transition hover:shadow-md">
+            <!-- Thumbnail -->
+            <div class="w-20 h-20 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200 relative">
+              <img src="${firstImg}" alt="${item.name}" class="w-full h-full object-cover">
+              <span class="absolute top-1 left-1 bg-stone-900/80 text-white font-mono text-[9px] font-bold px-1.5 py-0.2 rounded">#${item.id}</span>
+            </div>
+
+            <!-- Item Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${item.location}</span>
+                ${stockBadge}
+              </div>
+
+              <h3 class="font-bold text-stone-900 text-sm truncate mt-0.5" title="${item.name}">${item.name}</h3>
+              
+              <div class="flex items-center justify-between mt-2 pt-2 border-t border-stone-100">
+                <span class="font-black text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+
+                <!-- Live Stock Stepper (+/-) -->
+                <div class="flex items-center bg-stone-100 rounded-xl border border-stone-200 p-0.5 shadow-sm">
+                  <button onclick="adjustStock('${item.id}', -1)" title="Minus 1 stock" class="w-7 h-7 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
+                  <span id="stock-val-${item.id}" class="w-9 text-center font-mono font-bold text-xs text-brand-900 select-none">${item.stock}</span>
+                  <button onclick="adjustStock('${item.id}', 1)" title="Add 1 stock" class="w-7 h-7 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&plus;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function adjustStock(itemId, delta) {
+      const item = allInventory.find(i => String(i.id) === String(itemId));
+      if (!item) return;
+
+      const newStock = Math.max(0, Number(item.stock) + delta);
+      if (newStock === item.stock) return;
+
+      item.stock = newStock;
+      const el = document.getElementById(`stock-val-${itemId}`);
+      if (el) el.innerText = newStock;
+      updateInvStats();
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateStock',
+            pin: currentPin,
+            itemId: itemId,
+            stock: newStock
+          })
+        });
+        const result = await res.json();
+        if (result.status !== 'success') {
+          alert('Failed to update stock: ' + (result.message || 'Unauthorized'));
+          fetchInventoryData();
+        } else {
+          renderInventory();
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+        fetchInventoryData();
+      }
+    }
+
+    // =========================================================================
+    // ADD NEW ITEM MODAL & DRIVE UPLOADER
     // =========================================================================
     function openAddItemModal() {
       selectedImageFiles = [];
@@ -534,8 +878,6 @@
 
       files.forEach(file => {
         if (!file.type.startsWith('image/')) return;
-        
-        // Auto-scale client-side to ensure fast uploads
         const reader = new FileReader();
         reader.onload = function(evt) {
           const img = new Image();
@@ -630,6 +972,8 @@
         if (result.status === 'success') {
           alert(`Item #${result.itemId} (${name}) successfully published with ${selectedImageFiles.length} photo(s)!`);
           closeAddItemModal();
+          refreshData();
+          switchMainView('inventory');
         } else {
           alert("Error adding item: " + (result.message || "Failed"));
         }
@@ -643,7 +987,7 @@
     }
 
     // =========================================================================
-    // CONFIRM / CANCEL ORDER LOGIC
+    // CONFIRM / CANCEL ORDERS
     // =========================================================================
     async function confirmOrder(orderId) {
       if (!confirm(`Mark Order ${orderId} as CONFIRMED / PAID? An automated confirmation email will be sent to the buyer.`)) return;
@@ -716,6 +1060,7 @@
           alert(`Order ${pendingCancelOrderId} cancelled. Items restored to stock.`);
           closeCancelModal();
           fetchOrders();
+          fetchInventoryData();
         } else {
           alert('Error cancelling order: ' + (result.message || 'Unauthorized'));
         }
