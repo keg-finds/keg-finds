@@ -104,7 +104,6 @@
               <p class="text-[10px] sm:text-[11px] text-stone-500 truncate">Post drop dates, sale alerts, and schedule changes</p>
             </div>
           </div>
-          <!-- Enable/Disable Switch -->
           <div class="flex items-center gap-1.5 shrink-0 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200">
             <label class="text-[11px] font-bold text-stone-700">Display:</label>
             <input type="checkbox" id="banner-active-toggle" class="w-4 h-4 text-brand-800 rounded focus:ring-brand-800 cursor-pointer">
@@ -246,7 +245,7 @@
     </main>
   </div>
 
-  <!-- EDIT PRICE & PROMO SALE MODAL (Feature: Edit Price for Existing Items) -->
+  <!-- EDIT PRICE & PROMO SALE MODAL -->
   <div id="edit-price-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeEditPriceModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -458,7 +457,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     </div>
   </div>
 
-  <!-- CONFIRM ORDER MODAL (With Optional Tracking Number / Meetup Note) -->
+  <!-- CONFIRM ORDER MODAL -->
   <div id="confirm-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeConfirmModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -544,7 +543,8 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
 
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
-    
+    const GRACE_PERIOD_MS = 5 * 60 * 1000; // 5 minutes inactivity timeout
+
     let currentPin = '';
     let currentView = 'orders';
     let allOrders = [];
@@ -559,6 +559,51 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     let pendingConfirmOrderId = null;
     let pendingEditPriceItemId = null;
     let selectedImageFiles = [];
+
+    // Check 5-minute grace period on initial load
+    function checkGracePeriod() {
+      const savedPin = sessionStorage.getItem('keg_admin_pin');
+      const lastActive = parseInt(sessionStorage.getItem('keg_admin_last_active') || '0', 10);
+      const now = Date.now();
+
+      if (savedPin && lastActive && (now - lastActive < GRACE_PERIOD_MS)) {
+        currentPin = savedPin;
+        touchActivity();
+        showDashboard();
+        return true;
+      } else {
+        handleLogout();
+        return false;
+      }
+    }
+
+    function touchActivity() {
+      if (currentPin) {
+        sessionStorage.setItem('keg_admin_last_active', String(Date.now()));
+      }
+    }
+
+    function verifyStillActive() {
+      if (!currentPin) return;
+      const lastActive = parseInt(sessionStorage.getItem('keg_admin_last_active') || '0', 10);
+      if (Date.now() - lastActive >= GRACE_PERIOD_MS) {
+        handleLogout();
+      } else {
+        touchActivity();
+      }
+    }
+
+    // Keep session alive while user is interacting
+    ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt => {
+      document.addEventListener(evt, verifyStillActive, { passive: true });
+    });
+
+    // Check timeout when user returns from Messenger or unlocks phone
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        verifyStillActive();
+      }
+    });
 
     function handleLogin(e) {
       e.preventDefault();
@@ -579,6 +624,8 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
           btn.innerText = "Unlock Dashboard";
           if (data && !data.error) {
             currentPin = pin;
+            sessionStorage.setItem('keg_admin_pin', currentPin);
+            touchActivity();
             allOrders = Array.isArray(data) ? data : (data.orders || []);
             uniqueBuyerCount = data.uniqueBuyerCount || 0;
             buyersList = data.buyersList || [];
@@ -603,18 +650,15 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       allOrders = [];
       allInventory = [];
       buyersList = [];
+      sessionStorage.removeItem('keg_admin_pin');
+      sessionStorage.removeItem('keg_admin_last_active');
       document.getElementById('dashboard-screen').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
       const pinInput = document.getElementById('admin-pin-input');
       if (pinInput) pinInput.value = '';
-      document.getElementById('login-error').classList.add('hidden');
+      const errBox = document.getElementById('login-error');
+      if (errBox) errBox.classList.add('hidden');
     }
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') handleLogout();
-    });
-    window.addEventListener('pagehide', () => handleLogout());
-    window.addEventListener('beforeunload', () => handleLogout());
 
     function showDashboard() {
       document.getElementById('login-screen').classList.add('hidden');
@@ -1573,6 +1617,9 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
         btn.innerText = "Confirm Cancel & Restock";
       }
     }
+
+    // Auto-check grace period on load
+    checkGracePeriod();
   </script>
 </body>
 </html>
