@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>KEG Finds | Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
 
   <!-- Admin Login Screen -->
   <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-xl border border-stone-200 text-center">
+    <div class="bg-white rounded-3xl p-7 sm:p-8 max-w-sm w-full shadow-xl border border-stone-200 text-center">
       <div class="w-14 h-14 bg-brand-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-serif font-bold text-2xl shadow-sm">
         K
       </div>
@@ -53,71 +53,74 @@
 
   <!-- Admin Dashboard Screen (Hidden until login) -->
   <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
-    <!-- Navbar -->
+    <!-- Clean, Mobile-First Sticky Header (No Overflow!) -->
     <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-brand-800 text-white font-serif font-bold text-lg flex items-center justify-center">K</div>
-          <div>
-            <span class="font-serif font-bold text-base text-stone-900 block leading-tight">KEG FINDS ADMIN</span>
-            <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Store Management</span>
+      <div class="max-w-6xl mx-auto px-4 py-2.5 sm:py-3">
+        <!-- Top Row: Brand & Quick Utility Buttons (Always visible on mobile!) -->
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-brand-800 text-white font-serif font-bold text-lg flex items-center justify-center shrink-0">K</div>
+            <div class="min-w-0">
+              <span class="font-serif font-bold text-sm sm:text-base text-stone-900 block leading-tight truncate">KEG FINDS ADMIN</span>
+              <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Store Management</span>
+            </div>
+          </div>
+
+          <!-- Utility Icons: Refresh & Lock -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="refreshData()" title="Refresh All Data" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition border border-stone-200 active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button onclick="handleLogout()" class="px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200 active:scale-95">
+              Lock
+            </button>
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <!-- VIP Drop Email Broadcast Button -->
-          <button onclick="openBroadcastModal()" class="px-3.5 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            <span class="hidden sm:inline">Email Past Buyers</span>
-            <span class="sm:hidden">Broadcast</span>
+        <!-- Action Row (2 Touch-Friendly Main Action Buttons on Mobile) -->
+        <div class="grid grid-cols-2 gap-2 mt-2.5 pt-2 border-t border-stone-100">
+          <button onclick="openBroadcastModal()" class="py-2 px-3 bg-purple-700 hover:bg-purple-800 text-white rounded-xl transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span class="truncate">Email Past Buyers</span>
           </button>
-
-          <!-- Add Item Button -->
-          <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-brand-800 hover:bg-brand-900 text-white rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-            <span>Add Item</span>
-          </button>
-
-          <button onclick="refreshData()" title="Refresh All Data" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          </button>
-          <button onclick="handleLogout()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200">
-            Lock
+          <button onclick="openAddItemModal()" class="py-2 px-3 bg-brand-800 hover:bg-brand-900 text-white rounded-xl transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Add Item</span>
           </button>
         </div>
       </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 flex-1 w-full space-y-6">
 
       <!-- Dynamic Announcement Banner Manager Card -->
-      <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">📢</span>
-            <div>
-              <h2 class="font-serif font-bold text-sm text-stone-900">Website Announcement Banner</h2>
-              <p class="text-[11px] text-stone-500">Post drop dates, sale alerts, and schedule changes in advance</p>
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <div class="flex items-center justify-between gap-2 pb-3 border-b border-stone-100">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-lg sm:text-xl shrink-0">📢</span>
+            <div class="min-w-0">
+              <h2 class="font-serif font-bold text-xs sm:text-sm text-stone-900 truncate">Website Announcement Banner</h2>
+              <p class="text-[10px] sm:text-[11px] text-stone-500 truncate">Post drop dates, sale alerts, and schedule changes</p>
             </div>
           </div>
           <!-- Enable/Disable Switch -->
-          <div class="flex items-center gap-2">
-            <label class="text-xs font-bold text-stone-700">Display Banner:</label>
+          <div class="flex items-center gap-1.5 shrink-0 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200">
+            <label class="text-[11px] font-bold text-stone-700">Display:</label>
             <input type="checkbox" id="banner-active-toggle" class="w-4 h-4 text-brand-800 rounded focus:ring-brand-800 cursor-pointer">
           </div>
         </div>
 
-        <div class="mt-3.5 flex flex-col sm:flex-row gap-2">
-          <input type="text" id="banner-text-input" placeholder="e.g. 📢 DROP ALERT: 15 new dress shirts dropping this Friday @ 8:00 PM! Mark your calendars." class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-          <button onclick="saveAnnouncementBanner()" id="save-banner-btn" class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm whitespace-nowrap active:scale-95">
+        <div class="mt-3 flex flex-col sm:flex-row gap-2">
+          <input type="text" id="banner-text-input" placeholder="e.g. 📢 DROP ALERT: 15 new dress shirts dropping this Friday @ 8:00 PM!" class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          <button onclick="saveAnnouncementBanner()" id="save-banner-btn" class="w-full sm:w-auto px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm whitespace-nowrap active:scale-95">
             Save Banner
           </button>
         </div>
       </div>
 
       <!-- Navigation Switcher: Orders vs Inventory -->
-      <div class="flex gap-2 p-1.5 bg-stone-200/80 rounded-2xl max-w-md">
+      <div class="flex gap-1.5 p-1 bg-stone-200/80 rounded-2xl max-w-md">
         <button id="nav-tab-orders" onclick="switchMainView('orders')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm">
           <span>📦 Orders</span>
           <span id="nav-badge-orders" class="bg-amber-100 text-amber-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
@@ -133,46 +136,46 @@
       <!-- =================================================================== -->
       <div id="view-orders" class="space-y-6">
         <!-- KPI Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-            <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
-            <div id="stat-total" class="text-2xl font-black text-stone-900 mt-1">0</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
+            <span class="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
+            <div id="stat-total" class="text-xl sm:text-2xl font-black text-stone-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
-            <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
-            <div id="stat-pending" class="text-2xl font-black text-amber-900 mt-1">0</div>
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+            <span class="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
+            <div id="stat-pending" class="text-xl sm:text-2xl font-black text-amber-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
-            <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
-            <div id="stat-confirmed" class="text-2xl font-black text-emerald-900 mt-1">0</div>
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+            <span class="text-[10px] sm:text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
+            <div id="stat-confirmed" class="text-xl sm:text-2xl font-black text-emerald-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
-            <span class="text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
-            <div id="stat-cancelled" class="text-2xl font-black text-red-900 mt-1">0</div>
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+            <span class="text-[10px] sm:text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
+            <div id="stat-cancelled" class="text-xl sm:text-2xl font-black text-red-900 mt-1">0</div>
           </div>
         </div>
 
         <!-- Search Bar & Filter Controls -->
-        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <input type="text" id="order-search-input" oninput="handleOrderSearch(this.value)" placeholder="Search by Buyer Name, Order ID (e.g. KEG-...), Mobile Number, or Email..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+            <input type="text" id="order-search-input" oninput="handleOrderSearch(this.value)" placeholder="Search by Buyer Name, Order ID, Mobile Number, or Email..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
             <button id="clear-order-search-btn" onclick="clearOrderSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
               &times;
             </button>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
-            <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
-              <button onclick="filterOrders('ALL', this)" class="order-filter-btn active bg-stone-900 text-white px-4 py-2 rounded-full transition shadow-sm">All</button>
-              <button onclick="filterOrders('PENDING_PAYMENT', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Pending</button>
-              <button onclick="filterOrders('CONFIRMED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Confirmed</button>
-              <button onclick="filterOrders('CANCELLED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2 rounded-full transition">Cancelled</button>
+            <div class="flex gap-1.5 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+              <button onclick="filterOrders('ALL', this)" class="order-filter-btn active bg-stone-900 text-white px-3.5 py-1.5 rounded-full transition shadow-sm">All</button>
+              <button onclick="filterOrders('PENDING_PAYMENT', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-1.5 rounded-full transition">Pending</button>
+              <button onclick="filterOrders('CONFIRMED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-1.5 rounded-full transition">Confirmed</button>
+              <button onclick="filterOrders('CANCELLED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-1.5 rounded-full transition">Cancelled</button>
             </div>
 
-            <div class="text-xs text-stone-500 font-medium">
+            <div class="text-[11px] sm:text-xs text-stone-500 font-medium">
               Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
             </div>
           </div>
@@ -191,53 +194,53 @@
       <!-- =================================================================== -->
       <div id="view-inventory" class="hidden space-y-6">
         <!-- Stock KPI Stats -->
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
-          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200 shadow-sm">
             <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Listed</span>
             <div id="inv-stat-total" class="text-xl font-black text-stone-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-4 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
             <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Live on Shop</span>
             <div id="inv-stat-live" class="text-xl font-black text-emerald-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-4 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/40">
-            <span class="text-[10px] font-bold text-purple-800 uppercase tracking-wider block">Scheduled Drops</span>
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/40">
+            <span class="text-[10px] font-bold text-purple-800 uppercase tracking-wider block">Scheduled</span>
             <div id="inv-stat-scheduled" class="text-xl font-black text-purple-900 mt-1">0</div>
           </div>
-          <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm bg-stone-100/70">
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200 shadow-sm bg-stone-100/70">
             <span class="text-[10px] font-bold text-stone-600 uppercase tracking-wider block">Drafts (Hidden)</span>
             <div id="inv-stat-draft" class="text-xl font-black text-stone-800 mt-1">0</div>
           </div>
-          <div class="bg-white p-4 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
             <span class="text-[10px] font-bold text-red-800 uppercase tracking-wider block">Sold Out</span>
             <div id="inv-stat-out" class="text-xl font-black text-red-900 mt-1">0</div>
           </div>
         </div>
 
         <!-- Inventory Search & Filter Controls -->
-        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <input type="text" id="inv-search-input" oninput="handleInvSearch(this.value)" placeholder="Search inventory by Item Name, ID (#1), Category, or Hub..." class="w-full pl-10 pr-10 py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+            <input type="text" id="inv-search-input" oninput="handleInvSearch(this.value)" placeholder="Search inventory by Item Name, ID (#1), Category, or Hub..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
             <button id="clear-inv-search-btn" onclick="clearInvSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
               &times;
             </button>
           </div>
 
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
-            <div class="flex gap-2 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
-              <button onclick="filterInventory('ALL', this)" class="inv-filter-btn active bg-stone-900 text-white px-3.5 py-2 rounded-full transition shadow-sm">All</button>
-              <button onclick="filterInventory('ACTIVE', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">🟢 Live</button>
-              <button onclick="filterInventory('SCHEDULED', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">⏰ Scheduled</button>
-              <button onclick="filterInventory('DRAFT', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">📝 Drafts</button>
-              <button onclick="filterInventory('PASIG', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">📍 Pasig</button>
-              <button onclick="filterInventory('SANTA MARIA', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">📍 Santa Maria</button>
-              <button onclick="filterInventory('OUT_OF_STOCK', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-2 rounded-full transition">🚨 Out of Stock</button>
+            <div class="flex gap-1.5 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+              <button onclick="filterInventory('ALL', this)" class="inv-filter-btn active bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm">All</button>
+              <button onclick="filterInventory('ACTIVE', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">🟢 Live</button>
+              <button onclick="filterInventory('SCHEDULED', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">⏰ Sched</button>
+              <button onclick="filterInventory('DRAFT', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">📝 Draft</button>
+              <button onclick="filterInventory('PASIG', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">📍 Pasig</button>
+              <button onclick="filterInventory('SANTA MARIA', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">📍 Ilocos</button>
+              <button onclick="filterInventory('OUT_OF_STOCK', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">🚨 Out</button>
             </div>
 
-            <div class="text-xs text-stone-500 font-medium whitespace-nowrap">
+            <div class="text-[11px] sm:text-xs text-stone-500 font-medium whitespace-nowrap">
               Showing <span id="inv-count-label" class="font-bold text-stone-900">0</span> listings
             </div>
           </div>
@@ -253,24 +256,37 @@
     </main>
   </div>
 
-  <!-- VIP DROP EMAIL BROADCAST MODAL -->
+  <!-- VIP DROP EMAIL BROADCAST MODAL (With Viewable Recipient List) -->
   <div id="broadcast-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
-      <button onclick="closeBroadcastModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl border border-stone-200 relative my-6">
+      <button onclick="closeBroadcastModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
       
-      <div class="flex items-center gap-3 mb-5">
-        <div class="w-10 h-10 rounded-2xl bg-purple-700 text-white flex items-center justify-center font-bold">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-purple-700 text-white flex items-center justify-center font-bold shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         </div>
         <div>
-          <h3 class="font-serif text-lg font-bold text-stone-900">Send Drop Email to Past Buyers</h3>
+          <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Send Drop Email to Past Buyers</h3>
           <p class="text-[11px] text-stone-500">
-            Automatically notifies <b id="broadcast-recipient-count" class="text-purple-700 font-bold">0</b> verified customer(s) who ordered from you before!
+            Reaches <b id="broadcast-recipient-count" class="text-purple-700 font-bold">0</b> unique customer(s) from your Orders sheet.
           </p>
         </div>
       </div>
 
-      <form id="broadcast-form" onsubmit="submitBroadcastEmail(event)" class="space-y-4 text-xs">
+      <!-- Explanatory note about deduplication -->
+      <div class="mb-3.5 p-3 bg-purple-50 rounded-xl border border-purple-200 text-[11px] text-purple-900 leading-relaxed">
+        <div class="flex items-center justify-between">
+          <span>👥 <b>Deduplicated by Email:</b> Customers who placed multiple orders will only receive <b>1 email</b> so they don't get spammed.</span>
+        </div>
+        <button type="button" onclick="toggleRecipientDetails()" class="mt-1.5 font-bold text-purple-700 underline text-[11px] hover:text-purple-900 block">
+          <span id="recipient-toggle-text">&#9662; Show Recipient List &amp; Breakdown</span>
+        </button>
+        <div id="recipient-details-box" class="hidden mt-2 pt-2 border-t border-purple-200/60 max-h-36 overflow-y-auto space-y-1 text-[10px]">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <form id="broadcast-form" onsubmit="submitBroadcastEmail(event)" class="space-y-3.5 text-xs">
         <div>
           <label class="font-bold text-stone-700 block mb-1">Drop Subject / Headline *</label>
           <input type="text" id="broadcast-headline" required placeholder="e.g. Fresh Batch of Oxford Dress Shirts &amp; Jackets Just Dropped!" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none font-semibold">
@@ -278,7 +294,7 @@
 
         <div>
           <label class="font-bold text-stone-700 block mb-1">Message Preview for Customers *</label>
-          <textarea id="broadcast-message" rows="4" required class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none leading-relaxed">Hi there! We just added new handpicked pre-loved items to our shop. As a valued past buyer, you get early access to check sizes and inspect photos before they sell out!
+          <textarea id="broadcast-message" rows="3" required class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none leading-relaxed">Hi there! We just added new handpicked pre-loved items to our shop. As a valued past buyer, you get early access to check sizes and inspect photos before they sell out!
 
 Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos Sur), plus Grab/J&amp;T delivery nationwide.</textarea>
         </div>
@@ -288,15 +304,11 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
           <input type="text" id="broadcast-link" value="https://keg-finds.netlify.app" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono text-stone-600 focus:ring-2 focus:ring-purple-700 outline-none">
         </div>
 
-        <div class="p-3 bg-purple-50 rounded-xl border border-purple-200 text-[11px] text-purple-900 leading-relaxed">
-          💡 <b>Tip:</b> Every buyer receives a personalized email with your logo and direct button to browse. Only customers with valid email addresses from your Orders sheet will be sent the update.
-        </div>
-
-        <div class="pt-3 border-t border-stone-100 flex gap-2">
-          <button type="button" onclick="closeBroadcastModal()" class="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+        <div class="pt-2 border-t border-stone-100 flex gap-2">
+          <button type="button" onclick="closeBroadcastModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
             Cancel
           </button>
-          <button type="submit" id="submit-broadcast-btn" class="flex-1 py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
+          <button type="submit" id="submit-broadcast-btn" class="flex-1 py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
             <span>Send Email Blast</span>
           </button>
         </div>
@@ -306,46 +318,46 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
 
   <!-- ADD ITEM MODAL -->
   <div id="add-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
-      <button onclick="closeAddItemModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl border border-stone-200 relative my-6">
+      <button onclick="closeAddItemModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
       
-      <div class="flex items-center gap-3 mb-5">
-        <div class="w-10 h-10 rounded-2xl bg-brand-800 text-white flex items-center justify-center font-bold">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-brand-800 text-white flex items-center justify-center font-bold shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         </div>
         <div>
-          <h3 class="font-serif text-lg font-bold text-stone-900">Add Item to Sell</h3>
+          <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Add Item to Sell</h3>
           <p class="text-[11px] text-stone-500">Auto-uploads to Google Drive &amp; syncs to your online shop</p>
         </div>
       </div>
 
-      <form id="add-item-form" onsubmit="submitNewItem(event)" class="space-y-4 text-xs">
+      <form id="add-item-form" onsubmit="submitNewItem(event)" class="space-y-3.5 text-xs">
         <div>
           <label class="font-bold text-stone-700 block mb-1">Item Name *</label>
           <input type="text" id="new-item-name" required placeholder="e.g. Jordan 1 Retro High OG" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="font-bold text-stone-700 block mb-1">Category *</label>
-            <input type="text" id="new-item-category" required placeholder="e.g. shoes, shirts, housewares" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+            <input type="text" id="new-item-category" required placeholder="e.g. shoes, shirts" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
           </div>
           <div>
             <label class="font-bold text-stone-700 block mb-1">Hub Location *</label>
             <select id="new-item-location" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none font-semibold">
-              <option value="Pasig">📍 Pasig Hub (Rosario / Urban Deca)</option>
-              <option value="Santa Maria">📍 Santa Maria, Ilocos Sur Hub</option>
+              <option value="Pasig">📍 Pasig (Urban Deca)</option>
+              <option value="Santa Maria">📍 Santa Maria (Ilocos)</option>
             </select>
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-2.5">
           <div>
             <label class="font-bold text-stone-700 block mb-1">Price (₱) *</label>
             <input type="number" id="new-item-price" required min="1" step="1" placeholder="3500" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
           <div>
-            <label class="font-bold text-stone-700 block mb-1">Stock Quantity *</label>
+            <label class="font-bold text-stone-700 block mb-1">Stock *</label>
             <input type="number" id="new-item-stock" required min="1" value="1" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
           <div>
@@ -355,58 +367,53 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
         </div>
 
         <!-- Publishing Status & Scheduling Box -->
-        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-3.5 space-y-2.5">
+        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-3 space-y-2">
           <label class="font-bold text-stone-800 block text-[11px] uppercase tracking-wider">
             Publishing Status &amp; Drop Timing *
           </label>
 
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-3 gap-1.5">
             <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
               <input type="radio" name="new-item-visibility" value="ACTIVE" checked onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
-              <span class="font-bold text-stone-800 text-[11px]">Publish Now</span>
+              <span class="font-bold text-stone-800 text-[10px] sm:text-[11px]">Publish Now</span>
             </label>
             <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
               <input type="radio" name="new-item-visibility" value="SCHEDULED" onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
-              <span class="font-bold text-purple-900 text-[11px]">⏰ Schedule Drop</span>
+              <span class="font-bold text-purple-900 text-[10px] sm:text-[11px]">⏰ Sched</span>
             </label>
             <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
               <input type="radio" name="new-item-visibility" value="DRAFT" onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
-              <span class="font-bold text-stone-600 text-[11px]">Save as Draft</span>
+              <span class="font-bold text-stone-600 text-[10px] sm:text-[11px]">Draft</span>
             </label>
           </div>
 
-          <!-- Schedule Drop Datetime Input -->
           <div id="schedule-datetime-container" class="hidden pt-2 border-t border-stone-200/60">
             <label class="font-semibold text-purple-900 block mb-1 text-[11px]">
-              Set Live Drop Date &amp; Time (UTC+8 / Manila Time):
+              Drop Date &amp; Time (Manila Time):
             </label>
             <input type="datetime-local" id="new-item-publish-at" class="w-full border border-purple-200 rounded-xl p-2 text-xs bg-white focus:ring-2 focus:ring-purple-700 outline-none font-medium">
-            <p class="text-[10px] text-stone-400 mt-1">Item will automatically become visible to buyers on this exact date and time!</p>
           </div>
         </div>
 
-        <!-- Photos Upload Area -->
         <div>
           <label class="font-bold text-stone-700 block mb-1">
             Item Photos * <span class="text-stone-400 font-normal">(select 1 or multiple, no renaming needed)</span>
           </label>
           
-          <div class="border-2 border-dashed border-stone-200 hover:border-brand-800 rounded-2xl p-4 text-center cursor-pointer transition bg-stone-50/60" onclick="document.getElementById('new-item-files').click()">
-            <svg class="w-8 h-8 text-stone-400 mx-auto mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <div class="text-xs font-bold text-stone-700">Click to choose photos from phone/computer</div>
-            <div class="text-[10px] text-stone-400 mt-0.5">JPEG, PNG, WebP &bull; Up to 5MB each</div>
+          <div class="border-2 border-dashed border-stone-200 hover:border-brand-800 rounded-2xl p-3.5 text-center cursor-pointer transition bg-stone-50/60" onclick="document.getElementById('new-item-files').click()">
+            <svg class="w-7 h-7 text-stone-400 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div class="text-xs font-bold text-stone-700">Tap to select photos from gallery</div>
             <input type="file" id="new-item-files" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event)">
           </div>
 
           <div id="photos-preview-container" class="mt-2.5 flex flex-wrap gap-2"></div>
         </div>
 
-        <!-- Submit Button -->
-        <div class="pt-3 border-t border-stone-100 flex gap-2">
-          <button type="button" onclick="closeAddItemModal()" class="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+        <div class="pt-2 border-t border-stone-100 flex gap-2">
+          <button type="button" onclick="closeAddItemModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
             Cancel
           </button>
-          <button type="submit" id="submit-item-btn" class="flex-1 py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
+          <button type="submit" id="submit-item-btn" class="flex-1 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
             <span>Save &amp; Upload</span>
           </button>
         </div>
@@ -416,45 +423,45 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
 
   <!-- Cancel Order Modal -->
   <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
       
-      <div class="w-12 h-12 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <div class="w-11 h-11 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center mb-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
       </div>
 
-      <h3 class="font-serif text-lg font-bold text-stone-900">Cancel Order</h3>
+      <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Cancel Order</h3>
       <p class="text-xs text-stone-500 mt-1">
-        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore item stock</b> to your spreadsheet and send an email update to the buyer.
+        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore item stock</b> and email the buyer.
       </p>
 
-      <div class="mt-4">
-        <label class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-2">Quick Select Reason:</label>
-        <div class="flex flex-wrap gap-1.5">
-          <button type="button" onclick="setPresetReason('Buyer requested cancellation')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+      <div class="mt-3.5">
+        <label class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-1.5">Quick Reason:</label>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" onclick="setPresetReason('Buyer requested cancellation')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
             Buyer requested
           </button>
-          <button type="button" onclick="setPresetReason('Meet-up no-show / Unresponsive on chat')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+          <button type="button" onclick="setPresetReason('Meet-up no-show / Unresponsive on chat')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
             Meet-up no-show
           </button>
-          <button type="button" onclick="setPresetReason('Payment window expired (No payment received)')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
+          <button type="button" onclick="setPresetReason('Payment window expired (No payment received)')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
             Payment expired
           </button>
-          <button type="button" onclick="setPresetReason('Item damaged during inspection / Unavailable')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Item unavailable
+          <button type="button" onclick="setPresetReason('Item damaged during inspection / Unavailable')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Unavailable
           </button>
-          <button type="button" onclick="setPresetReason('Duplicate order submitted')" class="reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95">
-            Duplicate order
+          <button type="button" onclick="setPresetReason('Duplicate order submitted')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Duplicate
           </button>
         </div>
       </div>
 
-      <div class="mt-3.5">
+      <div class="mt-3">
         <label class="text-xs font-bold text-stone-700 block mb-1">Reason / Comment *</label>
-        <textarea id="cancel-comment-input" rows="3" placeholder="Select a chip above or type custom reason..." class="w-full border border-stone-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
+        <textarea id="cancel-comment-input" rows="2" placeholder="Select a chip above or type custom reason..." class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
       </div>
 
-      <div class="mt-5 flex gap-2">
+      <div class="mt-4 flex gap-2">
         <button onclick="closeCancelModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
           Dismiss
         </button>
@@ -473,6 +480,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     let allOrders = [];
     let allInventory = [];
     let uniqueBuyerCount = 0;
+    let buyersList = [];
     let currentOrderFilter = 'ALL';
     let currentInvFilter = 'ALL';
     let orderSearchQuery = '';
@@ -501,6 +509,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
             currentPin = pin;
             allOrders = Array.isArray(data) ? data : (data.orders || []);
             uniqueBuyerCount = data.uniqueBuyerCount || 0;
+            buyersList = data.buyersList || [];
             pinInput.value = '';
             showDashboard();
           } else {
@@ -521,6 +530,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       currentPin = '';
       allOrders = [];
       allInventory = [];
+      buyersList = [];
       document.getElementById('dashboard-screen').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
       const pinInput = document.getElementById('admin-pin-input');
@@ -566,16 +576,43 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     }
 
     // =========================================================================
-    // VIP DROP BROADCAST MODAL & ACTIONS
+    // VIP DROP BROADCAST MODAL
     // =========================================================================
     function openBroadcastModal() {
       const countEl = document.getElementById('broadcast-recipient-count');
       if (countEl) countEl.innerText = uniqueBuyerCount;
+
+      const detailsBox = document.getElementById('recipient-details-box');
+      if (detailsBox) {
+        if (buyersList.length > 0) {
+          detailsBox.innerHTML = buyersList.map(b => `
+            <div class="flex items-center justify-between py-1 border-b border-purple-200/40">
+              <div><b>${b.name}</b> (${b.email})</div>
+              <span class="text-purple-600 font-bold">${b.orderCount} order(s)</span>
+            </div>
+          `).join('');
+        } else {
+          detailsBox.innerHTML = '<div class="text-stone-400 py-1">No past buyers found.</div>';
+        }
+      }
+
       document.getElementById('broadcast-modal').classList.remove('hidden');
     }
 
     function closeBroadcastModal() {
       document.getElementById('broadcast-modal').classList.add('hidden');
+    }
+
+    function toggleRecipientDetails() {
+      const box = document.getElementById('recipient-details-box');
+      const text = document.getElementById('recipient-toggle-text');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        text.innerHTML = '&#9652; Hide Recipient List';
+      } else {
+        box.classList.add('hidden');
+        text.innerHTML = '&#9662; Show Recipient List &amp; Breakdown';
+      }
     }
 
     async function submitBroadcastEmail(e) {
@@ -591,7 +628,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       const btn = document.getElementById('submit-broadcast-btn');
       const origText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Sending to Past Buyers...`;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Sending...`;
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
@@ -673,6 +710,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
         if (data && !data.error) {
           allOrders = Array.isArray(data) ? data : (data.orders || []);
           uniqueBuyerCount = data.uniqueBuyerCount || 0;
+          buyersList = data.buyersList || [];
           updateOrderStats();
           renderOrders();
         } else {
@@ -786,23 +824,23 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
         `).join('');
 
         return `
-          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 transition hover:shadow-md">
+          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 transition hover:shadow-md">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="font-mono font-black text-sm text-stone-900">${order.orderId}</span>
                   ${statusBadge}
-                  ${isMeetup ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">🤝 Meetup (No Timeout)</span>' : ''}
+                  ${isMeetup ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">🤝 Meetup</span>' : ''}
                 </div>
                 <div class="text-[11px] text-stone-400 mt-0.5">${order.date}</div>
               </div>
               <div class="text-left sm:text-right">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Amount</span>
-                <div class="text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
+                <div class="text-base sm:text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-3.5 text-xs border-b border-stone-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 py-3 text-xs border-b border-stone-100">
               <div class="space-y-1">
                 <div><span class="text-stone-400 font-medium">Buyer:</span> <b class="text-stone-800">${order.buyerName}</b></div>
                 <div><span class="text-stone-400 font-medium">Contact:</span> <b class="font-mono text-stone-800">${order.buyerContact}</b></div>
@@ -815,19 +853,19 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
               </div>
             </div>
 
-            <div class="py-3">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1.5">Ordered Items</span>
-              <div class="bg-stone-50 rounded-xl p-3 border border-stone-100">
+            <div class="py-2.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1">Ordered Items</span>
+              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-100">
                 ${itemsListHtml}
               </div>
             </div>
 
             ${isPending ? `
-              <div class="pt-3 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
-                <button onclick="openCancelModal('${order.orderId}')" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
+              <div class="pt-2.5 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
+                <button onclick="openCancelModal('${order.orderId}')" class="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
                   Cancel Order...
                 </button>
-                <button onclick="confirmOrder('${order.orderId}')" class="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
+                <button onclick="confirmOrder('${order.orderId}')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
                   Mark Confirmed / Paid
                 </button>
               </div>
@@ -978,51 +1016,51 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
 
         let visibilityBadge = '';
         if (status === 'DRAFT') {
-          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-200 text-stone-700">📝 Draft (Hidden)</span>';
+          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-200 text-stone-700">📝 Draft</span>';
         } else if (status === 'SCHEDULED') {
           const schedDate = item.publishAt ? new Date(item.publishAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) : 'Pending';
           const isLiveNow = item.publishAt && now >= new Date(item.publishAt).getTime();
           visibilityBadge = isLiveNow ? 
-            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live (Dropped ${schedDate})</span>` :
+            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live (${schedDate})</span>` :
             `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-200">⏰ Drop: ${schedDate}</span>`;
         } else {
-          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live on Store</span>';
+          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live</span>';
         }
 
         return `
-          <div class="bg-white rounded-2xl border border-stone-200 p-4 shadow-sm flex flex-col justify-between transition hover:shadow-md gap-3">
-            <div class="flex gap-3.5 items-start">
-              <div class="w-20 h-20 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200 relative">
+          <div class="bg-white rounded-2xl border border-stone-200 p-3.5 sm:p-4 shadow-sm flex flex-col justify-between transition hover:shadow-md gap-3">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200 relative">
                 <img src="${firstImg}" alt="${item.name}" class="w-full h-full object-cover">
                 <span class="absolute top-1 left-1 bg-stone-900/80 text-white font-mono text-[9px] font-bold px-1.5 py-0.2 rounded">#${item.id}</span>
               </div>
 
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5 flex-wrap">
+                <div class="flex items-center gap-1 flex-wrap">
                   ${visibilityBadge}
                   <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${item.location}</span>
                   <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
                 </div>
 
-                <h3 class="font-bold text-stone-900 text-sm truncate mt-1" title="${item.name}">${item.name}</h3>
-                <div class="text-xs text-stone-500 mt-0.5 font-medium">Condition: <b class="text-stone-700">${item.condition || 'Pre-loved'}</b></div>
+                <h3 class="font-bold text-stone-900 text-xs sm:text-sm truncate mt-1" title="${item.name}">${item.name}</h3>
+                <div class="text-[11px] text-stone-500 mt-0.5 font-medium">Condition: <b class="text-stone-700">${item.condition || 'Pre-loved'}</b></div>
               </div>
             </div>
 
-            <div class="flex items-center justify-between pt-2.5 border-t border-stone-100 flex-wrap gap-2">
-              <span class="font-black text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+            <div class="flex items-center justify-between pt-2 border-t border-stone-100 flex-wrap gap-2">
+              <span class="font-black text-xs sm:text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
 
-              <div class="flex items-center gap-2">
-                <select onchange="updateItemVisibility('${item.id}', this.value)" class="text-[11px] font-bold bg-stone-50 border border-stone-200 rounded-lg p-1.5 focus:ring-1 focus:ring-brand-800 outline-none">
+              <div class="flex items-center gap-1.5">
+                <select onchange="updateItemVisibility('${item.id}', this.value)" class="text-[10px] sm:text-[11px] font-bold bg-stone-50 border border-stone-200 rounded-lg p-1 focus:ring-1 focus:ring-brand-800 outline-none">
                   <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>🟢 Live</option>
                   <option value="DRAFT" ${status === 'DRAFT' ? 'selected' : ''}>📝 Draft</option>
-                  <option value="SCHEDULED" ${status === 'SCHEDULED' ? 'selected' : ''}>⏰ Scheduled</option>
+                  <option value="SCHEDULED" ${status === 'SCHEDULED' ? 'selected' : ''}>⏰ Sched</option>
                 </select>
 
                 <div class="flex items-center bg-stone-100 rounded-xl border border-stone-200 p-0.5 shadow-sm">
-                  <button onclick="adjustStock('${item.id}', -1)" title="Minus 1 stock" class="w-7 h-7 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
-                  <span id="stock-val-${item.id}" class="w-8 text-center font-mono font-bold text-xs text-brand-900 select-none">${item.stock}</span>
-                  <button onclick="adjustStock('${item.id}', 1)" title="Add 1 stock" class="w-7 h-7 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&plus;</button>
+                  <button onclick="adjustStock('${item.id}', -1)" title="Minus 1 stock" class="w-6 h-6 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition active:scale-90">&minus;</button>
+                  <span id="stock-val-${item.id}" class="w-7 text-center font-mono font-bold text-xs text-brand-900 select-none">${item.stock}</span>
+                  <button onclick="adjustStock('${item.id}', 1)" title="Add 1 stock" class="w-6 h-6 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition active:scale-90">&plus;</button>
                 </div>
               </div>
             </div>
@@ -1178,10 +1216,10 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     function renderPhotoThumbnails() {
       const container = document.getElementById('photos-preview-container');
       container.innerHTML = selectedImageFiles.map((f, i) => `
-        <div class="relative w-16 h-16 rounded-xl overflow-hidden border border-stone-200 shadow-sm group">
+        <div class="relative w-14 h-14 rounded-xl overflow-hidden border border-stone-200 shadow-sm group">
           <img src="${f.data}" class="w-full h-full object-cover">
-          <button type="button" onclick="removePhoto(${i})" class="absolute top-1 right-1 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow leading-none">&times;</button>
-          <span class="absolute bottom-0 inset-x-0 bg-stone-900/70 text-white text-[8px] text-center font-mono py-0.5">${i + 1}</span>
+          <button type="button" onclick="removePhoto(${i})" class="absolute top-0.5 right-0.5 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow leading-none">&times;</button>
+          <span class="absolute bottom-0 inset-x-0 bg-stone-900/70 text-white text-[8px] text-center font-mono py-0.2">${i + 1}</span>
         </div>
       `).join('');
     }
@@ -1218,7 +1256,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       const btn = document.getElementById('submit-item-btn');
       const originalText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Uploading to Drive &amp; Syncing...`;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Uploading...`;
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
@@ -1287,7 +1325,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       document.getElementById('cancel-modal-order-id').innerText = orderId;
       document.getElementById('cancel-comment-input').value = '';
       document.querySelectorAll('.reason-chip').forEach(btn => {
-        btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
+        btn.className = 'reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200';
       });
       document.getElementById('cancel-modal').classList.remove('hidden');
     }
@@ -1301,9 +1339,9 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       document.getElementById('cancel-comment-input').value = reasonText;
       document.querySelectorAll('.reason-chip').forEach(btn => {
         if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
-          btn.className = 'reason-chip text-[11px] font-bold bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm border border-stone-900 active:scale-95';
+          btn.className = 'reason-chip text-[10px] font-bold bg-stone-900 text-white px-2.5 py-1 rounded-full transition shadow-sm border border-stone-900';
         } else {
-          btn.className = 'reason-chip text-[11px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-full transition border border-stone-200 active:scale-95';
+          btn.className = 'reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200';
         }
       });
     }
