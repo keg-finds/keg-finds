@@ -104,6 +104,7 @@
               <p class="text-[10px] sm:text-[11px] text-stone-500 truncate">Post drop dates, sale alerts, and schedule changes</p>
             </div>
           </div>
+          <!-- Enable/Disable Switch -->
           <div class="flex items-center gap-1.5 shrink-0 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200">
             <label class="text-[11px] font-bold text-stone-700">Display:</label>
             <input type="checkbox" id="banner-active-toggle" class="w-4 h-4 text-brand-800 rounded focus:ring-brand-800 cursor-pointer">
@@ -243,6 +244,50 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- EDIT PRICE & PROMO SALE MODAL (Feature: Edit Price for Existing Items) -->
+  <div id="edit-price-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeEditPriceModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="flex items-center gap-2.5 mb-3">
+        <div class="w-10 h-10 bg-brand-800 text-white rounded-2xl flex items-center justify-center font-bold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Edit Price &amp; Promo</h3>
+          <p id="edit-price-item-title" class="text-xs text-stone-500 truncate max-w-[200px]">Item #1</p>
+        </div>
+      </div>
+
+      <form onsubmit="submitEditPrice(event)" class="mt-4 space-y-3.5 text-xs">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Selling Price (₱) *</label>
+          <input type="number" id="edit-selling-price" required min="1" step="1" oninput="updatePromoPreview()" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono font-bold focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Original Price (₱) <span class="text-stone-400 font-normal">(Optional for Sale)</span></label>
+          <input type="number" id="edit-orig-price" min="0" step="1" placeholder="Leave empty if not on sale" oninput="updatePromoPreview()" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono focus:ring-2 focus:ring-brand-800 outline-none">
+          <p class="text-[10px] text-stone-400 mt-1">If higher than selling price, website shows crossed-out price &amp; "SAVE XX%" badge.</p>
+        </div>
+
+        <div id="edit-promo-preview-box" class="p-3 bg-stone-50 rounded-xl border border-stone-200 text-stone-600 text-[11px] space-y-1">
+          <span class="font-bold text-stone-500 text-[10px] uppercase tracking-wider block">Customer Will See:</span>
+          <div id="edit-promo-preview-content" class="font-semibold text-stone-800">₱0</div>
+        </div>
+
+        <div class="mt-5 flex gap-2 pt-2 border-t border-stone-100">
+          <button type="button" onclick="closeEditPriceModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" id="save-price-btn" class="flex-1 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
+            Save Price
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- VIP DROP EMAIL BROADCAST MODAL -->
@@ -512,6 +557,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     let invSearchQuery = '';
     let pendingCancelOrderId = null;
     let pendingConfirmOrderId = null;
+    let pendingEditPriceItemId = null;
     let selectedImageFiles = [];
 
     function handleLogin(e) {
@@ -601,6 +647,98 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
+    // =========================================================================
+    // EDIT PRICE & PROMO ACTIONS
+    // =========================================================================
+    function openEditPriceModal(itemId) {
+      const item = allInventory.find(i => String(i.id) === String(itemId));
+      if (!item) return;
+
+      pendingEditPriceItemId = itemId;
+      document.getElementById('edit-price-item-title').innerText = `[#${item.id}] ${item.name}`;
+      document.getElementById('edit-selling-price').value = item.price || 0;
+      document.getElementById('edit-orig-price').value = (item.originalPrice > item.price) ? item.originalPrice : '';
+      updatePromoPreview();
+      document.getElementById('edit-price-modal').classList.remove('hidden');
+    }
+
+    function closeEditPriceModal() {
+      pendingEditPriceItemId = null;
+      document.getElementById('edit-price-modal').classList.add('hidden');
+    }
+
+    function updatePromoPreview() {
+      const selling = Number(document.getElementById('edit-selling-price').value) || 0;
+      const orig = Number(document.getElementById('edit-orig-price').value) || 0;
+      const previewEl = document.getElementById('edit-promo-preview-content');
+
+      if (orig > selling && selling > 0) {
+        const pct = Math.round(((orig - selling) / orig) * 100);
+        previewEl.innerHTML = `
+          <span class="text-stone-900 font-black text-sm">₱${selling.toLocaleString()}</span>
+          <span class="text-stone-400 line-through text-xs ml-1">₱${orig.toLocaleString()}</span>
+          <span class="bg-red-600 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full ml-1">SAVE ${pct}%</span>
+        `;
+      } else {
+        previewEl.innerHTML = `<span class="text-stone-900 font-black text-sm">₱${selling.toLocaleString()}</span> (Regular price)`;
+      }
+    }
+
+    async function submitEditPrice(e) {
+      e.preventDefault();
+      if (!pendingEditPriceItemId) return;
+
+      const selling = Number(document.getElementById('edit-selling-price').value) || 0;
+      const orig = Number(document.getElementById('edit-orig-price').value) || 0;
+      const btn = document.getElementById('save-price-btn');
+      const origText = btn.innerText;
+
+      if (selling <= 0) {
+        alert("Please enter a valid selling price greater than 0.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateItemPrice',
+            pin: currentPin,
+            itemId: pendingEditPriceItemId,
+            price: selling,
+            originalPrice: orig
+          })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          const item = allInventory.find(i => String(i.id) === String(pendingEditPriceItemId));
+          if (item) {
+            item.price = selling;
+            item.originalPrice = orig;
+          }
+          closeEditPriceModal();
+          renderInventory();
+          alert("Price updated successfully! Synced to Google Sheet and website.");
+        } else {
+          alert("Error updating price: " + (result.message || "Unauthorized"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error connecting to backend.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = origText;
+      }
+    }
+
+    // =========================================================================
+    // VIP DROP BROADCAST MODAL
+    // =========================================================================
     function openBroadcastModal() {
       const countEl = document.getElementById('broadcast-recipient-count');
       if (countEl) countEl.innerText = uniqueBuyerCount;
@@ -682,6 +820,9 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
+    // =========================================================================
+    // ANNOUNCEMENT BANNER ACTIONS
+    // =========================================================================
     async function saveAnnouncementBanner() {
       const text = document.getElementById('banner-text-input').value.trim();
       const isActive = document.getElementById('banner-active-toggle').checked;
@@ -717,6 +858,9 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
+    // =========================================================================
+    // ORDERS CONTROLLER
+    // =========================================================================
     async function fetchOrders() {
       const container = document.getElementById('orders-list');
       container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">Loading orders from database...</div>';
@@ -893,6 +1037,9 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }).join('');
     }
 
+    // =========================================================================
+    // INVENTORY, DRAFTS & LIVE STOCKS CONTROLLER
+    // =========================================================================
     async function fetchInventoryData() {
       const container = document.getElementById('inventory-grid');
       try {
@@ -1063,9 +1210,13 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-stone-100 flex-wrap gap-2">
-              <div class="flex items-baseline gap-1.5">
-                <span class="font-black text-xs sm:text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
-                ${item.originalPrice > item.price ? `<span class="text-[10px] text-stone-400 line-through">₱${Number(item.originalPrice).toLocaleString()}</span>` : ''}
+              <!-- Clickable Price & Strikethrough to trigger Edit Price Modal -->
+              <div class="flex items-center gap-1.5">
+                <button onclick="openEditPriceModal('${item.id}')" title="Click to edit selling price or add promo sale" class="flex items-baseline gap-1.5 group p-1 -m-1 rounded-lg hover:bg-stone-100 transition text-left">
+                  <span class="font-black text-xs sm:text-sm text-stone-900 group-hover:text-brand-800">₱${Number(item.price).toLocaleString()}</span>
+                  ${item.originalPrice > item.price ? `<span class="text-[10px] text-stone-400 line-through">₱${Number(item.originalPrice).toLocaleString()}</span>` : ''}
+                  <svg class="w-3.5 h-3.5 text-stone-400 group-hover:text-brand-800 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                </button>
               </div>
 
               <div class="flex items-center gap-1.5">
