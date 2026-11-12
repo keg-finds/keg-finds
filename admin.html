@@ -104,7 +104,6 @@
               <p class="text-[10px] sm:text-[11px] text-stone-500 truncate">Post drop dates, sale alerts, and schedule changes</p>
             </div>
           </div>
-          <!-- Enable/Disable Switch -->
           <div class="flex items-center gap-1.5 shrink-0 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200">
             <label class="text-[11px] font-bold text-stone-700">Display:</label>
             <input type="checkbox" id="banner-active-toggle" class="w-4 h-4 text-brand-800 rounded focus:ring-brand-800 cursor-pointer">
@@ -131,11 +130,8 @@
         </button>
       </div>
 
-      <!-- =================================================================== -->
       <!-- VIEW 1: ORDERS MANAGEMENT -->
-      <!-- =================================================================== -->
       <div id="view-orders" class="space-y-6">
-        <!-- KPI Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
             <span class="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
@@ -155,7 +151,6 @@
           </div>
         </div>
 
-        <!-- Search Bar & Filter Controls -->
         <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -181,7 +176,6 @@
           </div>
         </div>
 
-        <!-- Orders List Container -->
         <div id="orders-list" class="space-y-4">
           <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
             Loading orders from database...
@@ -189,11 +183,8 @@
         </div>
       </div>
 
-      <!-- =================================================================== -->
       <!-- VIEW 2: STOCKS, DRAFTS & SCHEDULED DROPS -->
-      <!-- =================================================================== -->
       <div id="view-inventory" class="hidden space-y-6">
-        <!-- Stock KPI Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200 shadow-sm">
             <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Listed</span>
@@ -217,7 +208,6 @@
           </div>
         </div>
 
-        <!-- Inventory Search & Filter Controls -->
         <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -246,7 +236,6 @@
           </div>
         </div>
 
-        <!-- Inventory Items Grid -->
         <div id="inventory-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="col-span-full bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
             Loading inventory from database...
@@ -256,7 +245,7 @@
     </main>
   </div>
 
-  <!-- VIP DROP EMAIL BROADCAST MODAL (With Viewable Recipient List) -->
+  <!-- VIP DROP EMAIL BROADCAST MODAL -->
   <div id="broadcast-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl border border-stone-200 relative my-6">
       <button onclick="closeBroadcastModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -273,7 +262,6 @@
         </div>
       </div>
 
-      <!-- Explanatory note about deduplication -->
       <div class="mb-3.5 p-3 bg-purple-50 rounded-xl border border-purple-200 text-[11px] text-purple-900 leading-relaxed">
         <div class="flex items-center justify-between">
           <span>👥 <b>Deduplicated by Email:</b> Customers who placed multiple orders will only receive <b>1 email</b> so they don't get spammed.</span>
@@ -282,7 +270,6 @@
           <span id="recipient-toggle-text">&#9662; Show Recipient List &amp; Breakdown</span>
         </button>
         <div id="recipient-details-box" class="hidden mt-2 pt-2 border-t border-purple-200/60 max-h-36 overflow-y-auto space-y-1 text-[10px]">
-          <!-- Populated by JS -->
         </div>
       </div>
 
@@ -351,13 +338,18 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2.5">
+        <!-- Selling Price & Promo Original Price Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div>
-            <label class="font-bold text-stone-700 block mb-1">Price (₱) *</label>
-            <input type="number" id="new-item-price" required min="1" step="1" placeholder="3500" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
+            <label class="font-bold text-stone-700 block mb-1">Selling Price (₱) *</label>
+            <input type="number" id="new-item-price" required min="1" step="1" placeholder="350" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
           <div>
-            <label class="font-bold text-stone-700 block mb-1">Stock *</label>
+            <label class="font-bold text-stone-700 block mb-1">Original Price (₱) <span class="font-normal text-stone-400 text-[10px]">(Optional)</span></label>
+            <input type="number" id="new-item-original-price" min="0" step="1" placeholder="500 (shows slash)" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono">
+          </div>
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Stock Quantity *</label>
             <input type="number" id="new-item-stock" required min="1" value="1" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
           </div>
           <div>
@@ -418,6 +410,39 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM ORDER MODAL (With Optional Tracking Number / Meetup Note) -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeConfirmModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="w-11 h-11 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mb-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+
+      <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Confirm Order</h3>
+      <p class="text-xs text-stone-500 mt-1">
+        Confirming <b id="confirm-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will mark it as paid and email verified confirmation to the buyer.
+      </p>
+
+      <div class="mt-4 space-y-2">
+        <label class="text-xs font-bold text-stone-700 block">
+          📦 Tracking Number or Meetup Note <span class="font-normal text-stone-400">(Optional)</span>
+        </label>
+        <textarea id="confirm-tracking-input" rows="2" placeholder="e.g. J&amp;T Express: 789123456789 or Meetup: Urban Deca Phase 2 Lobby tomorrow 4:00 PM" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-700 outline-none"></textarea>
+        <p class="text-[10px] text-stone-400">This note will be included directly in the confirmation email and visible on their "Track Order" portal.</p>
+      </div>
+
+      <div class="mt-5 flex gap-2">
+        <button onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+          Dismiss
+        </button>
+        <button id="submit-confirm-btn" onclick="submitConfirmOrder()" class="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
+          Mark Confirmed
+        </button>
+      </div>
     </div>
   </div>
 
@@ -486,6 +511,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     let orderSearchQuery = '';
     let invSearchQuery = '';
     let pendingCancelOrderId = null;
+    let pendingConfirmOrderId = null;
     let selectedImageFiles = [];
 
     function handleLogin(e) {
@@ -575,9 +601,6 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    // =========================================================================
-    // VIP DROP BROADCAST MODAL
-    // =========================================================================
     function openBroadcastModal() {
       const countEl = document.getElementById('broadcast-recipient-count');
       if (countEl) countEl.innerText = uniqueBuyerCount;
@@ -659,9 +682,6 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    // =========================================================================
-    // ANNOUNCEMENT BANNER ACTIONS
-    // =========================================================================
     async function saveAnnouncementBanner() {
       const text = document.getElementById('banner-text-input').value.trim();
       const isActive = document.getElementById('banner-active-toggle').checked;
@@ -697,9 +717,6 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    // =========================================================================
-    // ORDERS CONTROLLER
-    // =========================================================================
     async function fetchOrders() {
       const container = document.getElementById('orders-list');
       container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">Loading orders from database...</div>';
@@ -849,6 +866,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
               <div class="space-y-1">
                 <div><span class="text-stone-400 font-medium">Fulfillment:</span> <b class="text-stone-800">${order.fulfillment}</b></div>
                 <div><span class="text-stone-400 font-medium">Payment:</span> <b class="text-stone-800">${order.paymentMethod}</b></div>
+                ${order.trackingNote ? `<div class="bg-blue-50 p-2 rounded-lg text-blue-800 text-[11px] border border-blue-200 mt-1"><b>📦 Dispatch / Meetup Note:</b> ${order.trackingNote}</div>` : ''}
                 ${order.comment ? `<div class="bg-red-50 p-2 rounded-lg text-red-700 text-[11px] border border-red-200 mt-1"><b class="text-red-900">Reason / Comment:</b> ${order.comment}</div>` : ''}
               </div>
             </div>
@@ -865,7 +883,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
                 <button onclick="openCancelModal('${order.orderId}')" class="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
                   Cancel Order...
                 </button>
-                <button onclick="confirmOrder('${order.orderId}')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
+                <button onclick="openConfirmModal('${order.orderId}')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
                   Mark Confirmed / Paid
                 </button>
               </div>
@@ -875,9 +893,6 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }).join('');
     }
 
-    // =========================================================================
-    // INVENTORY, DRAFTS & LIVE STOCKS CONTROLLER
-    // =========================================================================
     async function fetchInventoryData() {
       const container = document.getElementById('inventory-grid');
       try {
@@ -1048,7 +1063,10 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-stone-100 flex-wrap gap-2">
-              <span class="font-black text-xs sm:text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+              <div class="flex items-baseline gap-1.5">
+                <span class="font-black text-xs sm:text-sm text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+                ${item.originalPrice > item.price ? `<span class="text-[10px] text-stone-400 line-through">₱${Number(item.originalPrice).toLocaleString()}</span>` : ''}
+              </div>
 
               <div class="flex items-center gap-1.5">
                 <select onchange="updateItemVisibility('${item.id}', this.value)" class="text-[10px] sm:text-[11px] font-bold bg-stone-50 border border-stone-200 rounded-lg p-1 focus:ring-1 focus:ring-brand-800 outline-none">
@@ -1138,9 +1156,6 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    // =========================================================================
-    // ADD NEW ITEM MODAL & DRIVE UPLOADER
-    // =========================================================================
     function openAddItemModal() {
       selectedImageFiles = [];
       document.getElementById('photos-preview-container').innerHTML = '';
@@ -1240,6 +1255,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       const category = document.getElementById('new-item-category').value.trim();
       const location = document.getElementById('new-item-location').value;
       const price = Number(document.getElementById('new-item-price').value) || 0;
+      const originalPrice = Number(document.getElementById('new-item-original-price').value) || 0;
       const stock = Number(document.getElementById('new-item-stock').value) || 1;
       const condition = document.getElementById('new-item-condition').value.trim();
       
@@ -1269,6 +1285,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
             category,
             location,
             price,
+            originalPrice,
             stock,
             condition,
             status: visibility,
@@ -1295,21 +1312,42 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    // =========================================================================
-    // CONFIRM / CANCEL ORDERS
-    // =========================================================================
-    async function confirmOrder(orderId) {
-      if (!confirm(`Mark Order ${orderId} as CONFIRMED / PAID? An automated confirmation email will be sent to the buyer.`)) return;
+    function openConfirmModal(orderId) {
+      pendingConfirmOrderId = orderId;
+      document.getElementById('confirm-modal-order-id').innerText = orderId;
+      document.getElementById('confirm-tracking-input').value = '';
+      document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      pendingConfirmOrderId = null;
+      document.getElementById('confirm-modal').classList.add('hidden');
+    }
+
+    async function submitConfirmOrder() {
+      if (!pendingConfirmOrderId) return;
+      const trackingNote = document.getElementById('confirm-tracking-input').value.trim();
+      const btn = document.getElementById('submit-confirm-btn');
+      const origText = btn.innerText;
+
+      btn.disabled = true;
+      btn.innerText = "Confirming & Emailing...";
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ action: 'confirmPayment', pin: currentPin, orderId })
+          body: JSON.stringify({
+            action: 'confirmPayment',
+            pin: currentPin,
+            orderId: pendingConfirmOrderId,
+            trackingNote: trackingNote
+          })
         });
         const result = await res.json();
         if (result.status === 'success') {
-          alert(`Order ${orderId} has been confirmed!`);
+          alert(`Order ${pendingConfirmOrderId} confirmed! Email receipt sent to buyer.`);
+          closeConfirmModal();
           fetchOrders();
         } else {
           alert('Error confirming order: ' + (result.message || 'Unauthorized'));
@@ -1317,6 +1355,9 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       } catch (err) {
         console.error(err);
         alert('Error connecting to backend.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = origText;
       }
     }
 
