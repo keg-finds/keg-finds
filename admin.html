@@ -65,11 +65,19 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- VIP Drop Email Broadcast Button -->
+          <button onclick="openBroadcastModal()" class="px-3.5 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span class="hidden sm:inline">Email Past Buyers</span>
+            <span class="sm:hidden">Broadcast</span>
+          </button>
+
           <!-- Add Item Button -->
           <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-brand-800 hover:bg-brand-900 text-white rounded-xl transition flex items-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
             <span>Add Item</span>
           </button>
+
           <button onclick="refreshData()" title="Refresh All Data" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition flex items-center gap-1.5 text-xs font-semibold border border-stone-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
@@ -245,7 +253,58 @@
     </main>
   </div>
 
-  <!-- ADD ITEM MODAL (With Publishing & Scheduling Options) -->
+  <!-- VIP DROP EMAIL BROADCAST MODAL -->
+  <div id="broadcast-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
+      <button onclick="closeBroadcastModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-2xl bg-purple-700 text-white flex items-center justify-center font-bold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-lg font-bold text-stone-900">Send Drop Email to Past Buyers</h3>
+          <p class="text-[11px] text-stone-500">
+            Automatically notifies <b id="broadcast-recipient-count" class="text-purple-700 font-bold">0</b> verified customer(s) who ordered from you before!
+          </p>
+        </div>
+      </div>
+
+      <form id="broadcast-form" onsubmit="submitBroadcastEmail(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Drop Subject / Headline *</label>
+          <input type="text" id="broadcast-headline" required placeholder="e.g. Fresh Batch of Oxford Dress Shirts &amp; Jackets Just Dropped!" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none font-semibold">
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Message Preview for Customers *</label>
+          <textarea id="broadcast-message" rows="4" required class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none leading-relaxed">Hi there! We just added new handpicked pre-loved items to our shop. As a valued past buyer, you get early access to check sizes and inspect photos before they sell out!
+
+Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos Sur), plus Grab/J&amp;T delivery nationwide.</textarea>
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Storefront Link</label>
+          <input type="text" id="broadcast-link" value="https://keg-finds.netlify.app" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono text-stone-600 focus:ring-2 focus:ring-purple-700 outline-none">
+        </div>
+
+        <div class="p-3 bg-purple-50 rounded-xl border border-purple-200 text-[11px] text-purple-900 leading-relaxed">
+          💡 <b>Tip:</b> Every buyer receives a personalized email with your logo and direct button to browse. Only customers with valid email addresses from your Orders sheet will be sent the update.
+        </div>
+
+        <div class="pt-3 border-t border-stone-100 flex gap-2">
+          <button type="button" onclick="closeBroadcastModal()" class="flex-1 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" id="submit-broadcast-btn" class="flex-1 py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
+            <span>Send Email Blast</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD ITEM MODAL -->
   <div id="add-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative my-8">
       <button onclick="closeAddItemModal()" class="absolute top-5 right-5 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -355,7 +414,7 @@
     </div>
   </div>
 
-  <!-- Cancel Order Modal with Reason Chips -->
+  <!-- Cancel Order Modal -->
   <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
       <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
@@ -413,6 +472,7 @@
     let currentView = 'orders';
     let allOrders = [];
     let allInventory = [];
+    let uniqueBuyerCount = 0;
     let currentOrderFilter = 'ALL';
     let currentInvFilter = 'ALL';
     let orderSearchQuery = '';
@@ -437,9 +497,10 @@
         .then(data => {
           btn.disabled = false;
           btn.innerText = "Unlock Dashboard";
-          if (data && !data.error && Array.isArray(data)) {
+          if (data && !data.error) {
             currentPin = pin;
-            allOrders = data;
+            allOrders = Array.isArray(data) ? data : (data.orders || []);
+            uniqueBuyerCount = data.uniqueBuyerCount || 0;
             pinInput.value = '';
             showDashboard();
           } else {
@@ -505,6 +566,63 @@
     }
 
     // =========================================================================
+    // VIP DROP BROADCAST MODAL & ACTIONS
+    // =========================================================================
+    function openBroadcastModal() {
+      const countEl = document.getElementById('broadcast-recipient-count');
+      if (countEl) countEl.innerText = uniqueBuyerCount;
+      document.getElementById('broadcast-modal').classList.remove('hidden');
+    }
+
+    function closeBroadcastModal() {
+      document.getElementById('broadcast-modal').classList.add('hidden');
+    }
+
+    async function submitBroadcastEmail(e) {
+      e.preventDefault();
+      const headline = document.getElementById('broadcast-headline').value.trim();
+      const message = document.getElementById('broadcast-message').value.trim();
+      const link = document.getElementById('broadcast-link').value.trim();
+
+      if (!confirm(`Are you sure you want to send this Drop Alert email to ${uniqueBuyerCount} past customer(s)?`)) {
+        return;
+      }
+
+      const btn = document.getElementById('submit-broadcast-btn');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Sending to Past Buyers...`;
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'sendDropBroadcast',
+            pin: currentPin,
+            headline: headline,
+            message: message,
+            link: link
+          })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Success! Email blast sent to ${result.sentCount} customer(s).`);
+          closeBroadcastModal();
+        } else {
+          alert('Error sending email: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    }
+
+    // =========================================================================
     // ANNOUNCEMENT BANNER ACTIONS
     // =========================================================================
     async function saveAnnouncementBanner() {
@@ -552,8 +670,9 @@
       try {
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
         const data = await res.json();
-        if (Array.isArray(data)) {
-          allOrders = data;
+        if (data && !data.error) {
+          allOrders = Array.isArray(data) ? data : (data.orders || []);
+          uniqueBuyerCount = data.uniqueBuyerCount || 0;
           updateOrderStats();
           renderOrders();
         } else {
