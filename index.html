@@ -14,7 +14,7 @@
   <title>KEG Finds | Pre-loved Closet & Housewares</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
@@ -54,11 +54,17 @@
         </div>
       </a>
 
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2">
+        <!-- Track Order Portal Button -->
+        <button onclick="openTrackOrderModal()" class="flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-brand-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-full transition border border-stone-200">
+          <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span class="hidden sm:inline">Track Order</span>
+        </button>
+
         <!-- Install App Button -->
         <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-full transition shadow-sm animate-pulse">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          <span>Install App</span>
+          <span class="hidden sm:inline">Install</span>
         </button>
 
         <!-- Header Quick Chat Link -->
@@ -104,7 +110,7 @@
           Quality closet pieces and houseware essentials.
         </h1>
         <p class="mt-4 text-stone-600 text-sm md:text-base leading-relaxed">
-          Gently worn dress shirts and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
+          Gently worn dress shirts, shoes, and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
         </p>
 
         <div class="mt-6 flex flex-wrap gap-3">
@@ -121,9 +127,9 @@
   </section>
 
   <!-- Catalog Section -->
-  <main id="items" class="max-w-5xl mx-auto px-4 py-12">
+  <main id="items" class="max-w-5xl mx-auto px-4 py-12 space-y-6">
     <!-- Location Switcher Tabs (All, Pasig, Santa Maria) -->
-    <div class="mb-8 p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
+    <div class="p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
       <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-1.5">
         <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         <span>Select Location / Dispatch Hub:</span>
@@ -141,15 +147,27 @@
       </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 gap-4">
-      <div>
-        <h2 id="catalog-title" class="font-serif text-2xl font-bold text-stone-900">Available Listings</h2>
-        <p class="text-xs text-stone-500 mt-0.5">Click thumbnails or arrows to view multiple photos. Have questions? Click "Inquire" to chat with us!</p>
+    <!-- Product Search Bar & Category Controls -->
+    <div class="p-4 bg-white rounded-2xl border border-stone-200 shadow-sm space-y-4">
+      <!-- Live Search Input -->
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <input type="text" id="catalog-search-input" oninput="handleCatalogSearch(this.value)" placeholder="Search products by brand, name, or keywords (e.g. Uniqlo, Jordan, Oxford)..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+        <button id="clear-catalog-search-btn" onclick="clearCatalogSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+          &times;
+        </button>
       </div>
 
-      <!-- Dynamic Category Filter Buttons (Generated from Google Sheet) -->
-      <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
-        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
+      <!-- Categories Filter Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
+        <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
+          <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
+        </div>
+        <div class="text-[11px] sm:text-xs text-stone-500 font-medium whitespace-nowrap">
+          Showing <span id="catalog-count-label" class="font-bold text-stone-900">0</span> items
+        </div>
       </div>
     </div>
 
@@ -178,8 +196,8 @@
         </div>
         <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
           <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
-          <h4 class="font-bold text-stone-900 text-sm">Automated Email Receipts</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Receive reservation and confirmation emails as soon as your order is logged.</p>
+          <h4 class="font-bold text-stone-900 text-sm">Track Your Order Live</h4>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Check your confirmation, meetup coordination notes, and tracking link anytime.</p>
         </div>
       </div>
     </div>
@@ -303,6 +321,37 @@
     </div>
   </div>
 
+  <!-- BUYER TRACK ORDER MODAL -->
+  <div id="track-order-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeTrackOrderModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="flex items-center gap-2.5 mb-3">
+        <div class="w-10 h-10 bg-brand-800 text-white rounded-2xl flex items-center justify-center font-bold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-lg font-bold text-stone-900">Track Your Order</h3>
+          <p class="text-xs text-stone-500">Enter your Order ID (from email receipt or Messenger)</p>
+        </div>
+      </div>
+
+      <form onsubmit="submitTrackOrder(event)" class="mt-4 space-y-3">
+        <div class="flex gap-2">
+          <input type="text" id="track-order-id-input" placeholder="e.g. KEG-260228-1234" required class="flex-1 border border-stone-200 rounded-xl p-2.5 text-xs font-mono uppercase font-bold focus:ring-2 focus:ring-brand-800 outline-none">
+          <button type="submit" id="track-order-btn" class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
+            Check
+          </button>
+        </div>
+      </form>
+
+      <!-- Track Result Container -->
+      <div id="track-result-box" class="hidden mt-4 pt-4 border-t border-stone-100 text-xs space-y-3">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
   <footer class="bg-stone-900 text-stone-400 text-xs py-10 border-t border-stone-800 mb-16 sm:mb-0">
     <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
       <div>
@@ -387,6 +436,7 @@
     let currentPhotoIndices = {};
     let selectedLocation = 'all';
     let selectedCategory = 'all';
+    let catalogSearchQuery = '';
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
@@ -438,7 +488,6 @@
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
         const data = await res.json();
 
-        // Handle both object payload with announcement and backwards-compatible array
         let rawItems = [];
         if (Array.isArray(data)) {
           rawItems = data;
@@ -450,10 +499,10 @@
         if (rawItems.length > 0 || Array.isArray(rawItems)) {
           inventory = rawItems.map(item => ({
             ...item,
-            location: normalizeLocation(item.location)
+            location: normalizeLocation(item.location),
+            originalPrice: Number(item.originalPrice) || 0
           }));
 
-          // Re-validate cart against updated live stock from Google Sheets
           cart.forEach(c => {
             const liveItem = inventory.find(i => String(i.id) === String(c.id));
             if (liveItem) {
@@ -506,14 +555,22 @@
         btn.classList.remove('bg-stone-100', 'text-stone-700');
       }
 
-      const titleEl = document.getElementById('catalog-title');
-      if (titleEl) {
-        if (selectedLocation === 'pasig') titleEl.innerText = "Available in Pasig, Metro Manila";
-        else if (selectedLocation === 'santa maria') titleEl.innerText = "Available in Santa Maria, Ilocos Sur";
-        else titleEl.innerText = "All Available Listings";
-      }
-
       renderCategoryFilters(getFilteredByLocationItems());
+      renderProducts(getDisplayedItems());
+    }
+
+    function handleCatalogSearch(val) {
+      catalogSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-catalog-search-btn');
+      if (catalogSearchQuery.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      renderProducts(getDisplayedItems());
+    }
+
+    function clearCatalogSearch() {
+      document.getElementById('catalog-search-input').value = '';
+      catalogSearchQuery = '';
+      document.getElementById('clear-catalog-search-btn').classList.add('hidden');
       renderProducts(getDisplayedItems());
     }
 
@@ -523,9 +580,23 @@
     }
 
     function getDisplayedItems() {
-      const locFiltered = getFilteredByLocationItems();
-      if (selectedCategory === 'all') return locFiltered;
-      return locFiltered.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
+      let items = getFilteredByLocationItems();
+
+      if (selectedCategory !== 'all') {
+        items = items.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
+      }
+
+      if (catalogSearchQuery.length > 0) {
+        items = items.filter(i => {
+          const name = String(i.name || '').toLowerCase();
+          const id = String(i.id || '').toLowerCase();
+          const cat = String(i.category || '').toLowerCase();
+          const cond = String(i.condition || '').toLowerCase();
+          return name.includes(catalogSearchQuery) || id.includes(catalogSearchQuery) || cat.includes(catalogSearchQuery) || cond.includes(catalogSearchQuery);
+        });
+      }
+
+      return items;
     }
 
     function renderCategoryFilters(items) {
@@ -590,8 +661,15 @@
 
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
+      const countLabel = document.getElementById('catalog-count-label');
+      if (countLabel) countLabel.innerText = items.length;
+
       if (items.length === 0) {
-        grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available for this selection.</div>';
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center text-stone-400 text-xs">
+            ${catalogSearchQuery ? `No items found matching "<b>${catalogSearchQuery}</b>". Try another search keyword!` : 'No items currently available for this selection.'}
+          </div>
+        `;
         return;
       }
 
@@ -605,58 +683,69 @@
         const remainingStock = Math.max(0, item.stock - cartQty);
         const isSoldOut = item.stock <= 0;
 
+        // Promo discount calculation (Feature 5)
+        const hasPromo = item.originalPrice && item.originalPrice > item.price;
+        const discountPct = hasPromo ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) : 0;
+
         return `
-          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
-            <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
-              <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
-              
-              <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-                <div class="flex gap-1.5 items-center">
-                  <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
-                  
-                  <!-- Dynamic Live Stock Badge -->
-                  ${isSoldOut ? `
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
-                  ` : cartQty > 0 ? (
-                    remainingStock === 0 ? `
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
-                    ` : `
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
-                    `
-                  ) : `
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
-                  `}
+          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col justify-between transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
+            <div>
+              <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
+                <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
+                
+                <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                  <div class="flex gap-1.5 items-center">
+                    <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
+                    
+                    ${isSoldOut ? `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
+                    ` : cartQty > 0 ? (
+                      remainingStock === 0 ? `
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
+                      ` : `
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
+                      `
+                    ) : `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
+                    `}
+                  </div>
+                  <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
+                    📍 ${item.location} Hub
+                  </span>
                 </div>
-                <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
-                  📍 ${item.location} Hub
-                </span>
+
+                ${hasPromo ? `
+                  <div class="absolute bottom-3 left-3 z-10">
+                    <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-md tracking-wider">
+                      SAVE ${discountPct}%
+                    </span>
+                  </div>
+                ` : ''}
+
+                ${hasMultiple ? `
+                  <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
+                    ${currentIdx + 1} / ${images.length}
+                  </span>
+                  <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                  </button>
+                  <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                  </button>
+                  <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
+                    ${images.map((_, i) => `
+                      <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
+                    `).join('')}
+                  </div>
+                ` : ''}
               </div>
 
-              ${hasMultiple ? `
-                <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
-                  ${currentIdx + 1} / ${images.length}
-                </span>
-                <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                </button>
-                <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
-                  ${images.map((_, i) => `
-                    <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
-                  `).join('')}
-                </div>
-              ` : ''}
-            </div>
-
-            <div class="p-5 flex-1 flex flex-col justify-between">
-              <div>
+              <div class="p-5">
                 <div class="flex items-center justify-between gap-1">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
                   <span class="text-[10px] font-semibold text-stone-500">📍 ${item.location}</span>
                 </div>
-                <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
+                <h3 class="font-bold text-stone-900 text-base mt-1 leading-snug">${item.name}</h3>
                 
                 <div class="flex items-center gap-1.5 mt-2">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
@@ -665,9 +754,17 @@
                   </span>
                 </div>
               </div>
+            </div>
 
-              <div class="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
-                <span class="text-lg font-bold text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+            <!-- Price & Buy Section -->
+            <div class="p-5 pt-0">
+              <div class="pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
+                <div class="flex flex-col">
+                  ${hasPromo ? `
+                    <span class="text-[11px] text-stone-400 line-through leading-none font-medium">₱${Number(item.originalPrice).toLocaleString()}</span>
+                  ` : ''}
+                  <span class="text-lg font-black text-stone-900 leading-tight">₱${Number(item.price).toLocaleString()}</span>
+                </div>
                 
                 ${isSoldOut ? `
                   <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
@@ -678,12 +775,11 @@
                       <span class="hidden sm:inline">Inquire</span>
                     </button>
 
-                    <!-- Interactive +/- Quantity Stepper on Main Card -->
                     ${cartQty > 0 ? `
                       <div class="flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 shadow-sm">
                         <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
                         <span class="w-7 text-center font-bold text-xs text-brand-900">${cartQty}</span>
-                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max available stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
+                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
                       </div>
                     ` : `
                       <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
@@ -847,7 +943,6 @@
               <div class="text-stone-500 mt-0.5">₱${Number(item.price).toLocaleString()} each &bull; Subtotal: <b class="text-stone-900">₱${Number(item.price * item.qty).toLocaleString()}</b></div>
             </div>
 
-            <!-- Stepper inside Drawer -->
             <div class="flex items-center gap-1.5">
               <div class="flex items-center bg-white rounded-lg border border-stone-200 shadow-sm p-0.5">
                 <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition">&minus;</button>
@@ -1015,6 +1110,107 @@
     function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
 
     // =========================================================================
+    // BUYER TRACK ORDER PORTAL (Feature 4)
+    // =========================================================================
+    function openTrackOrderModal() {
+      document.getElementById('track-order-modal').classList.remove('hidden');
+    }
+
+    function closeTrackOrderModal() {
+      document.getElementById('track-order-modal').classList.add('hidden');
+      document.getElementById('track-result-box').classList.add('hidden');
+      document.getElementById('track-order-id-input').value = '';
+    }
+
+    async function submitTrackOrder(e) {
+      e.preventDefault();
+      const input = document.getElementById('track-order-id-input').value.trim();
+      const resultBox = document.getElementById('track-result-box');
+      const btn = document.getElementById('track-order-btn');
+
+      if (!input) return;
+
+      btn.disabled = true;
+      btn.innerText = 'Checking...';
+      resultBox.classList.remove('hidden');
+      resultBox.innerHTML = '<div class="text-stone-400 py-3 text-center">Looking up order in database...</div>';
+
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=trackOrder&orderId=${encodeURIComponent(input)}&_t=${Date.now()}`);
+        const data = await res.json();
+
+        if (data && data.status === 'success') {
+          const isConfirmed = data.orderStatus === 'CONFIRMED';
+          const isCancelled = data.orderStatus.includes('CANCELLED') || data.orderStatus.includes('EXPIRED');
+
+          let badgeHtml = '';
+          if (isConfirmed) {
+            badgeHtml = '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">✔ CONFIRMED / PREPARING</span>';
+          } else if (isCancelled) {
+            badgeHtml = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-red-100 text-red-800">✖ ${data.orderStatus}</span>`;
+          } else {
+            badgeHtml = '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900">⏱️ RESERVED (PENDING)</span>';
+          }
+
+          const itemsHtml = (data.items || []).map(i => `
+            <div class="flex justify-between py-1 border-b border-stone-100 last:border-0">
+              <span class="font-medium text-stone-800">${i.name} &times; ${i.qty}</span>
+              <span class="font-mono text-stone-600">₱${Number(i.price * i.qty).toLocaleString()}</span>
+            </div>
+          `).join('');
+
+          resultBox.innerHTML = `
+            <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-stone-900 text-sm">${data.orderId}</span>
+                ${badgeHtml}
+              </div>
+
+              <div class="text-[11px] text-stone-500">
+                Placed on <b>${data.date}</b> &bull; Total: <b class="text-stone-900 font-mono text-xs">₱${Number(data.total).toLocaleString()}</b>
+              </div>
+
+              ${data.trackingNote ? `
+                <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+                  <span class="font-bold block text-[11px]">📦 Dispatch / Meetup Note:</span>
+                  <div class="mt-0.5 font-bold">${data.trackingNote}</div>
+                </div>
+              ` : ''}
+
+              ${data.comment ? `
+                <div class="p-2.5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-[11px]">
+                  <b>Note:</b> ${data.comment}
+                </div>
+              ` : ''}
+
+              <div class="pt-2 border-t border-stone-200/60">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1">Ordered Pieces</span>
+                ${itemsHtml}
+              </div>
+
+              <div class="pt-2 border-t border-stone-200/60 text-[11px] text-stone-500">
+                <b>Fulfillment:</b> ${data.fulfillment}<br>
+                <b>Payment:</b> ${data.paymentMethod}
+              </div>
+            </div>
+          `;
+        } else {
+          resultBox.innerHTML = `
+            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center">
+              Order ID "<b>${input}</b>" not found. Please double-check the ID from your receipt.
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error(err);
+        resultBox.innerHTML = `<div class="p-3 bg-red-50 text-red-700 rounded-xl text-center">Network error. Please try again later.</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Check';
+      }
+    }
+
+    // =========================================================================
     // PWA INSTALLATION LOGIC
     // =========================================================================
     let deferredPrompt = null;
@@ -1073,7 +1269,6 @@
     selectPaymentTab('gcash');
     fetchInventory();
 
-    // Polling every 25 seconds
     setInterval(() => {
       fetchInventory(true);
     }, 25000);
