@@ -436,11 +436,18 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
             Item Photos * <span class="text-stone-400 font-normal">(select 1 or multiple, no renaming needed)</span>
           </label>
           
-          <div class="border-2 border-dashed border-stone-200 hover:border-brand-800 rounded-2xl p-3.5 text-center cursor-pointer transition bg-stone-50/60" onclick="document.getElementById('new-item-files').click()">
-            <svg class="w-7 h-7 text-stone-400 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <div class="text-xs font-bold text-stone-700">Tap to select photos from gallery</div>
+          <div class="border-2 border-dashed border-stone-200 hover:border-brand-800 rounded-2xl p-4 text-center cursor-pointer transition bg-stone-50/60" onclick="document.getElementById('new-item-files').click()">
+            <svg class="w-8 h-8 text-stone-400 mx-auto mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div class="text-xs font-bold text-stone-700">Click to choose photos from phone/computer</div>
             <input type="file" id="new-item-files" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event)">
           </div>
+
+          <!-- Auto White Background Checkbox (Option 1) -->
+          <label class="mt-3 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 cursor-pointer">
+            <input type="checkbox" id="auto-white-background" checked class="mt-0.5 h-4 w-4 accent-emerald-700">
+            <span class="text-[11px] leading-relaxed text-emerald-950"><b>Automatically make the background white</b><br><span class="text-emerald-800">Runs on this device. First use downloads the AI model; processing can take a while, especially on iPhone.</span></span>
+          </label>
+          <div id="photo-processing-status" class="mt-2 text-[11px] font-semibold text-emerald-800 hidden"></div>
 
           <div id="photos-preview-container" class="mt-2.5 flex flex-wrap gap-2"></div>
         </div>
@@ -559,6 +566,14 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     let pendingConfirmOrderId = null;
     let pendingEditPriceItemId = null;
     let selectedImageFiles = [];
+    let bgRemovalModulePromise = null;
+
+    function getBgRemovalModule() {
+      if (!bgRemovalModulePromise) {
+        bgRemovalModulePromise = import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+      }
+      return bgRemovalModulePromise;
+    }
 
     // Check 5-minute grace period on initial load
     function checkGracePeriod() {
@@ -903,7 +918,7 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
     }
 
     // =========================================================================
-    // ORDERS CONTROLLER (Fixed to seamlessly accept object or array)
+    // ORDERS CONTROLLER
     // =========================================================================
     async function fetchOrders() {
       const container = document.getElementById('orders-list');
@@ -1353,6 +1368,11 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       selectedImageFiles = [];
       document.getElementById('photos-preview-container').innerHTML = '';
       document.getElementById('add-item-form').reset();
+      const statusEl = document.getElementById('photo-processing-status');
+      if (statusEl) {
+        statusEl.innerText = '';
+        statusEl.classList.add('hidden');
+      }
       toggleScheduleInput();
       document.getElementById('add-item-modal').classList.remove('hidden');
     }
@@ -1377,48 +1397,152 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    function handleFileSelect(e) {
-      const files = Array.from(e.target.files);
-      if (!files.length) return;
+    function loadImageElement(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
 
-      files.forEach(file => {
-        if (!file.type.startsWith('image/')) return;
+    async function processFileToWhiteBackground(file) {
+      const statusEl = document.getElementById('photo-processing-status');
+      const makeWhite = document.getElementById('auto-white-background')?.checked ?? true;
+
+      const readDataUrl = () => new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = function(evt) {
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const maxDim = 1200;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > maxDim || height > maxDim) {
-              if (width > height) {
-                height = Math.round((height * maxDim) / width);
-                width = maxDim;
-              } else {
-                width = Math.round((width * maxDim) / height);
-                height = maxDim;
-              }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
-            selectedImageFiles.push({
-              data: compressedBase64,
-              type: 'image/jpeg',
-              name: file.name
-            });
-            renderPhotoThumbnails();
-          };
-          img.src = evt.target.result;
-        };
+        reader.onload = (evt) => resolve(evt.target.result);
+        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
+
+      const rawDataUrl = await readDataUrl();
+
+      if (!makeWhite) {
+        const img = await loadImageElement(rawDataUrl);
+        const canvas = document.createElement('canvas');
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        return {
+          data: canvas.toDataURL('image/jpeg', 0.85),
+          type: 'image/jpeg',
+          name: file.name
+        };
+      }
+
+      if (statusEl) {
+        statusEl.classList.remove('hidden');
+        statusEl.innerText = `Removing background & applying studio white for ${file.name}... (downloading model if first time)`;
+      }
+
+      const { removeBackground } = await getBgRemovalModule();
+      const outputBlob = await removeBackground(file, {
+        output: { format: 'image/png', quality: 0.9 },
+        progress: (key, current, total) => {
+          if (statusEl && total) {
+            const pct = Math.round((current / total) * 100);
+            statusEl.innerText = `AI processing ${file.name}: ${pct}%`;
+          }
+        }
+      });
+
+      const cutDataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => resolve(evt.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(outputBlob);
+      });
+
+      const cutImg = await loadImageElement(cutDataUrl);
+      const canvas = document.createElement('canvas');
+      const maxDim = 1200;
+      let width = cutImg.width;
+      let height = cutImg.height;
+
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(cutImg, 0, 0, width, height);
+
+      return {
+        data: canvas.toDataURL('image/jpeg', 0.85),
+        type: 'image/jpeg',
+        name: file.name
+      };
+    }
+
+    async function handleFileSelect(e) {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      const statusEl = document.getElementById('photo-processing-status');
+
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        try {
+          const item = await processFileToWhiteBackground(file);
+          selectedImageFiles.push(item);
+          renderPhotoThumbnails();
+        } catch (err) {
+          console.error('Failed to process image:', err);
+          alert(`Could not process ${file.name}. Uploading regular compressed photo instead.`);
+          
+          const rawDataUrl = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = (evt) => resolve(evt.target.result);
+            r.readAsDataURL(file);
+          });
+          const img = await loadImageElement(rawDataUrl);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          selectedImageFiles.push({
+            data: canvas.toDataURL('image/jpeg', 0.85),
+            type: 'image/jpeg',
+            name: file.name
+          });
+          renderPhotoThumbnails();
+        }
+      }
+
+      if (statusEl) {
+        statusEl.innerText = 'All selected photos processed!';
+        setTimeout(() => statusEl.classList.add('hidden'), 2000);
+      }
     }
 
     function renderPhotoThumbnails() {
