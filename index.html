@@ -1,17 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- PWA Meta Tags -->
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#1b2921">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="KEG Finds">
-  <link rel="apple-touch-icon" href="./icon-192.png">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KEG Finds | Pre-loved Closet & Housewares</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>KEG Finds | Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -36,1242 +28,1720 @@
     }
   </script>
 </head>
-<body class="bg-stone-50 text-stone-800 font-sans antialiased selection:bg-brand-800 selection:text-white">
+<body class="bg-stone-100 text-stone-800 font-sans antialiased min-h-screen">
 
-  <!-- Top Announcement Bar -->
-  <div class="bg-brand-900 text-stone-200 text-xs py-2 px-4 text-center font-medium tracking-wide">
-    📍 Hubs: Pasig City &amp; Santa Maria, Ilocos Sur &bull; Meet-up / Pickup or Delivery (Grab / Lalamove / J&amp;T) &bull; GCash QR &bull; Maya QR &bull; Cash on Meet-up
-  </div>
+  <!-- Admin Login Screen -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-7 sm:p-8 max-w-sm w-full shadow-xl border border-stone-200 text-center">
+      <div class="w-14 h-14 bg-brand-800 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 font-serif font-bold text-2xl shadow-sm">
+        K
+      </div>
+      <h1 class="font-serif text-2xl font-bold text-stone-900">Seller Dashboard</h1>
+      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your 4-digit PIN to manage store &amp; inventory</p>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-stone-200">
-    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-      <a href="#" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-brand-800 text-white font-serif font-bold text-xl flex items-center justify-center shadow-sm">K</div>
+      <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
-          <span class="font-serif font-bold text-lg tracking-tight text-stone-900 block leading-tight">KEG FINDS</span>
-          <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Pasig City and Santa Maria, Ilocos Sur</span>
+          <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" class="w-full text-center text-2xl tracking-widest font-mono font-bold border border-stone-200 rounded-2xl p-3 focus:ring-2 focus:ring-brand-800 outline-none">
         </div>
-      </a>
-
-      <div class="flex items-center gap-2">
-        <!-- Track Order Portal Button -->
-        <button onclick="openTrackOrderModal()" class="flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-brand-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-full transition border border-stone-200">
-          <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-          <span class="hidden sm:inline">Track Order</span>
+        <button type="submit" id="login-btn" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm">
+          Unlock Dashboard
         </button>
-
-        <!-- Install App Button -->
-        <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-full transition shadow-sm animate-pulse">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          <span class="hidden sm:inline">Install</span>
-        </button>
-
-        <!-- Header Quick Chat Link -->
-        <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-blue-600 bg-stone-100 hover:bg-blue-50 px-3 py-2 rounded-full transition border border-stone-200">
-          <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-          <span>Ask Seller</span>
-        </a>
-
-        <!-- Cart Bag Button -->
-        <button onclick="openCart()" class="relative bg-brand-800 hover:bg-brand-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition flex items-center gap-2 shadow-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-          <span>Bag</span>
-          <span id="cart-badge" class="bg-amber-400 text-stone-900 text-[10px] font-black px-1.5 py-0.2 rounded-full transition-transform">0</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Dynamic Announcement Banner (Loaded from Google Sheets 'Settings' tab) -->
-  <div id="dynamic-announcement-banner" class="hidden bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 text-white px-4 py-3 shadow-md relative transition-all duration-300">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3 text-xs sm:text-sm">
-      <div class="flex items-center gap-2.5 flex-1">
-        <span class="text-base sm:text-lg animate-bounce shrink-0">📢</span>
-        <div class="leading-relaxed">
-          <span class="font-bold uppercase tracking-wider text-[10px] bg-black/25 text-amber-200 px-2 py-0.5 rounded-full mr-1.5 inline-block">Notice</span>
-          <span id="announcement-text" class="font-medium text-amber-50"></span>
-        </div>
-      </div>
-      <button onclick="dismissAnnouncement()" title="Close notice" class="text-amber-200 hover:text-white p-1 rounded-lg text-lg leading-none font-bold transition shrink-0">
-        &times;
-      </button>
+      </form>
+      <div id="login-error" class="text-xs text-red-600 font-semibold mt-3 hidden">Invalid PIN. Please try again.</div>
     </div>
   </div>
 
-  <!-- Hero Section -->
-  <section class="py-12 md:py-16 bg-white border-b border-stone-200">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="max-w-2xl">
-        <span class="inline-block px-3 py-1 bg-stone-100 text-brand-800 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
-          Curated Pre-Loved &bull; Pasig City and Santa Maria, Ilocos Sur
-        </span>
-        <h1 class="font-serif text-3xl md:text-5xl font-bold text-stone-900 leading-tight">
-          Quality closet pieces and houseware essentials.
-        </h1>
-        <p class="mt-4 text-stone-600 text-sm md:text-base leading-relaxed">
-          Gently worn dress shirts, shoes, and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
-        </p>
-
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href="#items" class="bg-brand-800 text-white text-xs font-bold px-5 py-3 rounded-xl hover:bg-brand-900 transition shadow-sm">
-            Browse Available Items
-          </a>
-          <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs font-bold px-5 py-3 rounded-xl transition flex items-center gap-2 shadow-sm">
-            <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-            <span>Chat on Messenger</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Catalog Section -->
-  <main id="items" class="max-w-5xl mx-auto px-4 py-12 space-y-6">
-    <!-- Location Switcher Tabs (All, Pasig, Santa Maria) -->
-    <div class="p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-      <div class="text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-1.5">
-        <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        <span>Select Location / Dispatch Hub:</span>
-      </div>
-      <div id="location-filter-bar" class="flex flex-wrap gap-2 text-xs font-bold">
-        <button onclick="switchLocation('all', this)" class="loc-btn bg-brand-800 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
-          🌐 All Locations (<span id="count-all">0</span>)
-        </button>
-        <button onclick="switchLocation('pasig', this)" class="loc-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2.5 rounded-xl transition">
-          📍 Pasig, Metro Manila (<span id="count-pasig">0</span>)
-        </button>
-        <button onclick="switchLocation('santa maria', this)" class="loc-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-4 py-2.5 rounded-xl transition">
-          📍 Santa Maria, Ilocos Sur (<span id="count-santamaria">0</span>)
-        </button>
-      </div>
-    </div>
-
-    <!-- Product Search Bar & Category Controls -->
-    <div class="p-4 bg-white rounded-2xl border border-stone-200 shadow-sm space-y-4">
-      <!-- Live Search Input -->
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-        <input type="text" id="catalog-search-input" oninput="handleCatalogSearch(this.value)" placeholder="Search products by brand, name, or keywords (e.g. Uniqlo, Jordan, Oxford)..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
-        <button id="clear-catalog-search-btn" onclick="clearCatalogSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
-          &times;
-        </button>
-      </div>
-
-      <!-- Categories Filter Bar -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
-        <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
-          <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
-        </div>
-        <div class="text-[11px] sm:text-xs text-stone-500 font-medium whitespace-nowrap">
-          Showing <span id="catalog-count-label" class="font-bold text-stone-900">0</span> items
-        </div>
-      </div>
-    </div>
-
-    <!-- Product Grid -->
-    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="col-span-full py-16 text-center text-stone-400 text-sm">
-        Loading inventory from database...
-      </div>
-    </div>
-  </main>
-
-  <!-- How It Works Section -->
-  <section id="how-it-works" class="bg-stone-100/70 border-t border-b border-stone-200 py-12">
-    <div class="max-w-5xl mx-auto px-4">
-      <h3 class="font-serif text-xl font-bold text-stone-900 mb-6 text-center">Fast QR &amp; Meet-up Ordering</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-          <div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs mb-3">1</div>
-          <h4 class="font-bold text-stone-900 text-sm">Inspect Photos &amp; Bag</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Swipe through photos of tags, fabrics, and measurements to verify condition.</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-          <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-3">2</div>
-          <h4 class="font-bold text-stone-900 text-sm">Scan QR or Cash Meet-up</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Scan GCash/Maya QR or choose Cash on Meet-up for free local pickup.</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-          <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
-          <h4 class="font-bold text-stone-900 text-sm">Track Your Order Live</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Check your confirmation, meetup coordination notes, and tracking link anytime.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Slide-Over Checkout Drawer -->
-  <div id="checkout-modal" class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-sm hidden flex justify-end">
-    <div class="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
-      
-      <div class="flex items-center justify-between pb-4 border-b border-stone-200">
-        <div>
-          <h2 class="font-serif text-xl font-bold text-stone-900">Your Order Bag</h2>
-          <p class="text-xs text-stone-500">Scan QR or Cash on Meet-up &bull; Receive email confirmation</p>
-        </div>
-        <button onclick="closeCart()" class="text-stone-400 hover:text-stone-700 text-2xl font-bold p-1 leading-none">&times;</button>
-      </div>
-
-      <!-- Policy Notice -->
-      <div class="my-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 leading-relaxed flex items-start gap-2.5">
-        <span class="text-base leading-none">⏱️</span>
-        <div>
-          <strong class="font-bold">Reservation Policy:</strong> Submitting an order reserves your items for <b>2 hours</b>. For QR orders, please send your GCash/Maya payment screenshot via Messenger or Viber within 2 hours. For Cash on Meet-up, coordinate your meetup schedule.
-        </div>
-      </div>
-
-      <div class="py-2 border-b border-stone-200">
-        <div id="cart-list" class="space-y-2"></div>
-        <div class="mt-4 pt-3 border-t border-stone-100 flex justify-between items-center text-sm font-bold text-stone-900">
-          <span>Items Total:</span>
-          <span id="items-total-display" class="text-base text-brand-800 font-extrabold">₱0</span>
-        </div>
-      </div>
-
-      <!-- Buyer Details Form with Email Input -->
-      <div class="py-4 space-y-3.5 border-b border-stone-200">
-        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500">Buyer Information</h4>
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Full Name *</label>
-          <input type="text" id="buyer-name" placeholder="e.g. Juan Dela Cruz" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Email Address * <span class="text-stone-400 font-normal">(for confirmation receipts)</span></label>
-          <input type="email" id="buyer-email" placeholder="juan.delacruz@gmail.com" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-        </div>
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Mobile / Viber Number *</label>
-          <input type="text" id="buyer-contact" placeholder="09XXXXXXXXX" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-stone-700 block mb-1">Fulfillment Option</label>
-          <select id="buyer-fulfillment" onchange="onFulfillmentChange()" class="w-full border border-stone-200 rounded-lg p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none">
-            <option value="Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)">Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)</option>
-            <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Payment Section -->
-      <div class="py-4 flex-1">
-        <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500 mb-2">Select Payment Method</h4>
-        
-        <div class="flex gap-2 mb-3">
-          <button onclick="selectPaymentTab('gcash')" id="tab-btn-gcash" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition">GCash QR</button>
-          <button onclick="selectPaymentTab('maya')" id="tab-btn-maya" class="flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">Maya QR</button>
-          <button onclick="selectPaymentTab('cash')" id="tab-btn-cash" class="hidden flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">💵 Cash (Meet-up)</button>
-        </div>
-
-        <!-- Account & QR Box -->
-        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
-          <span id="payment-amount-label" class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
-          <div id="payment-amount-display" class="text-2xl font-black text-brand-800 mt-0.5 mb-3">₱0</div>
-
-          <!-- QR Image Container -->
-          <div id="qr-payment-container">
-            <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
-              <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
-            </div>
-            <p class="text-[10px] text-stone-400 mt-1.5">Take a screenshot to scan from your photo gallery</p>
-
-            <div class="mt-3 pt-3 border-t border-stone-200 text-left space-y-1.5 text-xs">
-              <div class="flex justify-between">
-                <span class="text-stone-500">Account:</span>
-                <span id="pay-account-name" class="font-bold text-stone-800">M. DIVINA</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-stone-500">Mobile Number:</span>
-                <div class="flex items-center gap-1.5">
-                  <span id="pay-account-number" class="font-mono font-bold text-stone-900 bg-white px-2 py-0.5 rounded border border-stone-200">0917-611-8382</span>
-                  <button onclick="copyAccountNumber()" class="text-[11px] font-bold text-brand-700 hover:underline">Copy</button>
-                </div>
-              </div>
+  <!-- Admin Dashboard Screen (Hidden until login) -->
+  <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+    <!-- Clean, Mobile-First Sticky Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 py-2.5 sm:py-3">
+        <!-- Top Row: Brand & Quick Utility Buttons -->
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-brand-800 text-white font-serif font-bold text-lg flex items-center justify-center shrink-0">K</div>
+            <div class="min-w-0">
+              <span class="font-serif font-bold text-sm sm:text-base text-stone-900 block leading-tight truncate">KEG FINDS ADMIN</span>
+              <span class="text-[10px] uppercase tracking-wider text-stone-500 font-semibold block">Store Management</span>
             </div>
           </div>
 
-          <!-- Cash On Meet-up Info Box -->
-          <div id="cash-payment-container" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left space-y-2 text-xs text-emerald-950">
-            <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm">
-              <span>🤝 Cash on Meet-up / Pick-up</span>
-            </div>
-            <p class="text-[11px] text-emerald-800 leading-relaxed">
-              Pay upon item inspection. Please prepare the exact cash amount of <b id="cash-amount-text" class="font-extrabold text-emerald-900">₱0</b> upon meeting.
-            </p>
-            <div class="text-[11px] text-emerald-700 pt-1 border-t border-emerald-200/60">
-              📍 Coordinate meeting spot &amp; time via Messenger or Viber after reserving.
-            </div>
+          <!-- Utility Icons: Refresh & Lock -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="refreshData()" title="Refresh All Data" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition border border-stone-200 active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button onclick="handleLogout()" class="px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200 active:scale-95">
+              Lock
+            </button>
           </div>
         </div>
 
-        <!-- Submit Buttons -->
-        <div class="mt-4 space-y-2">
-          <button id="submit-messenger-btn" onclick="processOrder('messenger')" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
-            <span>Submit Order &amp; Message on Messenger</span>
+        <!-- Action Row -->
+        <div class="grid grid-cols-2 gap-2 mt-2.5 pt-2 border-t border-stone-100">
+          <button onclick="openBroadcastModal()" class="py-2 px-3 bg-purple-700 hover:bg-purple-800 text-white rounded-xl transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <span class="truncate">Email Past Buyers</span>
           </button>
-          <button id="submit-viber-btn" onclick="processOrder('viber')" class="w-full py-3 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
-            <span>Submit Order &amp; Message on Viber</span>
+          <button onclick="openAddItemModal()" class="py-2 px-3 bg-brand-800 hover:bg-brand-900 text-white rounded-xl transition flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm active:scale-95">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Add Item</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 flex-1 w-full space-y-6">
+
+      <!-- Dynamic Announcement Banner Manager Card -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <div class="flex items-center justify-between gap-2 pb-3 border-b border-stone-100">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-lg sm:text-xl shrink-0">📢</span>
+            <div class="min-w-0">
+              <h2 class="font-serif font-bold text-xs sm:text-sm text-stone-900 truncate">Website Announcement Banner</h2>
+              <p class="text-[10px] sm:text-[11px] text-stone-500 truncate">Post drop dates, sale alerts, and schedule changes</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200">
+            <label class="text-[11px] font-bold text-stone-700">Display:</label>
+            <input type="checkbox" id="banner-active-toggle" class="w-4 h-4 text-brand-800 rounded focus:ring-brand-800 cursor-pointer">
+          </div>
+        </div>
+
+        <div class="mt-3 flex flex-col sm:flex-row gap-2">
+          <input type="text" id="banner-text-input" placeholder="e.g. 📢 DROP ALERT: 15 new dress shirts dropping this Friday @ 8:00 PM!" class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          <button onclick="saveAnnouncementBanner()" id="save-banner-btn" class="w-full sm:w-auto px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm whitespace-nowrap active:scale-95">
+            Save Banner
           </button>
         </div>
       </div>
 
-    </div>
+      <!-- Navigation Switcher: Orders vs Inventory -->
+      <div class="flex gap-1.5 p-1 bg-stone-200/80 rounded-2xl max-w-md">
+        <button id="nav-tab-orders" onclick="switchMainView('orders')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm">
+          <span>📦 Orders</span>
+          <span id="nav-badge-orders" class="bg-amber-100 text-amber-900 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+        <button id="nav-tab-inventory" onclick="switchMainView('inventory')" class="flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900">
+          <span>🏷️ Stocks &amp; Drops</span>
+          <span id="nav-badge-inventory" class="bg-stone-300 text-stone-800 text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+      </div>
+
+      <!-- VIEW 1: ORDERS MANAGEMENT -->
+      <div id="view-orders" class="space-y-6">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
+            <span class="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider block">Total Orders</span>
+            <div id="stat-total" class="text-xl sm:text-2xl font-black text-stone-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/40">
+            <span class="text-[10px] sm:text-[11px] font-bold text-amber-800 uppercase tracking-wider block">Pending</span>
+            <div id="stat-pending" class="text-xl sm:text-2xl font-black text-amber-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+            <span class="text-[10px] sm:text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">Confirmed / Paid</span>
+            <div id="stat-confirmed" class="text-xl sm:text-2xl font-black text-emerald-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+            <span class="text-[10px] sm:text-[11px] font-bold text-red-800 uppercase tracking-wider block">Cancelled</span>
+            <div id="stat-cancelled" class="text-xl sm:text-2xl font-black text-red-900 mt-1">0</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input type="text" id="order-search-input" oninput="handleOrderSearch(this.value)" placeholder="Search by Buyer Name, Order ID, Mobile Number, or Email..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+            <button id="clear-order-search-btn" onclick="clearOrderSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+              &times;
+            </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
+            <div class="flex gap-1.5 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+              <button onclick="filterOrders('ALL', this)" class="order-filter-btn active bg-stone-900 text-white px-3.5 py-1.5 rounded-full transition shadow-sm">All</button>
+              <button onclick="filterOrders('PENDING_PAYMENT', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-1.5 rounded-full transition">Pending</button>
+              <button onclick="filterOrders('CONFIRMED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-1.5 rounded-full transition">Confirmed</button>
+              <button onclick="filterOrders('CANCELLED', this)" class="order-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3.5 py-1.5 rounded-full transition">Cancelled</button>
+            </div>
+
+            <div class="text-[11px] sm:text-xs text-stone-500 font-medium">
+              Showing <span id="orders-count-label" class="font-bold text-stone-900">0</span> orders
+            </div>
+          </div>
+        </div>
+
+        <div id="orders-list" class="space-y-4">
+          <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
+            Loading orders from database...
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: STOCKS, DRAFTS & SCHEDULED DROPS -->
+      <div id="view-inventory" class="hidden space-y-6">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200 shadow-sm">
+            <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Listed</span>
+            <div id="inv-stat-total" class="text-xl font-black text-stone-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-emerald-200 shadow-sm bg-emerald-50/40">
+            <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Live on Shop</span>
+            <div id="inv-stat-live" class="text-xl font-black text-emerald-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/40">
+            <span class="text-[10px] font-bold text-purple-800 uppercase tracking-wider block">Scheduled</span>
+            <div id="inv-stat-scheduled" class="text-xl font-black text-purple-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-stone-200 shadow-sm bg-stone-100/70">
+            <span class="text-[10px] font-bold text-stone-600 uppercase tracking-wider block">Drafts (Hidden)</span>
+            <div id="inv-stat-draft" class="text-xl font-black text-stone-800 mt-1">0</div>
+          </div>
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-red-200 shadow-sm bg-red-50/40">
+            <span class="text-[10px] font-bold text-red-800 uppercase tracking-wider block">Sold Out</span>
+            <div id="inv-stat-out" class="text-xl font-black text-red-900 mt-1">0</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input type="text" id="inv-search-input" oninput="handleInvSearch(this.value)" placeholder="Search inventory by Item Name, ID (#1), Category, or Hub..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+            <button id="clear-inv-search-btn" onclick="clearInvSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+              &times;
+            </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
+            <div class="flex gap-1.5 text-xs font-bold overflow-x-auto pb-1 sm:pb-0">
+              <button onclick="filterInventory('ALL', this)" class="inv-filter-btn active bg-stone-900 text-white px-3 py-1.5 rounded-full transition shadow-sm">All</button>
+              <button onclick="filterInventory('ACTIVE', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">🟢 Live</button>
+              <button onclick="filterInventory('SCHEDULED', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">⏰ Sched</button>
+              <button onclick="filterInventory('DRAFT', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">📝 Draft</button>
+              <button onclick="filterInventory('PASIG', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">📍 Pasig</button>
+              <button onclick="filterInventory('SANTA MARIA', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">📍 Ilocos</button>
+              <button onclick="filterInventory('OUT_OF_STOCK', this)" class="inv-filter-btn bg-stone-100 text-stone-700 hover:bg-stone-200 px-3 py-1.5 rounded-full transition">🚨 Out</button>
+            </div>
+
+            <div class="text-[11px] sm:text-xs text-stone-500 font-medium whitespace-nowrap">
+              Showing <span id="inv-count-label" class="font-bold text-stone-900">0</span> listings
+            </div>
+          </div>
+        </div>
+
+        <div id="inventory-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="col-span-full bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">
+            Loading inventory from database...
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <!-- BUYER TRACK ORDER MODAL -->
-  <div id="track-order-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
-      <button onclick="closeTrackOrderModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+  <!-- EDIT PRICE & PROMO SALE MODAL -->
+  <div id="edit-price-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeEditPriceModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
       
       <div class="flex items-center gap-2.5 mb-3">
         <div class="w-10 h-10 bg-brand-800 text-white rounded-2xl flex items-center justify-center font-bold">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
-          <h3 class="font-serif text-lg font-bold text-stone-900">Track Your Order</h3>
-          <p class="text-xs text-stone-500">Enter your Order ID (from email receipt or Messenger)</p>
+          <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Edit Price &amp; Promo</h3>
+          <p id="edit-price-item-title" class="text-xs text-stone-500 truncate max-w-[200px]">Item #1</p>
         </div>
       </div>
 
-      <form onsubmit="submitTrackOrder(event)" class="mt-4 space-y-3">
-        <div class="flex gap-2">
-          <input type="text" id="track-order-id-input" placeholder="e.g. KEG-260228-1234" required class="flex-1 border border-stone-200 rounded-xl p-2.5 text-xs font-mono uppercase font-bold focus:ring-2 focus:ring-brand-800 outline-none">
-          <button type="submit" id="track-order-btn" class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
-            Check
+      <form onsubmit="submitEditPrice(event)" class="mt-4 space-y-3.5 text-xs">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Selling Price (₱) *</label>
+          <input type="number" id="edit-selling-price" required min="1" step="1" oninput="updatePromoPreview()" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono font-bold focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Original Price (₱) <span class="text-stone-400 font-normal">(Optional for Sale)</span></label>
+          <input type="number" id="edit-orig-price" min="0" step="1" placeholder="Leave empty if not on sale" oninput="updatePromoPreview()" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono focus:ring-2 focus:ring-brand-800 outline-none">
+          <p class="text-[10px] text-stone-400 mt-1">If higher than selling price, website shows crossed-out price &amp; "SAVE XX%" badge.</p>
+        </div>
+
+        <div id="edit-promo-preview-box" class="p-3 bg-stone-50 rounded-xl border border-stone-200 text-stone-600 text-[11px] space-y-1">
+          <span class="font-bold text-stone-500 text-[10px] uppercase tracking-wider block">Customer Will See:</span>
+          <div id="edit-promo-preview-content" class="font-semibold text-stone-800">₱0</div>
+        </div>
+
+        <div class="mt-5 flex gap-2 pt-2 border-t border-stone-100">
+          <button type="button" onclick="closeEditPriceModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" id="save-price-btn" class="flex-1 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
+            Save Price
           </button>
         </div>
       </form>
-
-      <!-- Track Result Container -->
-      <div id="track-result-box" class="hidden mt-4 pt-4 border-t border-stone-100 text-xs space-y-3">
-        <!-- Rendered by JS -->
-      </div>
     </div>
   </div>
 
-  <footer class="bg-stone-900 text-stone-400 text-xs py-10 border-t border-stone-800 mb-16 sm:mb-0">
-    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-      <div>
-        <span class="font-serif font-bold text-white text-sm tracking-wide block">KEG FINDS</span>
-        <span class="text-[11px] text-stone-500">Pasig City and Santa Maria, Ilocos Sur</span>
-      </div>
-      <div class="text-[11px] text-stone-500">
-        &copy; 2026 KEG Finds. All rights reserved.
-      </div>
-    </div>
-  </footer>
-
-  <!-- Floating Quick Chat Button for Messenger -->
-  <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="fixed bottom-5 right-5 z-40 group flex items-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#00C6FF] hover:from-[#0074E0] hover:to-[#00B4F0] text-white font-bold text-xs py-3 px-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-    <span class="relative flex h-2.5 w-2.5">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
-    </span>
-    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-    <span class="tracking-wide">Chat with Us</span>
-  </a>
-
-  <!-- iOS Step-by-Step Install Guide Modal -->
-  <div id="ios-install-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 text-center relative">
-      <button onclick="closeIosInstallModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+  <!-- VIP DROP EMAIL BROADCAST MODAL -->
+  <div id="broadcast-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl border border-stone-200 relative my-6">
+      <button onclick="closeBroadcastModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
       
-      <div class="w-12 h-12 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-      </div>
-
-      <h3 class="font-serif text-lg font-bold text-stone-900">Install KEG Finds App</h3>
-      <p class="text-xs text-stone-500 mt-1">Install on your iPhone home screen for fast full-screen shopping:</p>
-
-      <div class="mt-5 space-y-3 text-left text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">1</span>
-          <span>Tap the <b class="text-stone-900">Share button</b> at the bottom of Safari (<svg class="w-4 h-4 inline text-blue-600 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>).</span>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-purple-700 text-white flex items-center justify-center font-bold shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">2</span>
-          <span>Scroll down and tap <b class="text-stone-900">"Add to Home Screen"</b> (<span class="font-bold text-stone-700">＋</span>).</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">3</span>
-          <span>Tap <b class="text-stone-900">Add</b> in the top right corner.</span>
+        <div>
+          <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Send Drop Email to Past Buyers</h3>
+          <p class="text-[11px] text-stone-500">
+            Reaches <b id="broadcast-recipient-count" class="text-purple-700 font-bold">0</b> unique customer(s) from your Orders sheet.
+          </p>
         </div>
       </div>
 
-      <button onclick="closeIosInstallModal()" class="w-full mt-5 py-3 bg-brand-800 text-white font-bold text-xs rounded-xl hover:bg-brand-900 transition">
-        Got it!
-      </button>
+      <div class="mb-3.5 p-3 bg-purple-50 rounded-xl border border-purple-200 text-[11px] text-purple-900 leading-relaxed">
+        <div class="flex items-center justify-between">
+          <span>👥 <b>Deduplicated by Email:</b> Customers who placed multiple orders will only receive <b>1 email</b> so they don't get spammed.</span>
+        </div>
+        <button type="button" onclick="toggleRecipientDetails()" class="mt-1.5 font-bold text-purple-700 underline text-[11px] hover:text-purple-900 block">
+          <span id="recipient-toggle-text">&#9662; Show Recipient List &amp; Breakdown</span>
+        </button>
+        <div id="recipient-details-box" class="hidden mt-2 pt-2 border-t border-purple-200/60 max-h-36 overflow-y-auto space-y-1 text-[10px]">
+        </div>
+      </div>
+
+      <form id="broadcast-form" onsubmit="submitBroadcastEmail(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Drop Subject / Headline *</label>
+          <input type="text" id="broadcast-headline" required placeholder="e.g. Fresh Batch of Oxford Dress Shirts &amp; Jackets Just Dropped!" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none font-semibold">
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Message Preview for Customers *</label>
+          <textarea id="broadcast-message" rows="3" required class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-purple-700 outline-none leading-relaxed">Hi there! We just added new handpicked pre-loved items to our shop. As a valued past buyer, you get early access to check sizes and inspect photos before they sell out!
+
+Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos Sur), plus Grab/J&amp;T delivery nationwide.</textarea>
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Storefront Link</label>
+          <input type="text" id="broadcast-link" value="https://keg-finds.netlify.app" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs font-mono text-stone-600 focus:ring-2 focus:ring-purple-700 outline-none">
+        </div>
+
+        <div class="pt-2 border-t border-stone-100 flex gap-2">
+          <button type="button" onclick="closeBroadcastModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" id="submit-broadcast-btn" class="flex-1 py-2.5 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
+            <span>Send Email Blast</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900/90 backdrop-blur text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 pointer-events-none translate-y-3 flex items-center gap-2">
-    <span class="text-emerald-400">✓</span>
-    <span id="toast-msg">Item added to Bag!</span>
+  <!-- ADD ITEM MODAL -->
+  <div id="add-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl border border-stone-200 relative my-6">
+      <button onclick="closeAddItemModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-brand-800 text-white flex items-center justify-center font-bold shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Add Item to Sell</h3>
+          <p class="text-[11px] text-stone-500">Auto-uploads to Google Drive &amp; syncs to your online shop</p>
+        </div>
+      </div>
+
+      <form id="add-item-form" onsubmit="submitNewItem(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">Item Name *</label>
+          <input type="text" id="new-item-name" required placeholder="e.g. Jordan 1 Retro High OG" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Category *</label>
+            <input type="text" id="new-item-category" required placeholder="e.g. shoes, shirts" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Hub Location *</label>
+            <select id="new-item-location" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs bg-white focus:ring-2 focus:ring-brand-800 outline-none font-semibold">
+              <option value="Pasig">📍 Pasig (Urban Deca)</option>
+              <option value="Santa Maria">📍 Santa Maria (Ilocos)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Selling Price & Promo Original Price Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Selling Price (₱) *</label>
+            <input type="number" id="new-item-price" required min="1" step="1" placeholder="350" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
+          </div>
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Original Price (₱) <span class="font-normal text-stone-400 text-[10px]">(Optional)</span></label>
+            <input type="number" id="new-item-original-price" min="0" step="1" placeholder="500 (shows slash)" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono">
+          </div>
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Stock Quantity *</label>
+            <input type="number" id="new-item-stock" required min="1" value="1" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none font-mono font-bold">
+          </div>
+          <div>
+            <label class="font-bold text-stone-700 block mb-1">Condition *</label>
+            <input type="text" id="new-item-condition" required value="10/10" placeholder="10/10 or Like New" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-800 outline-none">
+          </div>
+        </div>
+
+        <!-- Publishing Status & Scheduling Box -->
+        <div class="bg-stone-50 border border-stone-200 rounded-2xl p-3 space-y-2">
+          <label class="font-bold text-stone-800 block text-[11px] uppercase tracking-wider">
+            Publishing Status &amp; Drop Timing *
+          </label>
+
+          <div class="grid grid-cols-3 gap-1.5">
+            <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
+              <input type="radio" name="new-item-visibility" value="ACTIVE" checked onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
+              <span class="font-bold text-stone-800 text-[10px] sm:text-[11px]">Publish Now</span>
+            </label>
+            <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
+              <input type="radio" name="new-item-visibility" value="SCHEDULED" onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
+              <span class="font-bold text-purple-900 text-[10px] sm:text-[11px]">⏰ Sched</span>
+            </label>
+            <label class="flex items-center gap-1.5 p-2 bg-white rounded-xl border border-stone-200 cursor-pointer hover:border-brand-800 transition">
+              <input type="radio" name="new-item-visibility" value="DRAFT" onchange="toggleScheduleInput()" class="text-brand-800 focus:ring-brand-800">
+              <span class="font-bold text-stone-600 text-[10px] sm:text-[11px]">Draft</span>
+            </label>
+          </div>
+
+          <div id="schedule-datetime-container" class="hidden pt-2 border-t border-stone-200/60">
+            <label class="font-semibold text-purple-900 block mb-1 text-[11px]">
+              Drop Date &amp; Time (Manila Time):
+            </label>
+            <input type="datetime-local" id="new-item-publish-at" class="w-full border border-purple-200 rounded-xl p-2 text-xs bg-white focus:ring-2 focus:ring-purple-700 outline-none font-medium">
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1">
+            Item Photos * <span class="text-stone-400 font-normal">(select 1 or multiple, no renaming needed)</span>
+          </label>
+          
+          <div class="border-2 border-dashed border-stone-200 hover:border-brand-800 rounded-2xl p-4 text-center cursor-pointer transition bg-stone-50/60" onclick="document.getElementById('new-item-files').click()">
+            <svg class="w-8 h-8 text-stone-400 mx-auto mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div class="text-xs font-bold text-stone-700">Click to choose photos from phone/computer</div>
+            <input type="file" id="new-item-files" multiple accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+          </div>
+
+          <!-- Auto White Background Checkbox (Option 1) -->
+          <label class="mt-3 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 cursor-pointer">
+            <input type="checkbox" id="auto-white-background" checked class="mt-0.5 h-4 w-4 accent-emerald-700">
+            <span class="text-[11px] leading-relaxed text-emerald-950"><b>Automatically make the background white</b><br><span class="text-emerald-800">Runs on this device. First use downloads the AI model; processing can take a while, especially on iPhone.</span></span>
+          </label>
+          <div id="photo-processing-status" class="mt-2 text-[11px] font-semibold text-emerald-800 hidden"></div>
+
+          <div id="photos-preview-container" class="mt-2.5 flex flex-wrap gap-2"></div>
+        </div>
+
+        <div class="pt-2 border-t border-stone-100 flex gap-2">
+          <button type="button" onclick="closeAddItemModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+            Cancel
+          </button>
+          <button type="submit" id="submit-item-btn" class="flex-1 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm active:scale-95 flex items-center justify-center gap-2">
+            <span>Save &amp; Upload</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM ORDER MODAL -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeConfirmModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="w-11 h-11 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mb-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+
+      <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Confirm Order</h3>
+      <p class="text-xs text-stone-500 mt-1">
+        Confirming <b id="confirm-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will mark it as paid and email verified confirmation to the buyer.
+      </p>
+
+      <div class="mt-4 space-y-2">
+        <label class="text-xs font-bold text-stone-700 block">
+          📦 Tracking Number or Meetup Note <span class="font-normal text-stone-400">(Optional)</span>
+        </label>
+        <textarea id="confirm-tracking-input" rows="2" placeholder="e.g. J&amp;T Express: 789123456789 or Meetup: Urban Deca Phase 2 Lobby tomorrow 4:00 PM" class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-700 outline-none"></textarea>
+        <p class="text-[10px] text-stone-400">This note will be included directly in the confirmation email and visible on their "Track Order" portal.</p>
+      </div>
+
+      <div class="mt-5 flex gap-2">
+        <button onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+          Dismiss
+        </button>
+        <button id="submit-confirm-btn" onclick="submitConfirmOrder()" class="flex-1 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
+          Mark Confirmed
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Order Modal -->
+  <div id="cancel-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button onclick="closeCancelModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      
+      <div class="w-11 h-11 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center mb-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+
+      <h3 class="font-serif text-base sm:text-lg font-bold text-stone-900">Cancel Order</h3>
+      <p class="text-xs text-stone-500 mt-1">
+        Cancelling <b id="cancel-modal-order-id" class="font-mono text-stone-800">KEG-000000</b> will <b>automatically restore item stock</b> and email the buyer.
+      </p>
+
+      <div class="mt-3.5">
+        <label class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block mb-1.5">Quick Reason:</label>
+        <div class="flex flex-wrap gap-1">
+          <button type="button" onclick="setPresetReason('Buyer requested cancellation')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Buyer requested
+          </button>
+          <button type="button" onclick="setPresetReason('Meet-up no-show / Unresponsive on chat')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Meet-up no-show
+          </button>
+          <button type="button" onclick="setPresetReason('Payment window expired (No payment received)')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Payment expired
+          </button>
+          <button type="button" onclick="setPresetReason('Item damaged during inspection / Unavailable')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Unavailable
+          </button>
+          <button type="button" onclick="setPresetReason('Duplicate order submitted')" class="reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200">
+            Duplicate
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <label class="text-xs font-bold text-stone-700 block mb-1">Reason / Comment *</label>
+        <textarea id="cancel-comment-input" rows="2" placeholder="Select a chip above or type custom reason..." class="w-full border border-stone-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-red-600 outline-none"></textarea>
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <button onclick="closeCancelModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+          Dismiss
+        </button>
+        <button id="confirm-cancel-btn" onclick="submitCancelOrder()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition shadow-sm">
+          Confirm Cancel &amp; Restock
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // =========================================================================
-    // VERIFIED GOOGLE APPS SCRIPT URL & CONFIGURATION
-    // =========================================================================
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
+    const GRACE_PERIOD_MS = 5 * 60 * 1000; // 5 minutes inactivity timeout
 
-    const SELLER_CONFIG = {
-      gcashNumber: "0917-611-8382",
-      mayaNumber: "0915-750-4596",
-      accountName: "M. DIVINA",
-      messengerUsername: "Kegfinds",
-      viberNumber: "+639176118382",
+    let currentPin = '';
+    let currentView = 'orders';
+    let allOrders = [];
+    let allInventory = [];
+    let uniqueBuyerCount = 0;
+    let buyersList = [];
+    let currentOrderFilter = 'ALL';
+    let currentInvFilter = 'ALL';
+    let orderSearchQuery = '';
+    let invSearchQuery = '';
+    let pendingCancelOrderId = null;
+    let pendingConfirmOrderId = null;
+    let pendingEditPriceItemId = null;
+    let selectedImageFiles = [];
+    let bgRemovalModulePromise = null;
 
-      gcashQrImage: "https://lh3.googleusercontent.com/d/1SzKWTCYFO07SjKZLD6bZdNibzaaC-c6w",
-      mayaQrImage: "https://lh3.googleusercontent.com/d/1x51q2b6iwXEK1kcFtBHF_Yj5gvW1O0kL"
-    };
-
-    let inventory = [];
-    let cart = [];
-    let currentPaymentMethod = 'GCASH';
-    let currentPhotoIndices = {};
-    let selectedLocation = 'all';
-    let selectedCategory = 'all';
-    let catalogSearchQuery = '';
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      if (!toast || !toastMsg) return;
-      toastMsg.innerText = msg;
-      toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
-      }, 2200);
+    function getBgRemovalModule() {
+      if (!bgRemovalModulePromise) {
+        bgRemovalModulePromise = import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+      }
+      return bgRemovalModulePromise;
     }
 
-    function normalizeLocation(loc) {
-      if (!loc) return 'Pasig';
-      const clean = String(loc).trim().toLowerCase();
-      if (clean.includes('santa') || clean.includes('ilocos') || clean.includes('maria')) return 'Santa Maria';
-      return 'Pasig';
-    }
+    // Check 5-minute grace period on initial load
+    function checkGracePeriod() {
+      const savedPin = sessionStorage.getItem('keg_admin_pin');
+      const lastActive = parseInt(sessionStorage.getItem('keg_admin_last_active') || '0', 10);
+      const now = Date.now();
 
-    let dismissedAnnouncementText = sessionStorage.getItem('keg_dismissed_announcement') || '';
-
-    function handleAnnouncement(text, isActive) {
-      const banner = document.getElementById('dynamic-announcement-banner');
-      const textEl = document.getElementById('announcement-text');
-      if (!banner || !textEl) return;
-
-      const cleanText = (text || '').trim();
-      if (isActive && cleanText.length > 0 && cleanText !== dismissedAnnouncementText) {
-        textEl.innerText = cleanText;
-        banner.classList.remove('hidden');
+      if (savedPin && lastActive && (now - lastActive < GRACE_PERIOD_MS)) {
+        currentPin = savedPin;
+        touchActivity();
+        showDashboard();
+        return true;
       } else {
-        banner.classList.add('hidden');
+        handleLogout();
+        return false;
       }
     }
 
-    function dismissAnnouncement() {
-      const textEl = document.getElementById('announcement-text');
-      const banner = document.getElementById('dynamic-announcement-banner');
-      if (textEl && banner) {
-        dismissedAnnouncementText = textEl.innerText;
-        sessionStorage.setItem('keg_dismissed_announcement', dismissedAnnouncementText);
-        banner.classList.add('hidden');
+    function touchActivity() {
+      if (currentPin) {
+        sessionStorage.setItem('keg_admin_last_active', String(Date.now()));
       }
     }
 
-    async function fetchInventory(silent = false) {
-      const grid = document.getElementById('product-grid');
-      try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getInventory&_t=${Date.now()}`);
-        const data = await res.json();
-
-        let rawItems = [];
-        if (Array.isArray(data)) {
-          rawItems = data;
-        } else if (data && Array.isArray(data.items)) {
-          rawItems = data.items;
-          handleAnnouncement(data.announcement, data.showAnnouncement);
-        }
-
-        if (rawItems.length > 0 || Array.isArray(rawItems)) {
-          inventory = rawItems.map(item => ({
-            ...item,
-            location: normalizeLocation(item.location),
-            originalPrice: Number(item.originalPrice) || 0
-          }));
-
-          cart.forEach(c => {
-            const liveItem = inventory.find(i => String(i.id) === String(c.id));
-            if (liveItem) {
-              if (c.qty > liveItem.stock) c.qty = liveItem.stock;
-            } else {
-              c.qty = 0;
-            }
-          });
-          cart = cart.filter(c => c.qty > 0);
-
-          updateLocationCounts();
-          renderCategoryFilters(getFilteredByLocationItems());
-          renderProducts(getDisplayedItems());
-          updateCartUI();
-        } else if (!silent) {
-          grid.innerHTML = '<div class="col-span-full py-16 text-center text-stone-400 text-xs">No items currently available.</div>';
-        }
-      } catch (err) {
-        if (!silent) {
-          console.error("Error fetching inventory:", err);
-          grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check Google Apps Script deployment permissions.</div>';
-        }
+    function verifyStillActive() {
+      if (!currentPin) return;
+      const lastActive = parseInt(sessionStorage.getItem('keg_admin_last_active') || '0', 10);
+      if (Date.now() - lastActive >= GRACE_PERIOD_MS) {
+        handleLogout();
+      } else {
+        touchActivity();
       }
     }
 
-    function updateLocationCounts() {
-      const pasigCount = inventory.filter(i => i.location === 'Pasig').length;
-      const smCount = inventory.filter(i => i.location === 'Santa Maria').length;
-      const allCount = inventory.length;
+    // Keep session alive while user is interacting
+    ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt => {
+      document.addEventListener(evt, verifyStillActive, { passive: true });
+    });
 
-      const elAll = document.getElementById('count-all');
-      const elPasig = document.getElementById('count-pasig');
-      const elSm = document.getElementById('count-santamaria');
-
-      if (elAll) elAll.innerText = allCount;
-      if (elPasig) elPasig.innerText = pasigCount;
-      if (elSm) elSm.innerText = smCount;
-    }
-
-    function switchLocation(loc, btn) {
-      selectedLocation = loc.toLowerCase();
-      selectedCategory = 'all';
-
-      document.querySelectorAll('.loc-btn').forEach(b => {
-        b.classList.remove('bg-brand-800', 'text-white', 'shadow-sm');
-        b.classList.add('bg-stone-100', 'text-stone-700');
-      });
-      if (btn) {
-        btn.classList.add('bg-brand-800', 'text-white', 'shadow-sm');
-        btn.classList.remove('bg-stone-100', 'text-stone-700');
+    // Check timeout when user returns from Messenger or unlocks phone
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        verifyStillActive();
       }
+    });
 
-      renderCategoryFilters(getFilteredByLocationItems());
-      renderProducts(getDisplayedItems());
-    }
+    function handleLogin(e) {
+      e.preventDefault();
+      const pinInput = document.getElementById('admin-pin-input');
+      const pin = pinInput.value.trim();
+      if (!pin) return;
 
-    function handleCatalogSearch(val) {
-      catalogSearchQuery = (val || '').trim().toLowerCase();
-      const clearBtn = document.getElementById('clear-catalog-search-btn');
-      if (catalogSearchQuery.length > 0) clearBtn.classList.remove('hidden');
-      else clearBtn.classList.add('hidden');
-      renderProducts(getDisplayedItems());
-    }
+      const btn = document.getElementById('login-btn');
+      const errBox = document.getElementById('login-error');
+      errBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.innerText = "Checking PIN...";
 
-    function clearCatalogSearch() {
-      document.getElementById('catalog-search-input').value = '';
-      catalogSearchQuery = '';
-      document.getElementById('clear-catalog-search-btn').classList.add('hidden');
-      renderProducts(getDisplayedItems());
-    }
-
-    function getFilteredByLocationItems() {
-      if (selectedLocation === 'all') return inventory;
-      return inventory.filter(i => i.location.toLowerCase() === selectedLocation);
-    }
-
-    function getDisplayedItems() {
-      let items = getFilteredByLocationItems();
-
-      if (selectedCategory !== 'all') {
-        items = items.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
-      }
-
-      if (catalogSearchQuery.length > 0) {
-        items = items.filter(i => {
-          const name = String(i.name || '').toLowerCase();
-          const id = String(i.id || '').toLowerCase();
-          const cat = String(i.category || '').toLowerCase();
-          const cond = String(i.condition || '').toLowerCase();
-          return name.includes(catalogSearchQuery) || id.includes(catalogSearchQuery) || cat.includes(catalogSearchQuery) || cond.includes(catalogSearchQuery);
+      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(pin)}`)
+        .then(res => res.json())
+        .then(data => {
+          btn.disabled = false;
+          btn.innerText = "Unlock Dashboard";
+          if (data && !data.error && data.status !== 'error') {
+            currentPin = pin;
+            sessionStorage.setItem('keg_admin_pin', currentPin);
+            touchActivity();
+            allOrders = Array.isArray(data) ? data : (data.orders || []);
+            uniqueBuyerCount = data.uniqueBuyerCount || allOrders.length;
+            buyersList = data.buyersList || [];
+            pinInput.value = '';
+            showDashboard();
+          } else {
+            errBox.classList.remove('hidden');
+            pinInput.value = '';
+            pinInput.focus();
+          }
+        })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerText = "Unlock Dashboard";
+          errBox.classList.remove('hidden');
+          pinInput.value = '';
         });
+    }
+
+    function handleLogout() {
+      currentPin = '';
+      allOrders = [];
+      allInventory = [];
+      buyersList = [];
+      sessionStorage.removeItem('keg_admin_pin');
+      sessionStorage.removeItem('keg_admin_last_active');
+      document.getElementById('dashboard-screen').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      const pinInput = document.getElementById('admin-pin-input');
+      if (pinInput) pinInput.value = '';
+      const errBox = document.getElementById('login-error');
+      if (errBox) errBox.classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('dashboard-screen').classList.remove('hidden');
+      refreshData();
+    }
+
+    function refreshData() {
+      fetchOrders();
+      fetchInventoryData();
+    }
+
+    function switchMainView(view) {
+      currentView = view;
+      const tabOrders = document.getElementById('nav-tab-orders');
+      const tabInv = document.getElementById('nav-tab-inventory');
+      const viewOrders = document.getElementById('view-orders');
+      const viewInv = document.getElementById('view-inventory');
+
+      if (view === 'orders') {
+        tabOrders.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm";
+        tabInv.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900";
+        viewOrders.classList.remove('hidden');
+        viewInv.classList.add('hidden');
+      } else {
+        tabInv.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-white text-stone-900 shadow-sm";
+        tabOrders.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900";
+        viewInv.classList.remove('hidden');
+        viewOrders.classList.add('hidden');
       }
-
-      return items;
     }
 
-    function renderCategoryFilters(items) {
-      const bar = document.getElementById('category-filter-bar');
-      if (!bar) return;
-
-      const categories = Array.from(new Set(
-        items.map(i => (i.category || '').trim()).filter(c => c.length > 0)
-      ));
-
-      let buttonsHtml = `
-        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">
-          All (${items.length})
-        </button>
-      `;
-
-      categories.forEach(cat => {
-        const label = cat.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        const count = items.filter(i => (i.category || '').trim().toLowerCase() === cat.toLowerCase()).length;
-        buttonsHtml += `
-          <button onclick="filterCatalog('${cat.replace(/'/g, "\\'")}', this)" class="cat-btn bg-stone-100 text-stone-600 hover:bg-stone-200 px-4 py-2 rounded-full transition">
-            ${label} (${count})
-          </button>
-        `;
-      });
-
-      bar.innerHTML = buttonsHtml;
-    }
-
-    function filterCatalog(category, clickedBtn) {
-      selectedCategory = category;
-      const btns = document.querySelectorAll('.cat-btn');
-
-      btns.forEach(b => {
-        b.classList.remove('bg-stone-900', 'text-white');
-        b.classList.add('bg-stone-100', 'text-stone-600');
-      });
-
-      if (clickedBtn) {
-        clickedBtn.classList.add('bg-stone-900', 'text-white');
-        clickedBtn.classList.remove('bg-stone-100', 'text-stone-600');
-      }
-
-      renderProducts(getDisplayedItems());
-    }
-
-    function parseImages(imgString) {
-      if (!imgString) return ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
-      const urls = imgString.split(',').map(s => s.trim()).filter(s => s.length > 0);
-      return urls.length > 0 ? urls : ['https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80'];
-    }
-
-    function formatCondition(val) {
-      if (!val) return 'Pre-loved';
-      const clean = String(val).trim();
-      if (clean.includes('Oct 10') || clean === '10' || clean === '10/10' || clean === '10 / 10') return '10/10 (Pristine / Like New)';
-      if (clean.includes('Sep') || clean === '9.5' || clean === '9' || clean === '9/10') return `${clean} (Excellent)`;
-      if (clean.includes('Aug') || clean === '8.5' || clean === '8' || clean === '8/10') return `${clean} (Very Good)`;
-      if (clean.includes('Jul') || clean === '7.5' || clean === '7' || clean === '7/10') return `${clean} (Good Condition)`;
-      return clean;
-    }
-
-    function renderProducts(items) {
-      const grid = document.getElementById('product-grid');
-      const countLabel = document.getElementById('catalog-count-label');
-      if (countLabel) countLabel.innerText = items.length;
-
-      if (items.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full py-16 text-center text-stone-400 text-xs">
-            ${catalogSearchQuery ? `No items found matching "<b>${catalogSearchQuery}</b>". Try another search keyword!` : 'No items currently available for this selection.'}
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML = items.map(item => {
-        const images = parseImages(item.image);
-        const currentIdx = currentPhotoIndices[item.id] || 0;
-        const hasMultiple = images.length > 1;
-        const isPasig = item.location === 'Pasig';
-        const inCart = cart.find(c => String(c.id) === String(item.id));
-        const cartQty = inCart ? inCart.qty : 0;
-        const remainingStock = Math.max(0, item.stock - cartQty);
-        const isSoldOut = item.stock <= 0;
-
-        // Promo discount calculation (Feature 5)
-        const hasPromo = item.originalPrice && item.originalPrice > item.price;
-        const discountPct = hasPromo ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) : 0;
-
-        return `
-          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col justify-between transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
-            <div>
-              <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
-                <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
-                
-                <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-                  <div class="flex gap-1.5 items-center">
-                    <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
-                    
-                    ${isSoldOut ? `
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
-                    ` : cartQty > 0 ? (
-                      remainingStock === 0 ? `
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
-                      ` : `
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
-                      `
-                    ) : `
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
-                    `}
-                  </div>
-                  <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
-                    📍 ${item.location} Hub
-                  </span>
-                </div>
-
-                ${hasPromo ? `
-                  <div class="absolute bottom-3 left-3 z-10">
-                    <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-md tracking-wider">
-                      SAVE ${discountPct}%
-                    </span>
-                  </div>
-                ` : ''}
-
-                ${hasMultiple ? `
-                  <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
-                    ${currentIdx + 1} / ${images.length}
-                  </span>
-                  <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                  </button>
-                  <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                  </button>
-                  <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
-                    ${images.map((_, i) => `
-                      <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
-                    `).join('')}
-                  </div>
-                ` : ''}
-              </div>
-
-              <div class="p-5">
-                <div class="flex items-center justify-between gap-1">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
-                  <span class="text-[10px] font-semibold text-stone-500">📍 ${item.location}</span>
-                </div>
-                <h3 class="font-bold text-stone-900 text-base mt-1 leading-snug">${item.name}</h3>
-                
-                <div class="flex items-center gap-1.5 mt-2">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
-                  <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                    ${formatCondition(item.condition)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Price & Buy Section -->
-            <div class="p-5 pt-0">
-              <div class="pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
-                <div class="flex flex-col">
-                  ${hasPromo ? `
-                    <span class="text-[11px] text-stone-400 line-through leading-none font-medium">₱${Number(item.originalPrice).toLocaleString()}</span>
-                  ` : ''}
-                  <span class="text-lg font-black text-stone-900 leading-tight">₱${Number(item.price).toLocaleString()}</span>
-                </div>
-                
-                ${isSoldOut ? `
-                  <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
-                ` : `
-                  <div class="flex items-center gap-1.5">
-                    <button onclick="inquireItem('${item.id}', '${item.name.replace(/'/g, "\\'")}', '${item.price}', '${item.location}')" title="Ask question about this item" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-2 rounded-lg transition flex items-center gap-1">
-                      <svg class="w-3.5 h-3.5 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
-                      <span class="hidden sm:inline">Inquire</span>
-                    </button>
-
-                    ${cartQty > 0 ? `
-                      <div class="flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 shadow-sm">
-                        <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
-                        <span class="w-7 text-center font-bold text-xs text-brand-900">${cartQty}</span>
-                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
-                      </div>
-                    ` : `
-                      <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
-                    `}
-                  </div>
-                `}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function inquireItem(id, name, price, location) {
-      const msg = `Hi KEG Finds! I have an inquiry about [ID #${id}] ${name} (₱${Number(price).toLocaleString()} - ${location} Hub). Is this still available? Can I ask about its sizing/pickup?`;
-      const url = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
-    }
-
-    function nextPhoto(itemId, total) {
-      const current = currentPhotoIndices[itemId] || 0;
-      setPhoto(itemId, (current + 1) % total);
-    }
-
-    function prevPhoto(itemId, total) {
-      const current = currentPhotoIndices[itemId] || 0;
-      setPhoto(itemId, (current - 1 + total) % total);
-    }
-
-    function setPhoto(itemId, index) {
-      currentPhotoIndices[itemId] = index;
-      const item = inventory.find(i => String(i.id) === String(itemId));
+    // =========================================================================
+    // EDIT PRICE & PROMO ACTIONS
+    // =========================================================================
+    function openEditPriceModal(itemId) {
+      const item = allInventory.find(i => String(i.id) === String(itemId));
       if (!item) return;
 
-      const images = parseImages(item.image);
-      const imgEl = document.getElementById(`item-img-${itemId}`);
-      const counterEl = document.getElementById(`photo-counter-${itemId}`);
-
-      if (imgEl && images[index]) imgEl.src = images[index];
-      if (counterEl) counterEl.innerText = `${index + 1} / ${images.length}`;
-      renderProducts(getDisplayedItems());
+      pendingEditPriceItemId = itemId;
+      document.getElementById('edit-price-item-title').innerText = `[#${item.id}] ${item.name}`;
+      document.getElementById('edit-selling-price').value = item.price || 0;
+      document.getElementById('edit-orig-price').value = (item.originalPrice > item.price) ? item.originalPrice : '';
+      updatePromoPreview();
+      document.getElementById('edit-price-modal').classList.remove('hidden');
     }
 
-    function addToBag(id) {
-      changeQty(id, 1);
+    function closeEditPriceModal() {
+      pendingEditPriceItemId = null;
+      document.getElementById('edit-price-modal').classList.add('hidden');
     }
 
-    function changeQty(id, delta) {
-      const item = inventory.find(i => String(i.id) === String(id));
-      if (!item || item.stock <= 0) return;
+    function updatePromoPreview() {
+      const selling = Number(document.getElementById('edit-selling-price').value) || 0;
+      const orig = Number(document.getElementById('edit-orig-price').value) || 0;
+      const previewEl = document.getElementById('edit-promo-preview-content');
 
-      const existing = cart.find(c => String(c.id) === String(id));
-
-      if (existing) {
-        const newQty = existing.qty + delta;
-        if (newQty <= 0) {
-          cart = cart.filter(c => String(c.id) !== String(id));
-          showToast(`Removed "${item.name}" from Bag`);
-        } else if (newQty > item.stock) {
-          alert(`Only ${item.stock} item(s) available in stock.`);
-          return;
-        } else {
-          existing.qty = newQty;
-          if (delta > 0) showToast(`Added +1 "${item.name}" (Now: ${newQty})`);
-        }
-      } else {
-        if (delta > 0) {
-          cart.push({ id: item.id, name: item.name, price: item.price, location: normalizeLocation(item.location), qty: 1 });
-          showToast(`Added "${item.name}" to Bag!`);
-        }
-      }
-
-      updateCartUI();
-      renderProducts(getDisplayedItems());
-
-      const badge = document.getElementById('cart-badge');
-      if (badge) {
-        badge.classList.add('scale-150');
-        setTimeout(() => badge.classList.remove('scale-150'), 250);
-      }
-    }
-
-    function updateFulfillmentOptions(items) {
-      const select = document.getElementById('buyer-fulfillment');
-      if (!select) return;
-
-      const locations = Array.from(new Set(items.map(i => i.location || 'Pasig')));
-      const prevVal = select.value;
-      let optionsHtml = '';
-
-      if (locations.length === 0 || (locations.length === 1 && locations[0] === 'Pasig')) {
-        optionsHtml = `
-          <option value="Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)">Pickup / Meet-up: Urban Deca Homes Ortigas, Pasig City (Free)</option>
-          <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
-        `;
-      } else if (locations.length === 1 && locations[0] === 'Santa Maria') {
-        optionsHtml = `
-          <option value="Pickup / Meet-up in Santa Maria, Ilocos Sur (Free)">Pickup / Meet-up in Santa Maria, Ilocos Sur (Free)</option>
-          <option value="Courier Delivery (Lalamove / Grab / J&T / Flash)">Courier Delivery — Lalamove / Grab / J&T (Fee paid by buyer)</option>
+      if (orig > selling && selling > 0) {
+        const pct = Math.round(((orig - selling) / orig) * 100);
+        previewEl.innerHTML = `
+          <span class="text-stone-900 font-black text-sm">₱${selling.toLocaleString()}</span>
+          <span class="text-stone-400 line-through text-xs ml-1">₱${orig.toLocaleString()}</span>
+          <span class="bg-red-600 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full ml-1">SAVE ${pct}%</span>
         `;
       } else {
-        optionsHtml = `
-          <option value="Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)">Courier Delivery (Separate Shipments: Pasig & Santa Maria Hubs)</option>
-        `;
-      }
-
-      select.innerHTML = optionsHtml;
-      if ([...select.options].some(o => o.value === prevVal)) {
-        select.value = prevVal;
-      }
-      onFulfillmentChange();
-    }
-
-    function onFulfillmentChange() {
-      const fulfillEl = document.getElementById('buyer-fulfillment');
-      const cashBtn = document.getElementById('tab-btn-cash');
-      if (!fulfillEl) return;
-
-      const isMeetup = fulfillEl.value.includes('Pickup') || fulfillEl.value.includes('Meet-up');
-      
-      if (isMeetup) {
-        if (cashBtn) cashBtn.classList.remove('hidden');
-      } else {
-        if (cashBtn) cashBtn.classList.add('hidden');
-        if (currentPaymentMethod === 'CASH') {
-          selectPaymentTab('gcash');
-        }
+        previewEl.innerHTML = `<span class="text-stone-900 font-black text-sm">₱${selling.toLocaleString()}</span> (Regular price)`;
       }
     }
 
-    function updateCartUI() {
-      const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
-      document.getElementById('cart-badge').innerText = totalQty;
-      const list = document.getElementById('cart-list');
-      const totalDisplay = document.getElementById('items-total-display');
-      const paymentDisplay = document.getElementById('payment-amount-display');
+    async function submitEditPrice(e) {
+      e.preventDefault();
+      if (!pendingEditPriceItemId) return;
 
-      if (cart.length === 0) {
-        list.innerHTML = '<p class="text-xs text-stone-400 py-4 text-center">Your bag is currently empty.</p>';
-        totalDisplay.innerText = '₱0';
-        paymentDisplay.innerText = '₱0';
-        updateFulfillmentOptions([]);
+      const selling = Number(document.getElementById('edit-selling-price').value) || 0;
+      const orig = Number(document.getElementById('edit-orig-price').value) || 0;
+      const btn = document.getElementById('save-price-btn');
+      const origText = btn.innerText;
+
+      if (selling <= 0) {
+        alert("Please enter a valid selling price greater than 0.");
         return;
       }
 
-      updateFulfillmentOptions(cart);
-
-      list.innerHTML = cart.map(item => {
-        const liveItem = inventory.find(i => String(i.id) === String(item.id));
-        const maxStock = liveItem ? liveItem.stock : item.qty;
-
-        return `
-          <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-100 text-xs">
-            <div class="flex-1 mr-2">
-              <div class="font-bold text-stone-800">
-                <span class="font-mono text-stone-500 mr-1">[ID #${item.id}]</span>${item.name}
-                <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">
-                  ${item.location}
-                </span>
-              </div>
-              <div class="text-stone-500 mt-0.5">₱${Number(item.price).toLocaleString()} each &bull; Subtotal: <b class="text-stone-900">₱${Number(item.price * item.qty).toLocaleString()}</b></div>
-            </div>
-
-            <div class="flex items-center gap-1.5">
-              <div class="flex items-center bg-white rounded-lg border border-stone-200 shadow-sm p-0.5">
-                <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition">&minus;</button>
-                <span class="w-6 text-center font-bold text-xs text-brand-900">${item.qty}</span>
-                <button onclick="changeQty('${item.id}', 1)" ${item.qty >= maxStock ? 'disabled' : ''} title="${item.qty >= maxStock ? 'Max stock reached' : 'Increase'}" class="w-6 h-6 rounded bg-stone-50 hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition ${item.qty >= maxStock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
-              </div>
-
-              <button onclick="changeQty('${item.id}', -9999)" title="Remove item" class="text-stone-400 hover:text-red-600 font-bold p-1 text-sm leading-none">&times;</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      totalDisplay.innerText = `₱${total.toLocaleString()}`;
-      paymentDisplay.innerText = `₱${total.toLocaleString()}`;
-      
-      const cashText = document.getElementById('cash-amount-text');
-      if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
-    }
-
-    function selectPaymentTab(method) {
-      currentPaymentMethod = method.toUpperCase();
-      const btnGcash = document.getElementById('tab-btn-gcash');
-      const btnMaya = document.getElementById('tab-btn-maya');
-      const btnCash = document.getElementById('tab-btn-cash');
-      const qrBox = document.getElementById('qr-payment-container');
-      const cashBox = document.getElementById('cash-payment-container');
-      const qrImg = document.getElementById('qr-image-display');
-      const accountNum = document.getElementById('pay-account-number');
-      const amountLabel = document.getElementById('payment-amount-label');
-
-      const inactiveClass = 'bg-stone-100 text-stone-700 hover:bg-stone-200';
-      if (btnGcash) btnGcash.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition`;
-      if (btnMaya) btnMaya.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition`;
-      if (btnCash) {
-        const isHidden = btnCash.classList.contains('hidden');
-        btnCash.className = `flex-1 py-2 text-xs font-bold rounded-lg ${inactiveClass} transition ${isHidden ? 'hidden' : ''}`;
-      }
-
-      if (method === 'cash') {
-        if (btnCash) {
-          btnCash.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
-          btnCash.classList.add('bg-amber-600', 'text-white');
-        }
-        if (qrBox) qrBox.classList.add('hidden');
-        if (cashBox) cashBox.classList.remove('hidden');
-        if (amountLabel) amountLabel.innerText = 'Amount to Pay in Cash';
-
-        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        const cashText = document.getElementById('cash-amount-text');
-        if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
-
-      } else {
-        if (qrBox) qrBox.classList.remove('hidden');
-        if (cashBox) cashBox.classList.add('hidden');
-        if (amountLabel) amountLabel.innerText = 'Amount to Transfer';
-
-        if (method === 'gcash') {
-          if (btnGcash) {
-            btnGcash.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
-            btnGcash.classList.add('bg-blue-600', 'text-white');
-          }
-          if (qrImg) qrImg.src = SELLER_CONFIG.gcashQrImage;
-          if (accountNum) accountNum.innerText = SELLER_CONFIG.gcashNumber;
-        } else {
-          if (btnMaya) {
-            btnMaya.classList.remove('bg-stone-100', 'text-stone-700', 'hover:bg-stone-200');
-            btnMaya.classList.add('bg-emerald-600', 'text-white');
-          }
-          if (qrImg) qrImg.src = SELLER_CONFIG.mayaQrImage;
-          if (accountNum) accountNum.innerText = SELLER_CONFIG.mayaNumber;
-        }
-      }
-    }
-
-    function copyAccountNumber() {
-      const num = document.getElementById('pay-account-number').innerText.replace(/[^0-9]/g, '');
-      navigator.clipboard.writeText(num);
-      alert(`Account number ${num} copied to clipboard!`);
-    }
-
-    async function processOrder(channel) {
-      if (cart.length === 0) {
-        alert('Your bag is empty.');
-        return;
-      }
-
-      const buyerName = document.getElementById('buyer-name').value.trim();
-      const buyerEmail = document.getElementById('buyer-email').value.trim();
-      const buyerContact = document.getElementById('buyer-contact').value.trim();
-      const fulfillment = document.getElementById('buyer-fulfillment').value;
-
-      if (!buyerName || !buyerEmail || !buyerContact) {
-        alert('Please fill in your Name, Email Address, and Mobile / Viber number.');
-        return;
-      }
-
-      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const itemsListText = cart.map(i => `• [ID #${i.id}] ${i.name} (📍${i.location}) - ${i.qty}x @ ₱${i.price}`).join('\n');
-
-      const submitBtn = event.currentTarget;
-      const originalText = submitBtn.innerText;
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Reserving & generating Order ID...";
+      btn.disabled = true;
+      btn.innerText = "Saving...";
 
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({
-            action: "createOrder",
-            buyerName,
-            buyerEmail,
-            buyerContact,
-            fulfillment,
-            paymentMethod: currentPaymentMethod === 'CASH' ? 'CASH (Meet-up)' : (currentPaymentMethod + ' QR'),
-            total,
-            items: cart
+            action: 'updateItemPrice',
+            pin: currentPin,
+            itemId: pendingEditPriceItemId,
+            price: selling,
+            originalPrice: orig
           })
         });
 
         const result = await res.json();
-
-        if (result.status === "out_of_stock") {
-          alert(result.message + "\n\nPlease review your bag; claimed items cannot be checked out.");
-          fetchInventory();
-          submitBtn.disabled = false;
-          submitBtn.innerText = originalText;
-          return;
-        }
-
-        const orderId = result.orderId || ("KEG-" + Date.now().toString().slice(-6));
-
-        const isCash = currentPaymentMethod === 'CASH';
-        const paymentNotice = isCash ? 
-          "(Payment: Cash upon Meet-up/Pickup - Coordinating schedule now!)" : 
-          "(Sending payment screenshot receipt now!)";
-
-        const message = `ORDER ID: ${orderId}\n\nHi KEG Finds! I want to confirm my order:\n\n${itemsListText}\n\nTotal: ₱${total.toLocaleString()}\nBuyer: ${buyerName} (${buyerContact})\nEmail: ${buyerEmail}\nFulfillment: ${fulfillment}\nPayment Channel: ${isCash ? 'Cash on Meet-up' : currentPaymentMethod + ' QR'}\n\n${paymentNotice}`;
-
-        cart = [];
-        updateCartUI();
-        closeCart();
-        fetchInventory();
-
-        if (channel === 'messenger') {
-          const messengerUrl = `https://m.me/${SELLER_CONFIG.messengerUsername}?text=${encodeURIComponent(message)}`;
-          window.location.href = messengerUrl;
-        } else if (channel === 'viber') {
-          const cleanViber = SELLER_CONFIG.viberNumber.replace(/[^0-9]/g, '');
-          window.location.href = `viber://chat?number=%2B${cleanViber}`;
-        }
-
-      } catch (e) {
-        console.error("Order error:", e);
-        alert("There was an issue processing your order. Please try again.");
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = originalText;
-      }
-    }
-
-    function openCart() { document.getElementById('checkout-modal').classList.remove('hidden'); }
-    function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
-
-    // =========================================================================
-    // BUYER TRACK ORDER PORTAL (Feature 4)
-    // =========================================================================
-    function openTrackOrderModal() {
-      document.getElementById('track-order-modal').classList.remove('hidden');
-    }
-
-    function closeTrackOrderModal() {
-      document.getElementById('track-order-modal').classList.add('hidden');
-      document.getElementById('track-result-box').classList.add('hidden');
-      document.getElementById('track-order-id-input').value = '';
-    }
-
-    async function submitTrackOrder(e) {
-      e.preventDefault();
-      const input = document.getElementById('track-order-id-input').value.trim();
-      const resultBox = document.getElementById('track-result-box');
-      const btn = document.getElementById('track-order-btn');
-
-      if (!input) return;
-
-      btn.disabled = true;
-      btn.innerText = 'Checking...';
-      resultBox.classList.remove('hidden');
-      resultBox.innerHTML = '<div class="text-stone-400 py-3 text-center">Looking up order in database...</div>';
-
-      try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=trackOrder&orderId=${encodeURIComponent(input)}&_t=${Date.now()}`);
-        const data = await res.json();
-
-        if (data && data.status === 'success') {
-          const isConfirmed = data.orderStatus === 'CONFIRMED';
-          const isCancelled = data.orderStatus.includes('CANCELLED') || data.orderStatus.includes('EXPIRED');
-
-          let badgeHtml = '';
-          if (isConfirmed) {
-            badgeHtml = '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">✔ CONFIRMED / PREPARING</span>';
-          } else if (isCancelled) {
-            badgeHtml = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-red-100 text-red-800">✖ ${data.orderStatus}</span>`;
-          } else {
-            badgeHtml = '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900">⏱️ RESERVED (PENDING)</span>';
+        if (result.status === 'success') {
+          const item = allInventory.find(i => String(i.id) === String(pendingEditPriceItemId));
+          if (item) {
+            item.price = selling;
+            item.originalPrice = orig;
           }
-
-          const itemsHtml = (data.items || []).map(i => `
-            <div class="flex justify-between py-1 border-b border-stone-100 last:border-0">
-              <span class="font-medium text-stone-800">${i.name} &times; ${i.qty}</span>
-              <span class="font-mono text-stone-600">₱${Number(i.price * i.qty).toLocaleString()}</span>
-            </div>
-          `).join('');
-
-          resultBox.innerHTML = `
-            <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-stone-900 text-sm">${data.orderId}</span>
-                ${badgeHtml}
-              </div>
-
-              <div class="text-[11px] text-stone-500">
-                Placed on <b>${data.date}</b> &bull; Total: <b class="text-stone-900 font-mono text-xs">₱${Number(data.total).toLocaleString()}</b>
-              </div>
-
-              ${data.trackingNote ? `
-                <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
-                  <span class="font-bold block text-[11px]">📦 Dispatch / Meetup Note:</span>
-                  <div class="mt-0.5 font-bold">${data.trackingNote}</div>
-                </div>
-              ` : ''}
-
-              ${data.comment ? `
-                <div class="p-2.5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-[11px]">
-                  <b>Note:</b> ${data.comment}
-                </div>
-              ` : ''}
-
-              <div class="pt-2 border-t border-stone-200/60">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1">Ordered Pieces</span>
-                ${itemsHtml}
-              </div>
-
-              <div class="pt-2 border-t border-stone-200/60 text-[11px] text-stone-500">
-                <b>Fulfillment:</b> ${data.fulfillment}<br>
-                <b>Payment:</b> ${data.paymentMethod}
-              </div>
-            </div>
-          `;
+          closeEditPriceModal();
+          renderInventory();
+          alert("Price updated successfully! Synced to Google Sheet and website.");
         } else {
-          resultBox.innerHTML = `
-            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center">
-              Order ID "<b>${input}</b>" not found. Please double-check the ID from your receipt.
-            </div>
-          `;
+          alert("Error updating price: " + (result.message || "Unauthorized"));
         }
       } catch (err) {
         console.error(err);
-        resultBox.innerHTML = `<div class="p-3 bg-red-50 text-red-700 rounded-xl text-center">Network error. Please try again later.</div>`;
+        alert("Error connecting to backend.");
       } finally {
         btn.disabled = false;
-        btn.innerText = 'Check';
+        btn.innerText = origText;
       }
     }
 
     // =========================================================================
-    // PWA INSTALLATION LOGIC
+    // VIP DROP BROADCAST MODAL
     // =========================================================================
-    let deferredPrompt = null;
-    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-    const isStandalone = () => ('standalone' in window.navigator && window.navigator.standalone) || window.matchMedia('(display-mode: standalone)').matches;
+    function openBroadcastModal() {
+      const countEl = document.getElementById('broadcast-recipient-count');
+      if (countEl) countEl.innerText = uniqueBuyerCount;
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const btn = document.getElementById('pwa-install-btn');
-      if (btn && !isStandalone()) {
-        btn.classList.remove('hidden');
-        btn.classList.add('flex');
-      }
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('pwa-install-btn');
-      if (btn && !isStandalone()) {
-        if (isIos()) {
-          btn.classList.remove('hidden');
-          btn.classList.add('flex');
+      const detailsBox = document.getElementById('recipient-details-box');
+      if (detailsBox) {
+        if (buyersList.length > 0) {
+          detailsBox.innerHTML = buyersList.map(b => `
+            <div class="flex items-center justify-between py-1 border-b border-purple-200/40">
+              <div><b>${b.name}</b> (${b.email})</div>
+              <span class="text-purple-600 font-bold">${b.orderCount} order(s)</span>
+            </div>
+          `).join('');
+        } else {
+          detailsBox.innerHTML = '<div class="text-stone-400 py-1">No past buyers found.</div>';
         }
       }
-    });
 
-    function triggerPWAInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User installed KEG Finds');
-            const btn = document.getElementById('pwa-install-btn');
-            if (btn) btn.classList.add('hidden');
-          }
-          deferredPrompt = null;
-        });
-      } else if (isIos()) {
-        document.getElementById('ios-install-modal').classList.remove('hidden');
+      document.getElementById('broadcast-modal').classList.remove('hidden');
+    }
+
+    function closeBroadcastModal() {
+      document.getElementById('broadcast-modal').classList.add('hidden');
+    }
+
+    function toggleRecipientDetails() {
+      const box = document.getElementById('recipient-details-box');
+      const text = document.getElementById('recipient-toggle-text');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        text.innerHTML = '&#9652; Hide Recipient List';
       } else {
-        alert("To install, tap your browser's menu (⋮ or Share) and select 'Install app' or 'Add to Home screen'.");
+        box.classList.add('hidden');
+        text.innerHTML = '&#9662; Show Recipient List &amp; Breakdown';
       }
     }
 
-    function closeIosInstallModal() {
-      document.getElementById('ios-install-modal').classList.add('hidden');
+    async function submitBroadcastEmail(e) {
+      e.preventDefault();
+      const headline = document.getElementById('broadcast-headline').value.trim();
+      const message = document.getElementById('broadcast-message').value.trim();
+      const link = document.getElementById('broadcast-link').value.trim();
+
+      if (!confirm(`Are you sure you want to send this Drop Alert email to ${uniqueBuyerCount} past customer(s)?`)) {
+        return;
+      }
+
+      const btn = document.getElementById('submit-broadcast-btn');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Sending...`;
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'sendDropBroadcast',
+            pin: currentPin,
+            headline: headline,
+            message: message,
+            link: link
+          })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Success! Email blast sent to ${result.sentCount} customer(s).`);
+          closeBroadcastModal();
+        } else {
+          alert('Error sending email: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
     }
 
-    window.addEventListener('appinstalled', () => {
-      const btn = document.getElementById('pwa-install-btn');
-      if (btn) btn.classList.add('hidden');
-      deferredPrompt = null;
-    });
+    // =========================================================================
+    // ANNOUNCEMENT BANNER ACTIONS
+    // =========================================================================
+    async function saveAnnouncementBanner() {
+      const text = document.getElementById('banner-text-input').value.trim();
+      const isActive = document.getElementById('banner-active-toggle').checked;
+      const btn = document.getElementById('save-banner-btn');
+      const origText = btn.innerText;
 
-    document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
-    selectPaymentTab('gcash');
-    fetchInventory();
+      btn.disabled = true;
+      btn.innerText = "Saving...";
 
-    setInterval(() => {
-      fetchInventory(true);
-    }, 25000);
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateAnnouncement',
+            pin: currentPin,
+            announcement: text,
+            showAnnouncement: isActive
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert('Announcement banner saved successfully and synced to your online shop!');
+        } else {
+          alert('Error saving announcement: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error communicating with Google Apps Script.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = origText;
+      }
+    }
+
+    // =========================================================================
+    // ORDERS CONTROLLER
+    // =========================================================================
+    async function fetchOrders() {
+      const container = document.getElementById('orders-list');
+      container.innerHTML = '<div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-sm">Loading orders from database...</div>';
+
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
+        const data = await res.json();
+        if (data && !data.error && data.status !== 'error') {
+          allOrders = Array.isArray(data) ? data : (data.orders || []);
+          uniqueBuyerCount = data.uniqueBuyerCount || allOrders.length;
+          buyersList = data.buyersList || [];
+          updateOrderStats();
+          renderOrders();
+        } else {
+          container.innerHTML = `<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">${data && data.message ? data.message : 'Failed to fetch orders. Unauthorized PIN or network issue.'}</div>`;
+        }
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div class="bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Network error fetching orders.</div>';
+      }
+    }
+
+    function updateOrderStats() {
+      const total = allOrders.length;
+      const pending = allOrders.filter(o => o.status === 'PENDING_PAYMENT').length;
+      const confirmed = allOrders.filter(o => o.status === 'CONFIRMED').length;
+      const cancelled = allOrders.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED')).length;
+
+      document.getElementById('stat-total').innerText = total;
+      document.getElementById('stat-pending').innerText = pending;
+      document.getElementById('stat-confirmed').innerText = confirmed;
+      document.getElementById('stat-cancelled').innerText = cancelled;
+
+      const navBadge = document.getElementById('nav-badge-orders');
+      if (navBadge) navBadge.innerText = pending;
+    }
+
+    function filterOrders(filter, btn) {
+      currentOrderFilter = filter;
+      document.querySelectorAll('.order-filter-btn').forEach(b => {
+        b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
+        b.classList.add('bg-stone-100', 'text-stone-700');
+      });
+      if (btn) {
+        btn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-stone-100', 'text-stone-700');
+      }
+      renderOrders();
+    }
+
+    function handleOrderSearch(val) {
+      orderSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-order-search-btn');
+      if (orderSearchQuery.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      renderOrders();
+    }
+
+    function clearOrderSearch() {
+      document.getElementById('order-search-input').value = '';
+      orderSearchQuery = '';
+      document.getElementById('clear-order-search-btn').classList.add('hidden');
+      renderOrders();
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('orders-list');
+      let filtered = allOrders;
+
+      if (currentOrderFilter === 'PENDING_PAYMENT') filtered = filtered.filter(o => o.status === 'PENDING_PAYMENT');
+      else if (currentOrderFilter === 'CONFIRMED') filtered = filtered.filter(o => o.status === 'CONFIRMED');
+      else if (currentOrderFilter === 'CANCELLED') filtered = filtered.filter(o => o.status.includes('CANCELLED') || o.status.includes('EXPIRED'));
+
+      if (orderSearchQuery.length > 0) {
+        filtered = filtered.filter(o => {
+          const id = (o.orderId || '').toLowerCase();
+          const name = (o.buyerName || '').toLowerCase();
+          const contact = (o.buyerContact || '').toLowerCase();
+          const email = (o.buyerEmail || '').toLowerCase();
+          const comment = (o.comment || '').toLowerCase();
+          return id.includes(orderSearchQuery) || name.includes(orderSearchQuery) || contact.includes(orderSearchQuery) || email.includes(orderSearchQuery) || comment.includes(orderSearchQuery);
+        });
+      }
+
+      document.getElementById('orders-count-label').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">
+            ${orderSearchQuery ? `No orders matching "<b>${orderSearchQuery}</b>".` : 'No orders found in this view.'}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(order => {
+        let items = [];
+        try { items = JSON.parse(order.itemsJson); } catch (e) { items = []; }
+
+        const isPending = order.status === 'PENDING_PAYMENT';
+        const isConfirmed = order.status === 'CONFIRMED';
+        const isCancelled = order.status.includes('CANCELLED') || order.status.includes('EXPIRED');
+
+        const isMeetup = (order.paymentMethod || '').includes('CASH') || 
+                         (order.fulfillment || '').includes('Pickup') || 
+                         (order.fulfillment || '').includes('Meet-up');
+
+        let statusBadge = '';
+        if (isConfirmed) statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">✔ CONFIRMED</span>';
+        else if (isCancelled) statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-red-100 text-red-800 border border-red-200">✖ ${order.status}</span>`;
+        else statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">⏱️ PENDING</span>';
+
+        const itemsListHtml = items.map(i => `
+          <div class="flex items-center justify-between text-xs py-1 border-b border-stone-100 last:border-0">
+            <div>
+              <span class="font-mono text-stone-500 font-bold">[ID #${i.id || '-'}]</span>
+              <span class="font-semibold text-stone-800 ml-1">${i.name}</span>
+              ${i.location ? `<span class="ml-1 text-[10px] px-1.5 py-0.2 rounded font-semibold ${i.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${i.location}</span>` : ''}
+            </div>
+            <div class="font-mono text-stone-600 font-medium">${i.qty} &times; ₱${Number(i.price).toLocaleString()}</div>
+          </div>
+        `).join('');
+
+        return `
+          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 transition hover:shadow-md">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono font-black text-sm text-stone-900">${order.orderId}</span>
+                  ${statusBadge}
+                  ${isMeetup ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">🤝 Meetup</span>' : ''}
+                </div>
+                <div class="text-[11px] text-stone-400 mt-0.5">${order.date}</div>
+              </div>
+              <div class="text-left sm:text-right">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Total Amount</span>
+                <div class="text-base sm:text-lg font-black text-brand-900">₱${Number(order.total).toLocaleString()}</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 py-3 text-xs border-b border-stone-100">
+              <div class="space-y-1">
+                <div><span class="text-stone-400 font-medium">Buyer:</span> <b class="text-stone-800">${order.buyerName}</b></div>
+                <div><span class="text-stone-400 font-medium">Contact:</span> <b class="font-mono text-stone-800">${order.buyerContact}</b></div>
+                <div><span class="text-stone-400 font-medium">Email:</span> <a href="mailto:${order.buyerEmail}" class="text-brand-700 hover:underline">${order.buyerEmail}</a></div>
+              </div>
+              <div class="space-y-1">
+                <div><span class="text-stone-400 font-medium">Fulfillment:</span> <b class="text-stone-800">${order.fulfillment}</b></div>
+                <div><span class="text-stone-400 font-medium">Payment:</span> <b class="text-stone-800">${order.paymentMethod}</b></div>
+                ${order.trackingNote ? `<div class="bg-blue-50 p-2 rounded-lg text-blue-800 text-[11px] border border-blue-200 mt-1"><b>📦 Dispatch / Meetup Note:</b> ${order.trackingNote}</div>` : ''}
+                ${order.comment ? `<div class="bg-red-50 p-2 rounded-lg text-red-700 text-[11px] border border-red-200 mt-1"><b class="text-red-900">Reason / Comment:</b> ${order.comment}</div>` : ''}
+              </div>
+            </div>
+
+            <div class="py-2.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1">Ordered Items</span>
+              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-100">
+                ${itemsListHtml}
+              </div>
+            </div>
+
+            ${isPending ? `
+              <div class="pt-2.5 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
+                <button onclick="openCancelModal('${order.orderId}')" class="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
+                  Cancel Order...
+                </button>
+                <button onclick="openConfirmModal('${order.orderId}')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl transition shadow-sm">
+                  Mark Confirmed / Paid
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // INVENTORY, DRAFTS & LIVE STOCKS CONTROLLER
+    // =========================================================================
+    async function fetchInventoryData() {
+      const container = document.getElementById('inventory-grid');
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAdminInventory&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
+        const data = await res.json();
+
+        if (data && data.announcement !== undefined) {
+          document.getElementById('banner-text-input').value = data.announcement || '';
+          document.getElementById('banner-active-toggle').checked = !!data.showAnnouncement;
+        }
+
+        let items = [];
+        if (Array.isArray(data)) items = data;
+        else if (data && Array.isArray(data.items)) items = data.items;
+
+        allInventory = items;
+        updateInvStats();
+        renderInventory();
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div class="col-span-full bg-white rounded-2xl border border-red-200 p-8 text-center text-red-600 text-xs font-semibold">Failed to fetch inventory.</div>';
+      }
+    }
+
+    function updateInvStats() {
+      const now = new Date().getTime();
+      const total = allInventory.length;
+      
+      const live = allInventory.filter(i => {
+        const status = (i.status || 'ACTIVE').toUpperCase();
+        if (status === 'DRAFT' || status === 'HIDDEN') return false;
+        if (status === 'SCHEDULED' && i.publishAt) {
+          const t = new Date(i.publishAt).getTime();
+          return !isNaN(t) && now >= t;
+        }
+        return true;
+      }).length;
+
+      const scheduled = allInventory.filter(i => {
+        const status = (i.status || '').toUpperCase();
+        if (status !== 'SCHEDULED' || !i.publishAt) return false;
+        const t = new Date(i.publishAt).getTime();
+        return !isNaN(t) && now < t;
+      }).length;
+
+      const drafts = allInventory.filter(i => (i.status || '').toUpperCase() === 'DRAFT').length;
+      const outStock = allInventory.filter(i => i.stock <= 0).length;
+
+      document.getElementById('inv-stat-total').innerText = total;
+      document.getElementById('inv-stat-live').innerText = live;
+      document.getElementById('inv-stat-scheduled').innerText = scheduled;
+      document.getElementById('inv-stat-draft').innerText = drafts;
+      document.getElementById('inv-stat-out').innerText = outStock;
+
+      const navBadge = document.getElementById('nav-badge-inventory');
+      if (navBadge) navBadge.innerText = total;
+    }
+
+    function filterInventory(filter, btn) {
+      currentInvFilter = filter;
+      document.querySelectorAll('.inv-filter-btn').forEach(b => {
+        b.classList.remove('bg-stone-900', 'text-white', 'shadow-sm');
+        b.classList.add('bg-stone-100', 'text-stone-700');
+      });
+      if (btn) {
+        btn.classList.add('bg-stone-900', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-stone-100', 'text-stone-700');
+      }
+      renderInventory();
+    }
+
+    function handleInvSearch(val) {
+      invSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-inv-search-btn');
+      if (invSearchQuery.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+      renderInventory();
+    }
+
+    function clearInvSearch() {
+      document.getElementById('inv-search-input').value = '';
+      invSearchQuery = '';
+      document.getElementById('clear-inv-search-btn').classList.add('hidden');
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const container = document.getElementById('inventory-grid');
+      let filtered = allInventory;
+      const now = new Date().getTime();
+
+      if (currentInvFilter === 'ACTIVE') {
+        filtered = filtered.filter(i => {
+          const status = (i.status || 'ACTIVE').toUpperCase();
+          if (status === 'DRAFT') return false;
+          if (status === 'SCHEDULED' && i.publishAt) return now >= new Date(i.publishAt).getTime();
+          return true;
+        });
+      } else if (currentInvFilter === 'SCHEDULED') {
+        filtered = filtered.filter(i => (i.status || '').toUpperCase() === 'SCHEDULED');
+      } else if (currentInvFilter === 'DRAFT') {
+        filtered = filtered.filter(i => (i.status || '').toUpperCase() === 'DRAFT');
+      } else if (currentInvFilter === 'PASIG') {
+        filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('pasig'));
+      } else if (currentInvFilter === 'SANTA MARIA') {
+        filtered = filtered.filter(i => (i.location || '').toLowerCase().includes('santa'));
+      } else if (currentInvFilter === 'OUT_OF_STOCK') {
+        filtered = filtered.filter(i => i.stock <= 0);
+      }
+
+      if (invSearchQuery.length > 0) {
+        filtered = filtered.filter(i => {
+          const id = String(i.id || '').toLowerCase();
+          const name = String(i.name || '').toLowerCase();
+          const cat = String(i.category || '').toLowerCase();
+          const loc = String(i.location || '').toLowerCase();
+          return id.includes(invSearchQuery) || name.includes(invSearchQuery) || cat.includes(invSearchQuery) || loc.includes(invSearchQuery);
+        });
+      }
+
+      document.getElementById('inv-count-label').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl border border-stone-200 p-12 text-center text-stone-400 text-xs">
+            ${invSearchQuery ? `No listings matching "<b>${invSearchQuery}</b>".` : 'No listings found in this filter.'}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const firstImg = (item.image || '').split(',')[0].trim() || 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=400&q=80';
+        const status = (item.status || 'ACTIVE').toUpperCase();
+
+        let visibilityBadge = '';
+        if (status === 'DRAFT') {
+          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-200 text-stone-700">📝 Draft</span>';
+        } else if (status === 'SCHEDULED') {
+          const schedDate = item.publishAt ? new Date(item.publishAt).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' }) : 'Pending';
+          const isLiveNow = item.publishAt && now >= new Date(item.publishAt).getTime();
+          visibilityBadge = isLiveNow ? 
+            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live (${schedDate})</span>` :
+            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-200">⏰ Drop: ${schedDate}</span>`;
+        } else {
+          visibilityBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">🟢 Live</span>';
+        }
+
+        return `
+          <div class="bg-white rounded-2xl border border-stone-200 p-3.5 sm:p-4 shadow-sm flex flex-col justify-between transition hover:shadow-md gap-3">
+            <div class="flex gap-3 items-start">
+              <div class="w-16 h-16 sm:w-20 sm:h-20 bg-stone-100 rounded-xl overflow-hidden shrink-0 border border-stone-200 relative">
+                <img src="${firstImg}" alt="${item.name}" class="w-full h-full object-cover">
+                <span class="absolute top-1 left-1 bg-stone-900/80 text-white font-mono text-[9px] font-bold px-1.5 py-0.2 rounded">#${item.id}</span>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1 flex-wrap">
+                  ${visibilityBadge}
+                  <span class="text-[10px] px-1.5 py-0.2 rounded font-semibold ${item.location === 'Pasig' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">📍 ${item.location}</span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
+                </div>
+
+                <h3 class="font-bold text-stone-900 text-xs sm:text-sm truncate mt-1" title="${item.name}">${item.name}</h3>
+                <div class="text-[11px] text-stone-500 mt-0.5 font-medium">Condition: <b class="text-stone-700">${item.condition || 'Pre-loved'}</b></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-stone-100 flex-wrap gap-2">
+              <div class="flex items-center gap-1.5">
+                <button onclick="openEditPriceModal('${item.id}')" title="Click to edit selling price or add promo sale" class="flex items-baseline gap-1.5 group p-1 -m-1 rounded-lg hover:bg-stone-100 transition text-left">
+                  <span class="font-black text-xs sm:text-sm text-stone-900 group-hover:text-brand-800">₱${Number(item.price).toLocaleString()}</span>
+                  ${item.originalPrice > item.price ? `<span class="text-[10px] text-stone-400 line-through">₱${Number(item.originalPrice).toLocaleString()}</span>` : ''}
+                  <svg class="w-3.5 h-3.5 text-stone-400 group-hover:text-brand-800 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                </button>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <select onchange="updateItemVisibility('${item.id}', this.value)" class="text-[10px] sm:text-[11px] font-bold bg-stone-50 border border-stone-200 rounded-lg p-1 focus:ring-1 focus:ring-brand-800 outline-none">
+                  <option value="ACTIVE" ${status === 'ACTIVE' ? 'selected' : ''}>🟢 Live</option>
+                  <option value="DRAFT" ${status === 'DRAFT' ? 'selected' : ''}>📝 Draft</option>
+                  <option value="SCHEDULED" ${status === 'SCHEDULED' ? 'selected' : ''}>⏰ Sched</option>
+                </select>
+
+                <div class="flex items-center bg-stone-100 rounded-xl border border-stone-200 p-0.5 shadow-sm">
+                  <button onclick="adjustStock('${item.id}', -1)" title="Minus 1 stock" class="w-6 h-6 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition active:scale-90">&minus;</button>
+                  <span id="stock-val-${item.id}" class="w-7 text-center font-mono font-bold text-xs text-brand-900 select-none">${item.stock}</span>
+                  <button onclick="adjustStock('${item.id}', 1)" title="Add 1 stock" class="w-6 h-6 rounded-lg bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-xs flex items-center justify-center transition active:scale-90">&plus;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function updateItemVisibility(itemId, newStatus) {
+      let publishAt = '';
+      if (newStatus === 'SCHEDULED') {
+        const input = prompt("Enter scheduled drop date and time (YYYY-MM-DDTHH:MM, e.g. 2025-02-28T20:00):", new Date().toISOString().slice(0, 16));
+        if (!input) return;
+        publishAt = input;
+      }
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateItemStatus',
+            pin: currentPin,
+            itemId: itemId,
+            status: newStatus,
+            publishAt: publishAt
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          fetchInventoryData();
+        } else {
+          alert('Failed to update status: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error communicating with Google Apps Script.');
+      }
+    }
+
+    async function adjustStock(itemId, delta) {
+      const item = allInventory.find(i => String(i.id) === String(itemId));
+      if (!item) return;
+
+      const newStock = Math.max(0, Number(item.stock) + delta);
+      if (newStock === item.stock) return;
+
+      item.stock = newStock;
+      const el = document.getElementById(`stock-val-${itemId}`);
+      if (el) el.innerText = newStock;
+      updateInvStats();
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateStock',
+            pin: currentPin,
+            itemId: itemId,
+            stock: newStock
+          })
+        });
+        const result = await res.json();
+        if (result.status !== 'success') {
+          alert('Failed to update stock: ' + (result.message || 'Unauthorized'));
+          fetchInventoryData();
+        } else {
+          renderInventory();
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+        fetchInventoryData();
+      }
+    }
+
+    function openAddItemModal() {
+      selectedImageFiles = [];
+      document.getElementById('photos-preview-container').innerHTML = '';
+      document.getElementById('add-item-form').reset();
+      const statusEl = document.getElementById('photo-processing-status');
+      if (statusEl) {
+        statusEl.innerText = '';
+        statusEl.classList.add('hidden');
+      }
+      toggleScheduleInput();
+      document.getElementById('add-item-modal').classList.remove('hidden');
+    }
+
+    function closeAddItemModal() {
+      document.getElementById('add-item-modal').classList.add('hidden');
+    }
+
+    function toggleScheduleInput() {
+      const selected = document.querySelector('input[name="new-item-visibility"]:checked');
+      const schedBox = document.getElementById('schedule-datetime-container');
+      if (selected && selected.value === 'SCHEDULED') {
+        schedBox.classList.remove('hidden');
+        if (!document.getElementById('new-item-publish-at').value) {
+          const d = new Date();
+          d.setDate(d.getDate() + 1);
+          d.setHours(20, 0, 0, 0);
+          document.getElementById('new-item-publish-at').value = d.toISOString().slice(0, 16);
+        }
+      } else {
+        schedBox.classList.add('hidden');
+      }
+    }
+
+    function loadImageElement(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    async function processFileToWhiteBackground(file) {
+      const statusEl = document.getElementById('photo-processing-status');
+      const makeWhite = document.getElementById('auto-white-background')?.checked ?? true;
+
+      const readDataUrl = () => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => resolve(evt.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const rawDataUrl = await readDataUrl();
+
+      if (!makeWhite) {
+        const img = await loadImageElement(rawDataUrl);
+        const canvas = document.createElement('canvas');
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        return {
+          data: canvas.toDataURL('image/jpeg', 0.85),
+          type: 'image/jpeg',
+          name: file.name
+        };
+      }
+
+      if (statusEl) {
+        statusEl.classList.remove('hidden');
+        statusEl.innerText = `Removing background & applying studio white for ${file.name}... (downloading model if first time)`;
+      }
+
+      const { removeBackground } = await getBgRemovalModule();
+      const outputBlob = await removeBackground(file, {
+        output: { format: 'image/png', quality: 0.9 },
+        progress: (key, current, total) => {
+          if (statusEl && total) {
+            const pct = Math.round((current / total) * 100);
+            statusEl.innerText = `AI processing ${file.name}: ${pct}%`;
+          }
+        }
+      });
+
+      const cutDataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => resolve(evt.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(outputBlob);
+      });
+
+      const cutImg = await loadImageElement(cutDataUrl);
+      const canvas = document.createElement('canvas');
+      const maxDim = 1200;
+      let width = cutImg.width;
+      let height = cutImg.height;
+
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(cutImg, 0, 0, width, height);
+
+      return {
+        data: canvas.toDataURL('image/jpeg', 0.85),
+        type: 'image/jpeg',
+        name: file.name
+      };
+    }
+
+    async function handleFileSelect(e) {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      const statusEl = document.getElementById('photo-processing-status');
+
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        try {
+          const item = await processFileToWhiteBackground(file);
+          selectedImageFiles.push(item);
+          renderPhotoThumbnails();
+        } catch (err) {
+          console.error('Failed to process image:', err);
+          alert(`Could not process ${file.name}. Uploading regular compressed photo instead.`);
+          
+          const rawDataUrl = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = (evt) => resolve(evt.target.result);
+            r.readAsDataURL(file);
+          });
+          const img = await loadImageElement(rawDataUrl);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          selectedImageFiles.push({
+            data: canvas.toDataURL('image/jpeg', 0.85),
+            type: 'image/jpeg',
+            name: file.name
+          });
+          renderPhotoThumbnails();
+        }
+      }
+
+      if (statusEl) {
+        statusEl.innerText = 'All selected photos processed!';
+        setTimeout(() => statusEl.classList.add('hidden'), 2000);
+      }
+    }
+
+    function renderPhotoThumbnails() {
+      const container = document.getElementById('photos-preview-container');
+      container.innerHTML = selectedImageFiles.map((f, i) => `
+        <div class="relative w-14 h-14 rounded-xl overflow-hidden border border-stone-200 shadow-sm group">
+          <img src="${f.data}" class="w-full h-full object-cover">
+          <button type="button" onclick="removePhoto(${i})" class="absolute top-0.5 right-0.5 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow leading-none">&times;</button>
+          <span class="absolute bottom-0 inset-x-0 bg-stone-900/70 text-white text-[8px] text-center font-mono py-0.2">${i + 1}</span>
+        </div>
+      `).join('');
+    }
+
+    function removePhoto(index) {
+      selectedImageFiles.splice(index, 1);
+      renderPhotoThumbnails();
+    }
+
+    async function submitNewItem(e) {
+      e.preventDefault();
+      if (!selectedImageFiles.length) {
+        alert("Please select at least 1 photo for this item.");
+        return;
+      }
+
+      const name = document.getElementById('new-item-name').value.trim();
+      const category = document.getElementById('new-item-category').value.trim();
+      const location = document.getElementById('new-item-location').value;
+      const price = Number(document.getElementById('new-item-price').value) || 0;
+      const originalPrice = Number(document.getElementById('new-item-original-price').value) || 0;
+      const stock = Number(document.getElementById('new-item-stock').value) || 1;
+      const condition = document.getElementById('new-item-condition').value.trim();
+      
+      const visibility = document.querySelector('input[name="new-item-visibility"]:checked').value;
+      let publishAt = '';
+      if (visibility === 'SCHEDULED') {
+        publishAt = document.getElementById('new-item-publish-at').value;
+        if (!publishAt) {
+          alert('Please pick a drop date and time for the scheduled release.');
+          return;
+        }
+      }
+
+      const btn = document.getElementById('submit-item-btn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Uploading...`;
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'addItem',
+            pin: currentPin,
+            name,
+            category,
+            location,
+            price,
+            originalPrice,
+            stock,
+            condition,
+            status: visibility,
+            publishAt: publishAt,
+            images: selectedImageFiles
+          })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Item #${result.itemId} (${name}) saved as [${visibility}] with ${selectedImageFiles.length} photo(s)!`);
+          closeAddItemModal();
+          refreshData();
+          switchMainView('inventory');
+        } else {
+          alert("Error adding item: " + (result.message || "Failed"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Network error communicating with Google Apps Script.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    function openConfirmModal(orderId) {
+      pendingConfirmOrderId = orderId;
+      document.getElementById('confirm-modal-order-id').innerText = orderId;
+      document.getElementById('confirm-tracking-input').value = '';
+      document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      pendingConfirmOrderId = null;
+      document.getElementById('confirm-modal').classList.add('hidden');
+    }
+
+    async function submitConfirmOrder() {
+      if (!pendingConfirmOrderId) return;
+      const trackingNote = document.getElementById('confirm-tracking-input').value.trim();
+      const btn = document.getElementById('submit-confirm-btn');
+      const origText = btn.innerText;
+
+      btn.disabled = true;
+      btn.innerText = "Confirming & Emailing...";
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'confirmPayment',
+            pin: currentPin,
+            orderId: pendingConfirmOrderId,
+            trackingNote: trackingNote
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Order ${pendingConfirmOrderId} confirmed! Email receipt sent to buyer.`);
+          closeConfirmModal();
+          fetchOrders();
+        } else {
+          alert('Error confirming order: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = origText;
+      }
+    }
+
+    function openCancelModal(orderId) {
+      pendingCancelOrderId = orderId;
+      document.getElementById('cancel-modal-order-id').innerText = orderId;
+      document.getElementById('cancel-comment-input').value = '';
+      document.querySelectorAll('.reason-chip').forEach(btn => {
+        btn.className = 'reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200';
+      });
+      document.getElementById('cancel-modal').classList.remove('hidden');
+    }
+
+    function closeCancelModal() {
+      pendingCancelOrderId = null;
+      document.getElementById('cancel-modal').classList.add('hidden');
+    }
+
+    function setPresetReason(reasonText) {
+      document.getElementById('cancel-comment-input').value = reasonText;
+      document.querySelectorAll('.reason-chip').forEach(btn => {
+        if (btn.innerText.trim().toLowerCase().includes(reasonText.slice(0, 10).toLowerCase())) {
+          btn.className = 'reason-chip text-[10px] font-bold bg-stone-900 text-white px-2.5 py-1 rounded-full transition shadow-sm border border-stone-900';
+        } else {
+          btn.className = 'reason-chip text-[10px] font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 px-2.5 py-1 rounded-full transition border border-stone-200';
+        }
+      });
+    }
+
+    async function submitCancelOrder() {
+      if (!pendingCancelOrderId) return;
+      const comment = document.getElementById('cancel-comment-input').value.trim();
+      if (!comment) {
+        alert('Please enter or select a cancellation reason/comment.');
+        return;
+      }
+
+      const btn = document.getElementById('confirm-cancel-btn');
+      btn.disabled = true;
+      btn.innerText = "Cancelling & Restocking...";
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'cancelOrder', pin: currentPin, orderId: pendingCancelOrderId, comment })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Order ${pendingCancelOrderId} cancelled. Items restored to stock.`);
+          closeCancelModal();
+          fetchOrders();
+          fetchInventoryData();
+        } else {
+          alert('Error cancelling order: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error connecting to backend.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Confirm Cancel & Restock";
+      }
+    }
+
+    // Auto-check grace period on load
+    checkGracePeriod();
   </script>
 </body>
 </html>
