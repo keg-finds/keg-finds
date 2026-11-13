@@ -94,6 +94,31 @@
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 flex-1 w-full space-y-6">
 
+      <!-- Store Maintenance Mode Manager Card -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
+        <div class="flex items-center justify-between gap-2 pb-3 border-b border-stone-100">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-lg sm:text-xl shrink-0">🛠️</span>
+            <div class="min-w-0">
+              <h2 class="font-serif font-bold text-xs sm:text-sm text-stone-900 truncate">Store Maintenance Mode</h2>
+              <p class="text-[10px] sm:text-[11px] text-stone-500 truncate">Hides items and shows "Shop Under Maintenance — Restocking &amp; Updating Inventory" on website</p>
+            </div>
+          </div>
+          <!-- Maintenance Toggle -->
+          <div class="flex items-center gap-1.5 shrink-0 bg-amber-50 px-2.5 py-1 rounded-xl border border-amber-200">
+            <label class="text-[11px] font-bold text-amber-900">Maintenance Active:</label>
+            <input type="checkbox" id="maintenance-active-toggle" class="w-4 h-4 text-amber-600 rounded focus:ring-amber-600 cursor-pointer">
+          </div>
+        </div>
+
+        <div class="mt-3 flex flex-col sm:flex-row gap-2">
+          <input type="text" id="maintenance-msg-input" placeholder="e.g. We are currently updating our stock with fresh pre-loved items. Check back shortly!" class="flex-1 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:ring-2 focus:ring-amber-600 outline-none">
+          <button onclick="saveMaintenanceMode()" id="save-maintenance-btn" class="w-full sm:w-auto px-5 py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs rounded-xl transition shadow-sm whitespace-nowrap active:scale-95">
+            Save Status
+          </button>
+        </div>
+      </div>
+
       <!-- Dynamic Announcement Banner Manager Card -->
       <div class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
         <div class="flex items-center justify-between gap-2 pb-3 border-b border-stone-100">
@@ -608,12 +633,10 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
       }
     }
 
-    // Keep session alive while user is interacting
     ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt => {
       document.addEventListener(evt, verifyStillActive, { passive: true });
     });
 
-    // Check timeout when user returns from Messenger or unlocks phone
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         verifyStillActive();
@@ -703,6 +726,44 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
         tabOrders.className = "flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-stone-600 hover:text-stone-900";
         viewInv.classList.remove('hidden');
         viewOrders.classList.add('hidden');
+      }
+    }
+
+    // =========================================================================
+    // STORE MAINTENANCE MODE ACTIONS
+    // =========================================================================
+    async function saveMaintenanceMode() {
+      const isActive = document.getElementById('maintenance-active-toggle').checked;
+      const msg = document.getElementById('maintenance-msg-input').value.trim();
+      const btn = document.getElementById('save-maintenance-btn');
+      const origText = btn.innerText;
+
+      btn.disabled = true;
+      btn.innerText = "Saving...";
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action: 'updateMaintenance',
+            pin: currentPin,
+            maintenanceMode: isActive,
+            maintenanceMessage: msg
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(`Maintenance mode is now ${isActive ? 'ACTIVE (Storefront displays Shop Under Maintenance)' : 'OFF (Storefront is live)'}!`);
+        } else {
+          alert('Error saving maintenance mode: ' + (result.message || 'Unauthorized'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error communicating with Google Apps Script.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = origText;
       }
     }
 
@@ -1108,6 +1169,11 @@ Meetups are available at Urban Deca Homes Ortigas (Pasig) or Santa Maria (Ilocos
         if (data && data.announcement !== undefined) {
           document.getElementById('banner-text-input').value = data.announcement || '';
           document.getElementById('banner-active-toggle').checked = !!data.showAnnouncement;
+        }
+
+        if (data && data.maintenanceMode !== undefined) {
+          document.getElementById('maintenance-active-toggle').checked = !!data.maintenanceMode;
+          document.getElementById('maintenance-msg-input').value = data.maintenanceMessage || '';
         }
 
         let items = [];
