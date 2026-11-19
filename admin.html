@@ -166,6 +166,12 @@
       <!-- VIEW 1: ORDERS MANAGEMENT -->
       <!-- =================================================================== -->
       <div id="view-orders" class="space-y-6">
+        <!-- Admin-only storefront and sales analytics -->
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="bg-white p-4 rounded-2xl border border-stone-200"><p class="text-xs text-stone-500 font-bold">Main Site Visits</p><div id="keg-site-views" class="text-2xl font-black">0</div></div>
+          <div class="bg-white p-4 rounded-2xl border border-stone-200"><p class="text-xs text-stone-500 font-bold">Confirmed Sales (Gross)</p><div id="keg-gross-sales" class="text-2xl font-black">₱0.00</div></div>
+          <div class="bg-white p-4 rounded-2xl border border-stone-200"><p class="text-xs text-stone-500 font-bold">Sales After Recorded Returns</p><div id="keg-net-sales" class="text-2xl font-black">₱0.00</div></div>
+        </div>
         <!-- KPI Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
@@ -620,6 +626,31 @@
     function refreshData() {
       fetchOrders();
       fetchInventoryData();
+      fetchKegAnalytics();
+    }
+
+    async function fetchKegAnalytics() {
+      if (!currentPin) return;
+      try {
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAnalytics&pin=${encodeURIComponent(currentPin)}&_t=${Date.now()}`);
+        const data = await res.json();
+        if (data.status !== 'success') throw Error(data.message || 'Analytics unavailable');
+        const set=(id,value)=>document.getElementById(id).textContent=value;
+        set('keg-site-views', Number(data.siteViews).toLocaleString());
+        set('keg-gross-sales', '₱'+Number(data.grossSales).toLocaleString('en-PH',{minimumFractionDigits:2}));
+        set('keg-net-sales', '₱'+Number(data.netItemSales).toLocaleString('en-PH',{minimumFractionDigits:2}));
+        renderInventory();
+      } catch(err) { console.error('Analytics:',err); }
+    }
+    async function deleteInventoryItem(itemId) {
+      const item=allInventory.find(i=>String(i.id)===String(itemId));
+      if (!item || !confirm(`Delete "${item.name}" (#${item.id}) from the storefront? Order history will be preserved.`)) return;
+      try {
+        const response=await fetch(GOOGLE_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'deleteItem',pin:currentPin,itemId:String(itemId)})});
+        const result=await response.json();
+        if(result.status!=='success') throw Error(result.message||'Deletion failed');
+        await fetchInventoryData(); await fetchKegAnalytics();
+      } catch(err) { alert('Could not delete item: '+err.message); }
     }
 
     function switchMainView(view) {
@@ -1082,7 +1113,7 @@
 
                 <h3 class="font-bold text-stone-900 text-sm truncate mt-1" title="${item.name}">${item.name}</h3>
                 <div class="text-xs text-stone-500 mt-0.5 font-medium">Condition: <b class="text-stone-700">${item.condition || 'Pre-loved'}</b></div>
-                <button type="button" onclick="openEditItemModal('${item.id}')" class="mt-2 text-[10px] font-bold text-brand-700 underline">Edit all details</button>
+                <div class="flex gap-3 items-center mt-2"><button type="button" onclick="openEditItemModal('${item.id}')" class="text-[10px] font-bold text-brand-700 underline">Edit all details</button><button type="button" onclick="deleteInventoryItem('${item.id}')" class="text-[10px] font-bold text-red-700 underline">Delete item</button></div>
               </div>
             </div>
 
