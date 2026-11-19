@@ -93,19 +93,16 @@
 
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-      <section class="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-sm">
-        <h2 class="font-serif font-bold text-sm text-stone-900">🔐 Change Admin PIN</h2>
-        <p class="text-xs text-stone-500 mt-1">Enter your current PIN and choose a new 6–8 digit PIN.</p>
-        <form id="change-pin-form" onsubmit="submitChangePin(event)" class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <input id="change-current-pin" type="password" inputmode="numeric" autocomplete="current-password" required placeholder="Current PIN" class="border border-stone-200 rounded-xl px-3 py-2.5 text-xs">
-          <input id="change-new-pin" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required placeholder="New PIN (6–8 digits)" class="border border-stone-200 rounded-xl px-3 py-2.5 text-xs">
-          <input id="change-confirm-pin" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required placeholder="Confirm new PIN" class="border border-stone-200 rounded-xl px-3 py-2.5 text-xs">
-          <button type="submit" id="change-pin-btn" class="sm:col-span-3 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl">Change PIN</button>
-        </form>
+      <section class="bg-white p-4 sm:p-4 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h2 class="font-serif font-bold text-sm text-stone-900">🔐 Admin PIN</h2>
+          <p class="text-xs text-stone-500 mt-1">Change the PIN used to unlock this dashboard.</p>
+        </div>
+        <button type="button" onclick="openChangePinModal()" class="shrink-0 px-4 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition">
+          Change PIN
+        </button>
       </section>
-
-
-      <!-- Dynamic Announcement Banner Manager Card -->
+<!-- Dynamic Announcement Banner Manager Card -->
       <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
           <div class="flex items-center gap-2">
@@ -289,6 +286,25 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- CHANGE ADMIN PIN MODAL (opens only when Change PIN is clicked) -->
+  <div id="change-pin-modal" class="fixed inset-0 z-[70] bg-stone-900/60 backdrop-blur-sm hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="change-pin-title" onclick="if(event.target===this) closeChangePinModal()">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button type="button" onclick="closeChangePinModal()" aria-label="Close" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      <div class="w-11 h-11 bg-brand-100 text-brand-800 rounded-2xl flex items-center justify-center mb-3 text-xl">🔐</div>
+      <h2 id="change-pin-title" class="font-serif text-lg font-bold text-stone-900">Change Admin PIN</h2>
+      <p class="text-xs text-stone-500 mt-1">Enter your current PIN and choose a new PIN with 6–8 digits.</p>
+      <form id="change-pin-form" onsubmit="submitChangePin(event)" class="mt-4 space-y-3">
+        <input id="change-current-pin" type="password" inputmode="numeric" autocomplete="current-password" required placeholder="Current PIN" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm">
+        <input id="change-new-pin" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required placeholder="New PIN (6–8 digits)" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm">
+        <input id="change-confirm-pin" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6,8}" minlength="6" maxlength="8" required placeholder="Confirm new PIN" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm">
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeChangePinModal()" class="flex-1 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl">Cancel</button>
+          <button type="submit" id="change-pin-btn" class="flex-1 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl">Save New PIN</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- ADD ITEM MODAL (With Publishing & Scheduling Options) -->
@@ -1469,6 +1485,23 @@
     }
       // Auto-check grace period on load
 
+    function openChangePinModal() {
+      const modal = document.getElementById('change-pin-modal');
+      const form = document.getElementById('change-pin-form');
+      if (form) form.reset();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => document.getElementById('change-current-pin')?.focus(), 0);
+    }
+
+    function closeChangePinModal() {
+      const modal = document.getElementById('change-pin-modal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('change-pin-form')?.reset();
+    }
+
     async function submitChangePin(event) {
       event.preventDefault();
       const form = document.getElementById('change-pin-form');
@@ -1490,6 +1523,7 @@
         const result = await response.json();
         if (result.status !== 'success') { alert(result.message || 'Could not change the PIN.'); return; }
         form.reset();
+        closeChangePinModal();
         handleLogout();
         alert('PIN changed. Please sign in using your new PIN.');
       } catch (err) {
