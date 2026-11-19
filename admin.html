@@ -37,11 +37,11 @@
         K
       </div>
       <h1 class="font-serif text-2xl font-bold text-stone-900">Seller Dashboard</h1>
-      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your 4-digit PIN to manage store &amp; inventory</p>
+      <p class="text-xs text-stone-500 mt-1 mb-6">Enter your admin PIN to manage the store and inventory</p>
 
       <form onsubmit="handleLogin(event)" class="space-y-4">
         <div>
-          <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" class="w-full text-center text-2xl tracking-widest font-mono font-bold border border-stone-200 rounded-2xl p-3 focus:ring-2 focus:ring-brand-800 outline-none">
+          <input type="password" id="admin-pin-input" maxlength="8" placeholder="Enter admin PIN" class="w-full text-center text-2xl tracking-widest font-mono font-bold border border-stone-200 rounded-2xl p-3 focus:ring-2 focus:ring-brand-800 outline-none">
         </div>
         <button type="submit" id="login-btn" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm">
           Unlock Dashboard
@@ -71,6 +71,9 @@
             <button onclick="refreshData()" title="Refresh All Data" class="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition border border-stone-200 active:scale-95">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             </button>
+            <button type="button" onclick="openChangePinModal()" class="px-3 py-1.5 text-xs font-bold text-brand-800 hover:bg-brand-50 rounded-xl transition border border-stone-200 active:scale-95">
+              Change PIN
+            </button>
             <button onclick="handleLogout()" class="px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition border border-red-200 active:scale-95">
               Lock
             </button>
@@ -93,15 +96,6 @@
 
     <!-- Main Content -->
     <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-      <section class="bg-white p-4 sm:p-4 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between gap-3">
-        <div class="min-w-0">
-          <h2 class="font-serif font-bold text-sm text-stone-900">🔐 Admin PIN</h2>
-          <p class="text-xs text-stone-500 mt-1">Change the PIN used to unlock this dashboard.</p>
-        </div>
-        <button type="button" onclick="openChangePinModal()" class="shrink-0 px-4 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition">
-          Change PIN
-        </button>
-      </section>
 <!-- Dynamic Announcement Banner Manager Card -->
       <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
