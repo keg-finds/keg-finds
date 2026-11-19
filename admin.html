@@ -508,6 +508,8 @@
     let pendingConfirmOrderId = null;
     let pendingEditPriceItemId = null;
     let selectedImageFiles = [];
+    let selectedEditImageFiles = [];
+    let editingItemId = null;
 
     // Check 5-minute grace period on initial load
     function checkGracePeriod() {
@@ -1080,6 +1082,7 @@
 
                 <h3 class="font-bold text-stone-900 text-sm truncate mt-1" title="${item.name}">${item.name}</h3>
                 <div class="text-xs text-stone-500 mt-0.5 font-medium">Condition: <b class="text-stone-700">${item.condition || 'Pre-loved'}</b></div>
+                <button type="button" onclick="openEditItemModal('${item.id}')" class="mt-2 text-[10px] font-bold text-brand-700 underline">Edit all details</button>
               </div>
             </div>
 
@@ -1113,6 +1116,31 @@
         `;
       }).join('');
     }
+
+    function openEditItemModal(itemId){
+      const item=allInventory.find(x=>String(x.id)===String(itemId)); if(!item)return;
+      editingItemId=String(item.id); selectedEditImageFiles=[];
+      document.getElementById('edit-item-heading').textContent=`Item #${item.id} — ${item.name}`;
+      document.getElementById('edit-item-name').value=item.name||'';
+      document.getElementById('edit-item-category').value=item.category||'';
+      document.getElementById('edit-item-location').value=/santa|ilocos/i.test(item.location||'')?'Santa Maria':'Pasig';
+      document.getElementById('edit-item-price').value=Number(item.price)||'';
+      document.getElementById('edit-item-original-price').value=Number(item.originalPrice)||'';
+      document.getElementById('edit-item-stock').value=Math.max(0,Number(item.stock)||0);
+      document.getElementById('edit-item-condition').value=String(item.condition||'').replace(/^'/,'');
+      document.getElementById('edit-item-status').value=['ACTIVE','DRAFT','SCHEDULED'].includes(String(item.status||'ACTIVE').toUpperCase())?String(item.status||'ACTIVE').toUpperCase():'ACTIVE';
+      document.getElementById('edit-item-publish-at').value=String(item.publishAt||'').slice(0,16);
+      document.getElementById('edit-item-files').value=''; setPhotoStatus('','edit-photo-processing-status');
+      renderExistingEditPhotos(item.image||''); renderEditPhotoThumbnails(); toggleEditScheduleInput();
+      const modal=document.getElementById('edit-item-modal'); modal.classList.remove('hidden'); modal.classList.add('flex');
+    }
+    function closeEditItemModal(){const modal=document.getElementById('edit-item-modal');modal.classList.add('hidden');modal.classList.remove('flex');editingItemId=null;selectedEditImageFiles=[];}
+    function toggleEditScheduleInput(){document.getElementById('edit-schedule-box').classList.toggle('hidden',document.getElementById('edit-item-status').value!=='SCHEDULED');}
+    function renderExistingEditPhotos(urls){const box=document.getElementById('edit-current-photos');const photos=String(urls||'').split(',').map(x=>x.trim()).filter(Boolean);box.innerHTML=photos.length?photos.map((url,i)=>`<img src="${url}" alt="Current photo ${i+1}" class="w-16 h-16 rounded-lg object-cover border border-stone-200">`).join(''):'<span class="text-[10px] text-stone-500">No saved photos</span>';}
+    async function handleEditFileSelect(event){const files=Array.from(event.target.files||[]).filter(f=>f.type.startsWith('image/'));if(!files.length)return;const clean=document.getElementById('edit-auto-white-background').checked;const failures=[];for(let i=0;i<files.length;i++){setPhotoStatus(`${clean?'Cleaning background':'Preparing'} — replacement photo ${i+1}/${files.length}…`,'edit-photo-processing-status');try{selectedEditImageFiles.push(await preparePhoto(files[i],clean,i,files.length,'edit-photo-processing-status'));renderEditPhotoThumbnails();}catch(err){console.error(err);failures.push(files[i].name);}}event.target.value='';setPhotoStatus('','edit-photo-processing-status');if(failures.length)alert(`Could not process: ${failures.join(', ')}. Try again or disable background removal.`);}
+    function renderEditPhotoThumbnails(){const box=document.getElementById('edit-photos-preview');box.innerHTML=selectedEditImageFiles.map((f,i)=>`<div class="relative w-16 h-16"><img src="${f.data}" class="w-full h-full rounded-lg object-cover border"><button type="button" onclick="removeEditPhoto(${i})" class="absolute -top-1 -right-1 rounded-full bg-red-600 text-white w-5 h-5">×</button></div>`).join('');}
+    function removeEditPhoto(index){selectedEditImageFiles.splice(index,1);renderEditPhotoThumbnails();}
+    async function submitEditItem(event){event.preventDefault();if(!editingItemId)return;const status=document.getElementById('edit-item-status').value;const publishAt=status==='SCHEDULED'?document.getElementById('edit-item-publish-at').value:'';if(status==='SCHEDULED'&&!publishAt){alert('Choose a scheduled publish date and time.');return;}const price=Number(document.getElementById('edit-item-price').value);const originalPrice=Number(document.getElementById('edit-item-original-price').value)||0;if(originalPrice>0&&originalPrice<=price){alert('Original price must be higher than selling price, or blank.');return;}const btn=document.getElementById('save-edit-item-btn');btn.disabled=true;btn.textContent='Saving item…';try{const response=await fetch(GOOGLE_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'updateItemDetails',pin:currentPin,itemId:editingItemId,name:document.getElementById('edit-item-name').value.trim(),category:document.getElementById('edit-item-category').value.trim(),location:document.getElementById('edit-item-location').value,price,originalPrice,stock:Number(document.getElementById('edit-item-stock').value),condition:document.getElementById('edit-item-condition').value.trim(),status,publishAt,images:selectedEditImageFiles})});const result=await response.json();if(result.status!=='success')throw new Error(result.message||'Item update failed.');closeEditItemModal();await fetchInventoryData();alert('Item details updated.');}catch(err){console.error(err);alert('Could not update item: '+(err.message||'Connection error.'));}finally{btn.disabled=false;btn.textContent='Save all details';}}
 
     async function updateItemVisibility(itemId, newStatus) {
       let publishAt = '';
@@ -1239,7 +1267,7 @@
       });
     }
 
-    async function preparePhoto(file, cleanWhite, index, total) {
+    async function preparePhoto(file, cleanWhite, index, total, statusId = 'photo-processing-status') {
       let sourceBlob = file;
       if (cleanWhite) {
         const removeBackground = await getBackgroundRemover();
@@ -1247,7 +1275,7 @@
           model: 'isnet_quint8',
           output: { format: 'image/png', quality: 0.9 },
           progress: (key, current, totalBytes) => {
-            if (totalBytes > 0) setPhotoStatus(`Preparing photo ${index + 1}/${total}: loading AI model (${Math.round(current / totalBytes * 100)}%)…`);
+            if (totalBytes > 0) setPhotoStatus(`Preparing photo ${index + 1}/${total}: loading AI model (${Math.round(current / totalBytes * 100)}%)…`, statusId);
           }
         });
       }
@@ -1279,8 +1307,8 @@
       return { data: compressedBase64, type: 'image/jpeg', name: file.name };
     }
 
-    function setPhotoStatus(message) {
-      const el = document.getElementById('photo-processing-status');
+    function setPhotoStatus(message, elementId = 'photo-processing-status') {
+      const el = document.getElementById(elementId);
       if (!el) return;
       el.textContent = message || '';
       el.classList.toggle('hidden', !message);
@@ -1691,6 +1719,36 @@
             Save Price
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Full existing-item editor modal -->
+  <div id="edit-item-modal" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-7 shadow-2xl border border-stone-200 relative my-6 max-h-[92vh] overflow-y-auto">
+      <button type="button" onclick="closeEditItemModal()" class="absolute top-4 right-4 text-stone-400 text-2xl font-bold">&times;</button>
+      <h2 class="font-serif text-xl font-bold text-stone-900">Edit All Item Details</h2><p id="edit-item-heading" class="text-xs text-stone-500 mt-1"></p>
+      <form id="edit-item-form" onsubmit="submitEditItem(event)" class="mt-5 space-y-3 text-xs">
+        <div><label class="font-bold block mb-1">Item name *</label><input id="edit-item-name" required class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="font-bold block mb-1">Category *</label><input id="edit-item-category" required class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+          <div><label class="font-bold block mb-1">Location *</label><select id="edit-item-location" class="w-full border border-stone-200 rounded-xl p-2.5 bg-white"><option value="Pasig">Pasig</option><option value="Santa Maria">Santa Maria</option></select></div>
+          <div><label class="font-bold block mb-1">Selling price (₱) *</label><input id="edit-item-price" type="number" min="1" step="1" required class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+          <div><label class="font-bold block mb-1">Original price (₱) optional</label><input id="edit-item-original-price" type="number" min="0" step="1" class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+          <div><label class="font-bold block mb-1">Stock *</label><input id="edit-item-stock" type="number" min="0" step="1" required class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+          <div><label class="font-bold block mb-1">Condition *</label><input id="edit-item-condition" required class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="font-bold block mb-1">Publishing status *</label><select id="edit-item-status" onchange="toggleEditScheduleInput()" class="w-full border border-stone-200 rounded-xl p-2.5 bg-white"><option value="ACTIVE">Live</option><option value="DRAFT">Draft (hidden)</option><option value="SCHEDULED">Scheduled</option></select></div>
+          <div id="edit-schedule-box" class="hidden"><label class="font-bold block mb-1">Publish time (Manila)</label><input id="edit-item-publish-at" type="datetime-local" class="w-full border border-stone-200 rounded-xl p-2.5"></div>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-stone-50 p-3"><b>Current photos</b><div id="edit-current-photos" class="mt-2 flex flex-wrap gap-2"></div>
+          <label class="mt-3 block font-bold">Optional replacement photos</label><p class="mt-1 text-[10px] text-stone-500">Leave blank to keep current photos. New photos replace storefront links; old Drive files are retained.</p>
+          <label class="mt-2 flex items-center gap-2"><input id="edit-auto-white-background" type="checkbox" checked><span>Remove background and use white</span></label>
+          <input id="edit-item-files" type="file" accept="image/jpeg,image/png,image/webp" multiple class="mt-3 block w-full text-xs" onchange="handleEditFileSelect(event)">
+          <div id="edit-photo-processing-status" class="hidden mt-2 text-[11px] text-stone-600" aria-live="polite"></div><div id="edit-photos-preview" class="mt-2 flex flex-wrap gap-2"></div>
+        </div>
+        <div class="flex gap-2 pt-3 border-t border-stone-100"><button type="button" onclick="closeEditItemModal()" class="flex-1 py-2.5 bg-stone-100 rounded-xl font-bold">Cancel</button><button id="save-edit-item-btn" type="submit" class="flex-1 py-2.5 bg-brand-800 hover:bg-brand-900 text-white rounded-xl font-bold">Save all details</button></div>
       </form>
     </div>
   </div>
