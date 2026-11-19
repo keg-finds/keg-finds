@@ -467,6 +467,23 @@
     </div>
   </div>
 
+
+  <!-- Record Returned Item Modal -->
+  <div id="return-item-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative">
+      <button type="button" onclick="closeReturnModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+      <h3 class="font-serif text-lg font-bold text-stone-900">Record Returned Item</h3>
+      <p class="mt-1 text-xs text-stone-500">Order <b id="return-order-label" class="font-mono"></b>. This records the return; it does not issue a refund.</p>
+      <form id="return-item-form" onsubmit="submitReturnItem(event)" class="mt-4 space-y-3 text-xs">
+        <label class="block font-bold text-stone-700">Item<select id="return-item-select" required class="mt-1 w-full rounded-xl border border-stone-200 p-2.5 bg-white"></select></label>
+        <label class="block font-bold text-stone-700">Quantity returned<input id="return-item-qty" type="number" min="1" step="1" value="1" required class="mt-1 w-full rounded-xl border border-stone-200 p-2.5"></label>
+        <label class="block font-bold text-stone-700">Reason / note<textarea id="return-item-reason" rows="2" required maxlength="500" placeholder="Buyer changed their mind" class="mt-1 w-full rounded-xl border border-stone-200 p-2.5"></textarea></label>
+        <label class="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-950"><input id="return-restock-toggle" type="checkbox" class="mt-0.5"><span><b>Restore stock</b><br>Only check after the item is physically back and approved for resale.</span></label>
+        <div class="flex gap-2 pt-2"><button type="button" onclick="closeReturnModal()" class="flex-1 rounded-xl bg-stone-100 py-2.5 font-bold">Cancel</button><button id="submit-return-btn" type="submit" class="flex-1 rounded-xl bg-brand-800 py-2.5 font-bold text-white">Save Return</button></div>
+      </form>
+    </div>
+  </div>
+
   <script>
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXrszc-8L5P1ZRcIHKD3OmJEyq4EZIwqx0cvUs4vYlaBJzZo6ilWh_KaRKrNEBJvmr/exec";
     const GRACE_PERIOD_MS = 5 * 60 * 1000; // 5 minutes inactivity timeout
@@ -482,6 +499,7 @@
     let orderSearchQuery = '';
     let invSearchQuery = '';
     let pendingCancelOrderId = null;
+    let pendingReturnOrderId = null;
     let pendingConfirmOrderId = null;
     let pendingEditPriceItemId = null;
     let selectedImageFiles = [];
@@ -847,6 +865,7 @@
                 <div><span class="text-stone-400 font-medium">Payment:</span> <b class="text-stone-800">${order.paymentMethod}</b></div>
                 ${order.trackingNote ? `<div class="bg-blue-50 p-2 rounded-lg text-blue-800 text-[11px] border border-blue-200 mt-1"><b>📦 Dispatch / Meetup Note:</b> ${order.trackingNote}</div>` : ''}
                 ${order.comment ? `<div class="bg-red-50 p-2 rounded-lg text-red-700 text-[11px] border border-red-200 mt-1"><b class="text-red-900">Reason / Comment:</b> ${order.comment}</div>` : ''}
+                ${order.returnJson ? `<div class="bg-amber-50 p-2 rounded-lg text-amber-900 text-[11px] border border-amber-200 mt-1"><b>↩ Returns:</b> ${renderReturnSummary(order.returnJson)}</div>` : ''}
               </div>
             </div>
 
@@ -857,6 +876,7 @@
               </div>
             </div>
 
+            ${isConfirmed ? `<div class="pt-3 border-t border-stone-100 flex justify-end"><button onclick="openReturnModal('${order.orderId}')" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold rounded-xl transition">↩ Record Return</button></div>` : ''}
             ${isPending ? `
               <div class="pt-3 border-t border-stone-100 flex flex-wrap gap-2 justify-end">
                 <button onclick="openCancelModal('${order.orderId}')" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold rounded-xl transition">
@@ -1414,6 +1434,32 @@
         btn.disabled = false;
         btn.innerText = origText;
       }
+    }
+
+    function renderReturnSummary(raw) {
+      try { const a=Array.isArray(raw)?raw:JSON.parse(raw||'[]'); return Array.isArray(a)?a.map(r=>`${escapeHtml(r.itemName||('Item #'+r.itemId))} × ${Number(r.qty)||0}: ${escapeHtml(r.reason||'')}${r.restocked?' (restocked)':' (not restocked)'}`).join('<br>'):'Return record exists'; }
+      catch(e){ return 'Return record exists'; }
+    }
+    function escapeHtml(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function openReturnModal(orderId) {
+      const order=allOrders.find(o=>String(o.orderId)===String(orderId));
+      if(!order||order.status!=='CONFIRMED'){alert('Only confirmed orders can have returns recorded.');return;}
+      let items=[],returns=[];try{items=JSON.parse(order.itemsJson||'[]');}catch(e){}try{returns=JSON.parse(order.returnJson||'[]');}catch(e){}
+      const select=document.getElementById('return-item-select');select.innerHTML='';
+      items.forEach(item=>{const bought=Number(item.qty)||1;const already=returns.reduce((sum,r)=>sum+(String(r.itemId)===String(item.id)?Number(r.qty||0):0),0);const left=Math.max(0,bought-already);if(!left)return;const o=document.createElement('option');o.value=String(item.id);o.dataset.remaining=String(left);o.textContent=`${item.name} (ID #${item.id}) — ${left} eligible`;select.appendChild(o);});
+      if(!select.options.length){alert('All items in this order already have return records.');return;}
+      pendingReturnOrderId=orderId;document.getElementById('return-order-label').textContent=orderId;document.getElementById('return-item-qty').max=select.options[0].dataset.remaining;document.getElementById('return-item-qty').value='1';document.getElementById('return-item-reason').value='Buyer changed their mind';document.getElementById('return-restock-toggle').checked=false;
+      select.onchange=()=>{document.getElementById('return-item-qty').max=select.selectedOptions[0].dataset.remaining;document.getElementById('return-item-qty').value='1';};
+      document.getElementById('return-item-modal').classList.remove('hidden');
+    }
+    function closeReturnModal(){pendingReturnOrderId=null;document.getElementById('return-item-modal').classList.add('hidden');}
+    async function submitReturnItem(event){
+      event.preventDefault();if(!pendingReturnOrderId)return;
+      const btn=document.getElementById('submit-return-btn'),original=btn.textContent;btn.disabled=true;btn.textContent='Saving...';
+      const body={action:'returnItem',pin:currentPin,orderId:pendingReturnOrderId,itemId:document.getElementById('return-item-select').value,qty:Number(document.getElementById('return-item-qty').value),reason:document.getElementById('return-item-reason').value.trim(),restock:document.getElementById('return-restock-toggle').checked};
+      try{const response=await fetch(GOOGLE_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)});const result=await response.json();if(result.status!=='success'){alert(result.message||'Could not record return.');return;}closeReturnModal();await fetchOrders();await fetchInventoryData();alert(result.restocked?'Return recorded and stock restored.':'Return recorded. Stock was not changed.');}
+      catch(err){console.error(err);alert('Could not record the return. Check the connection and refresh before retrying.');}
+      finally{btn.disabled=false;btn.textContent=original;}
     }
 
     function openCancelModal(orderId) {
