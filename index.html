@@ -745,6 +745,60 @@
       return clean;
     }
 
+    function trackKegView(kind, itemId = '') {
+      const url = `${GOOGLE_SCRIPT_URL}?action=trackView&kind=${encodeURIComponent(kind)}&itemId=${encodeURIComponent(itemId)}&_t=${Date.now()}`;
+      fetch(url).catch(err => console.warn('View tracking failed', err));
+    }
+    let detailItemId = null;
+    function openItemDetail(itemId) {
+      detailItemId = itemId;
+      const item = inventory.find(x => String(x.id) === String(itemId));
+      if (!item) return;
+      const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      const photos = parseImages(item.image);
+      document.getElementById('item-detail-content').innerHTML = `
+        <h2 class="font-serif font-bold text-2xl mb-2">${escapeHtml(item.name)}</h2>
+        <p class="text-xs text-stone-500 mb-3">Item #${escapeHtml(item.id)} · ${escapeHtml(item.category)} · ${escapeHtml(item.location)}</p>
+        <div class="grid grid-cols-2 gap-2">${photos.map(url=>`<img src="${escapeHtml(url)}" alt="${escapeHtml(item.name)}" loading="lazy" class="w-full aspect-square object-contain bg-stone-100 rounded-lg cursor-zoom-in" onclick="openImageViewerById(detailItemId, Array.from(this.parentElement.children).indexOf(this))">`).join('')}</div>
+        <p class="mt-4 font-black text-xl">₱${Number(item.price).toLocaleString()}</p>
+        <p class="mt-2 text-sm">Condition: ${escapeHtml(item.condition || 'Pre-loved')}</p>
+        <p class="mt-1 text-sm">Available stock: ${Number(item.stock)||0}</p>
+        <button type="button" onclick="addDetailItemToBag()" class="mt-4 bg-brand-800 text-white rounded-xl px-5 py-3 font-bold text-sm" ${Number(item.stock)<=0?'disabled':''}>Add to Bag</button>`;
+      document.getElementById('item-detail-modal').classList.remove('hidden');
+
+    }
+    let viewerPhotos = [], viewerIndex = 0, viewerTouchX = null;
+    function openImageViewerById(itemId, index = 0) {
+      const item = inventory.find(x => String(x.id) === String(itemId));
+      if (!item) return;
+      viewerPhotos = parseImages(item.image);
+      viewerIndex = Math.max(0, Math.min(index, viewerPhotos.length - 1));
+      document.getElementById('image-fullscreen-viewer').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      updateImageViewer();
+    }
+    function updateImageViewer() {
+      document.getElementById('fullscreen-image').src = viewerPhotos[viewerIndex] || '';
+      document.getElementById('fullscreen-counter').textContent = `${viewerIndex + 1} / ${viewerPhotos.length}`;
+    }
+    function moveImageViewer(delta) {
+      if (!viewerPhotos.length) return;
+      viewerIndex = (viewerIndex + delta + viewerPhotos.length) % viewerPhotos.length;
+      updateImageViewer();
+    }
+    function closeImageViewer() {
+      document.getElementById('image-fullscreen-viewer').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('image-fullscreen-viewer').classList.contains('hidden')) return;
+      if (e.key === 'Escape') closeImageViewer();
+      if (e.key === 'ArrowLeft') moveImageViewer(-1);
+      if (e.key === 'ArrowRight') moveImageViewer(1);
+    });
+    function addDetailItemToBag() { if (detailItemId !== null) { closeItemDetail(); addToBag(detailItemId); } }
+    function closeItemDetail() { document.getElementById('item-detail-modal').classList.add('hidden'); }
+
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
       if (items.length === 0) {
@@ -773,7 +827,7 @@
         return `
           <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
             <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
-              <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
+              <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300 cursor-zoom-in" onclick="openImageViewerById(this.dataset.itemId, Number(this.dataset.photoIndex || 0))" data-item-id="${item.id}" data-photo-index="${currentIdx}">
 
               <!-- Badges on Image -->
               <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
@@ -830,6 +884,7 @@
                   <span class="text-[10px] font-semibold text-stone-500">📍 ${item.location}</span>
                 </div>
                 <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
+                <button type="button" onclick="openItemDetail('${item.id}')" class="mt-2 text-xs font-bold text-brand-800 underline">View full details</button>
 
                 <div class="flex items-center gap-1.5 mt-2">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
@@ -1345,10 +1400,31 @@
     document.getElementById('pay-account-name').innerText = SELLER_CONFIG.accountName;
     selectPaymentTab('gcash');
     fetchInventory();
+    try {
+      if (!sessionStorage.getItem('keg_site_visit_counted')) {
+        sessionStorage.setItem('keg_site_visit_counted','1');
+        trackKegView('site');
+      }
+    } catch (err) { trackKegView('site'); }
 
     setInterval(() => {
       fetchInventory(true);
     }, 25000);
   </script>
+  <!-- Full item details (no view counter). -->
+  <div id="item-detail-modal" class="hidden fixed inset-0 z-50 bg-black/70 p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-label="Item details" onclick="if(event.target===this)closeItemDetail()">
+    <div class="max-w-xl mx-auto my-8 bg-white rounded-2xl p-5 shadow-xl relative">
+      <button type="button" onclick="closeItemDetail()" class="absolute top-3 right-3 rounded-lg bg-stone-100 px-3 py-2 font-bold" aria-label="Close">✕</button>
+      <div id="item-detail-content" class="pr-6"></div>
+    </div>
+  </div>
+
+  <div id="image-fullscreen-viewer" class="hidden fixed inset-0 z-[100] bg-black/95 flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Full-size product photo" onclick="if(event.target===this)closeImageViewer()" ontouchstart="viewerTouchX=event.touches[0].clientX" ontouchend="if(viewerTouchX!==null){const d=event.changedTouches[0].clientX-viewerTouchX;if(Math.abs(d)>45)moveImageViewer(d<0?1:-1);viewerTouchX=null}">
+    <button type="button" onclick="closeImageViewer()" class="absolute right-4 top-4 z-10 text-white bg-white/20 rounded-full w-11 h-11 text-2xl" aria-label="Close photo">×</button>
+    <button type="button" onclick="moveImageViewer(-1)" class="absolute left-2 sm:left-6 z-10 text-white bg-white/20 rounded-full w-11 h-11 text-2xl" aria-label="Previous photo">‹</button>
+    <img id="fullscreen-image" alt="Full-size product photo" class="max-w-[90vw] max-h-[85vh] object-contain" style="touch-action:pan-y pinch-zoom" />
+    <button type="button" onclick="moveImageViewer(1)" class="absolute right-2 sm:right-6 z-10 text-white bg-white/20 rounded-full w-11 h-11 text-2xl" aria-label="Next photo">›</button>
+    <span id="fullscreen-counter" class="absolute bottom-5 text-white text-sm font-semibold"></span>
+  </div>
 </body>
 </html>
