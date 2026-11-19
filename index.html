@@ -55,26 +55,26 @@
       </a>
 
       <div class="flex items-center gap-2">
-        <!-- Track Order Portal Button -->
-        <button onclick="openTrackOrderModal()" class="flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-brand-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-full transition border border-stone-200">
-          <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        <!-- Track Order Button -->
+        <button onclick="openTrackModal()" class="flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-brand-800 bg-stone-100 hover:bg-stone-200 px-3 py-2 rounded-full transition border border-stone-200">
+          <svg class="w-4 h-4 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
           <span class="hidden sm:inline">Track Order</span>
         </button>
 
         <!-- Install App Button -->
         <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-3 py-2 rounded-full transition shadow-sm animate-pulse">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          <span class="hidden sm:inline">Install</span>
+          <span class="hidden sm:inline">Install App</span>
         </button>
 
         <!-- Header Quick Chat Link -->
-        <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-blue-600 bg-stone-100 hover:bg-blue-50 px-3 py-2 rounded-full transition border border-stone-200">
+        <a href="https://m.me/Kegfinds" target="_blank" rel="noopener noreferrer" class="hidden md:flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-blue-600 bg-stone-100 hover:bg-blue-50 px-3 py-2 rounded-full transition border border-stone-200">
           <svg class="w-4 h-4 text-[#0084FF]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
           <span>Ask Seller</span>
         </a>
 
-        <!-- Cart Bag Button (Hidden when in maintenance) -->
-        <button id="cart-bag-btn" onclick="openCart()" class="relative bg-brand-800 hover:bg-brand-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition flex items-center gap-2 shadow-sm">
+        <!-- Cart Bag Button -->
+        <button onclick="openCart()" class="relative bg-brand-800 hover:bg-brand-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full transition flex items-center gap-2 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
           <span>Bag</span>
           <span id="cart-badge" class="bg-amber-400 text-stone-900 text-[10px] font-black px-1.5 py-0.2 rounded-full transition-transform">0</span>
@@ -99,7 +99,7 @@
     </div>
   </div>
 
-  <!-- Store Maintenance Screen -->
+  <!-- Store Maintenance Screen (Displayed when maintenance mode is active) -->
   <section id="maintenance-screen" class="hidden py-16 md:py-24 bg-white border-b border-stone-200 text-center">
     <div class="max-w-xl mx-auto px-4">
       <div class="w-16 h-16 bg-amber-100 text-amber-800 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-sm text-2xl animate-pulse">
@@ -114,6 +114,9 @@
       <p id="maintenance-message-display" class="mt-4 text-stone-600 text-sm md:text-base leading-relaxed">
         We are currently updating our stock with fresh curated pre-loved pieces. New items will be live shortly!
       </p>
+      <div id="maintenance-countdown" class="hidden mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-950 text-sm font-bold" aria-live="polite">
+        <span>⏳ Store reopens in</span><span id="maintenance-countdown-value" class="font-mono tabular-nums">--:--:--</span>
+      </div>
 
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <button onclick="openTrackOrderModal()" class="bg-brand-800 text-white text-xs font-bold px-5 py-3 rounded-xl hover:bg-brand-900 transition shadow-sm flex items-center gap-2">
@@ -143,7 +146,7 @@
           Quality closet pieces and houseware essentials.
         </h1>
         <p class="mt-4 text-stone-600 text-sm md:text-base leading-relaxed">
-          Gently worn dress shirts, shoes, and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
+          Gently worn dress shirts and functional household items. Inspect multiple photos of collar tags, fabrics, and condition before ordering.
         </p>
 
         <div class="mt-6 flex flex-wrap gap-3">
@@ -180,25 +183,29 @@
       </div>
     </div>
 
-    <!-- Product Search Bar & Category Controls -->
-    <div class="p-4 bg-white rounded-2xl border border-stone-200 shadow-sm space-y-4">
+    <!-- Product Search Bar (Feature 2) -->
+    <div class="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm">
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        <input type="text" id="catalog-search-input" oninput="handleCatalogSearch(this.value)" placeholder="Search products by brand, name, or keywords (e.g. Uniqlo, Jordan, Oxford)..." class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
-        <button id="clear-catalog-search-btn" onclick="clearCatalogSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
+        <input type="text" id="store-search-input" oninput="handleStoreSearch(this.value)" placeholder="Search pieces by brand, name, category, or size (e.g. Uniqlo, Jordan, Oxford, Plate)..." class="w-full pl-10 pr-10 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs sm:text-sm font-medium focus:bg-white focus:ring-2 focus:ring-brand-800 outline-none transition">
+        <button id="clear-store-search-btn" onclick="clearStoreSearch()" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-600 font-bold text-sm">
           &times;
         </button>
       </div>
+    </div>
 
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100">
-        <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
-          <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
-        </div>
-        <div class="text-[11px] sm:text-xs text-stone-500 font-medium whitespace-nowrap">
-          Showing <span id="catalog-count-label" class="font-bold text-stone-900">0</span> items
-        </div>
+    <!-- Filter Buttons & Catalog Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-200 gap-4">
+      <div>
+        <h2 id="catalog-title" class="font-serif text-2xl font-bold text-stone-900">Available Listings</h2>
+        <p class="text-xs text-stone-500 mt-0.5">Click thumbnails or arrows to view multiple photos. Have questions? Click "Inquire" to chat with us!</p>
+      </div>
+
+      <!-- Dynamic Category Filter Buttons -->
+      <div id="category-filter-bar" class="flex flex-wrap gap-2 text-xs font-semibold">
+        <button onclick="filterCatalog('all', this)" class="cat-btn bg-stone-900 text-white px-4 py-2 rounded-full transition">All Items</button>
       </div>
     </div>
 
@@ -227,17 +234,51 @@
         </div>
         <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
           <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-3">3</div>
-          <h4 class="font-bold text-stone-900 text-sm">Track Your Order Live</h4>
-          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Check your confirmation, meetup coordination notes, and tracking link anytime.</p>
+          <h4 class="font-bold text-stone-900 text-sm">Automated Email Receipts</h4>
+          <p class="text-xs text-stone-600 mt-1 leading-relaxed">Receive reservation and confirmation emails as soon as your order is logged.</p>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- BUYER "TRACK MY ORDER" MODAL (Feature 4) -->
+  <div id="track-order-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative my-6">
+      <button onclick="closeTrackModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-brand-800 text-white flex items-center justify-center font-bold shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        </div>
+        <div>
+          <h3 class="font-serif text-lg font-bold text-stone-900">Track My Order</h3>
+          <p class="text-[11px] text-stone-500">Check live status, dispatch notes, and pickup details</p>
+        </div>
+      </div>
+
+      <form onsubmit="searchOrderStatus(event)" class="space-y-3">
+        <div>
+          <label class="text-xs font-bold text-stone-700 block mb-1">Order ID *</label>
+          <div class="flex gap-2">
+            <input type="text" id="track-order-id-input" required placeholder="e.g. KEG-260228-1234" class="flex-1 font-mono uppercase border border-stone-200 rounded-xl px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-brand-800 outline-none">
+            <button type="submit" id="track-submit-btn" class="px-4 py-2 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
+              Check
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Results Area -->
+      <div id="track-result-box" class="mt-4 hidden space-y-3 pt-3 border-t border-stone-100 text-xs">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
   <!-- Slide-Over Checkout Drawer -->
   <div id="checkout-modal" class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-sm hidden flex justify-end">
     <div class="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
-      
+
       <div class="flex items-center justify-between pb-4 border-b border-stone-200">
         <div>
           <h2 class="font-serif text-xl font-bold text-stone-900">Your Order Bag</h2>
@@ -261,6 +302,7 @@
         </div>
       </div>
 
+      <!-- Buyer Details Form with Email Input -->
       <div class="py-4 space-y-3.5 border-b border-stone-200">
         <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500">Buyer Information</h4>
         <div>
@@ -285,19 +327,22 @@
         </div>
       </div>
 
+      <!-- Payment Section -->
       <div class="py-4 flex-1">
         <h4 class="text-xs uppercase tracking-wider font-bold text-stone-500 mb-2">Select Payment Method</h4>
-        
+
         <div class="flex gap-2 mb-3">
           <button onclick="selectPaymentTab('gcash')" id="tab-btn-gcash" class="flex-1 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white transition">GCash QR</button>
           <button onclick="selectPaymentTab('maya')" id="tab-btn-maya" class="flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">Maya QR</button>
           <button onclick="selectPaymentTab('cash')" id="tab-btn-cash" class="hidden flex-1 py-2 text-xs font-bold rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition">💵 Cash (Meet-up)</button>
         </div>
 
+        <!-- Account & QR Box -->
         <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 text-center">
           <span id="payment-amount-label" class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Amount to Transfer</span>
           <div id="payment-amount-display" class="text-2xl font-black text-brand-800 mt-0.5 mb-3">₱0</div>
 
+          <!-- QR Image Container -->
           <div id="qr-payment-container">
             <div class="w-56 h-56 mx-auto bg-white p-2 rounded-xl border border-stone-200 shadow-inner flex items-center justify-center overflow-hidden">
               <img id="qr-image-display" src="" alt="Payment QR Code" class="w-full h-full object-contain">
@@ -319,6 +364,7 @@
             </div>
           </div>
 
+          <!-- Cash On Meet-up Info Box -->
           <div id="cash-payment-container" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left space-y-2 text-xs text-emerald-950">
             <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm">
               <span>🤝 Cash on Meet-up / Pick-up</span>
@@ -332,6 +378,7 @@
           </div>
         </div>
 
+        <!-- Submit Buttons -->
         <div class="mt-4 space-y-2">
           <button id="submit-messenger-btn" onclick="processOrder('messenger')" class="w-full py-3 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm flex items-center justify-center gap-2">
             <span>Submit Order &amp; Message on Messenger</span>
@@ -342,35 +389,6 @@
         </div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- BUYER TRACK ORDER MODAL -->
-  <div id="track-order-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 relative">
-      <button onclick="closeTrackOrderModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
-      
-      <div class="flex items-center gap-2.5 mb-3">
-        <div class="w-10 h-10 bg-brand-800 text-white rounded-2xl flex items-center justify-center font-bold">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-        </div>
-        <div>
-          <h3 class="font-serif text-lg font-bold text-stone-900">Track Your Order</h3>
-          <p class="text-xs text-stone-500">Enter your Order ID (from email receipt or Messenger)</p>
-        </div>
-      </div>
-
-      <form onsubmit="submitTrackOrder(event)" class="mt-4 space-y-3">
-        <div class="flex gap-2">
-          <input type="text" id="track-order-id-input" placeholder="e.g. KEG-260228-1234" required class="flex-1 border border-stone-200 rounded-xl p-2.5 text-xs font-mono uppercase font-bold focus:ring-2 focus:ring-brand-800 outline-none">
-          <button type="submit" id="track-order-btn" class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs rounded-xl transition shadow-sm active:scale-95">
-            Check
-          </button>
-        </div>
-      </form>
-
-      <div id="track-result-box" class="hidden mt-4 pt-4 border-t border-stone-100 text-xs space-y-3">
-      </div>
     </div>
   </div>
 
@@ -395,39 +413,6 @@
     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.91 1.455 5.518 3.735 7.18V22l3.419-1.875c.91.252 1.872.388 2.846.388 5.523 0 10-4.145 10-9.255C22 6.145 17.523 2 12 2zm1.002 12.443l-2.56-2.73-4.996 2.73 5.497-5.836 2.622 2.73 4.935-2.73-5.498 5.836z"/></svg>
     <span class="tracking-wide">Chat with Us</span>
   </a>
-
-  <!-- iOS Step-by-Step Install Guide Modal -->
-  <div id="ios-install-modal" class="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 text-center relative">
-      <button onclick="closeIosInstallModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 text-2xl font-bold leading-none">&times;</button>
-      
-      <div class="w-12 h-12 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-      </div>
-
-      <h3 class="font-serif text-lg font-bold text-stone-900">Install KEG Finds App</h3>
-      <p class="text-xs text-stone-500 mt-1">Install on your iPhone home screen for fast full-screen shopping:</p>
-
-      <div class="mt-5 space-y-3 text-left text-xs bg-stone-50 p-4 rounded-2xl border border-stone-200">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">1</span>
-          <span>Tap the <b class="text-stone-900">Share button</b> at the bottom of Safari (<svg class="w-4 h-4 inline text-blue-600 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>).</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">2</span>
-          <span>Scroll down and tap <b class="text-stone-900">"Add to Home Screen"</b> (<span class="font-bold text-stone-700">＋</span>).</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-brand-800 text-white font-bold flex items-center justify-center text-[11px] shrink-0">3</span>
-          <span>Tap <b class="text-stone-900">Add</b> in the top right corner.</span>
-        </div>
-      </div>
-
-      <button onclick="closeIosInstallModal()" class="w-full mt-5 py-3 bg-brand-800 text-white font-bold text-xs rounded-xl hover:bg-brand-900 transition">
-        Got it!
-      </button>
-    </div>
-  </div>
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900/90 backdrop-blur text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 pointer-events-none translate-y-3 flex items-center gap-2">
@@ -455,8 +440,7 @@
     let currentPhotoIndices = {};
     let selectedLocation = 'all';
     let selectedCategory = 'all';
-    let catalogSearchQuery = '';
-    let isStoreUnderMaintenance = false;
+    let storeSearchQuery = '';
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
@@ -502,30 +486,65 @@
       }
     }
 
-    function applyMaintenanceMode(active, customMessage) {
-      isStoreUnderMaintenance = !!active;
-      const maintenanceScreen = document.getElementById('maintenance-screen');
+        let maintenanceCountdownInterval = null;
+    let maintenanceReopenRequested = false;
+
+    function updateMaintenanceCountdown(endAt) {
+      const box = document.getElementById('maintenance-countdown');
+      const value = document.getElementById('maintenance-countdown-value');
+      const endMs = Number(endAt);
+      if (maintenanceCountdownInterval) {
+        clearInterval(maintenanceCountdownInterval);
+        maintenanceCountdownInterval = null;
+      }
+      if (!box || !value || !endMs || !Number.isFinite(endMs)) {
+        if (box) box.classList.add('hidden');
+        maintenanceReopenRequested = false;
+        return;
+      }
+      box.classList.remove('hidden');
+      maintenanceReopenRequested = false;
+      const tick = () => {
+        const remaining = endMs - Date.now();
+        if (remaining <= 0) {
+          value.textContent = 'Reopening…';
+          if (!maintenanceReopenRequested) {
+            maintenanceReopenRequested = true;
+            fetchInventory(true);
+          }
+          return;
+        }
+        const totalSeconds = Math.floor(remaining / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        value.textContent = (days ? `${days}d ` : '') + [hours, minutes, seconds].map(n => String(n).padStart(2, '0')).join(':');
+      };
+      tick();
+      maintenanceCountdownInterval = setInterval(tick, 1000);
+    }
+
+    function handleMaintenanceMode(active, message, endAt) {
+      const maintScreen = document.getElementById('maintenance-screen');
+      const maintMsgEl = document.getElementById('maintenance-message-display');
       const heroSection = document.getElementById('hero-section');
       const catalogSection = document.getElementById('items');
       const howItWorks = document.getElementById('how-it-works');
-      const cartBtn = document.getElementById('cart-bag-btn');
-      const msgDisplay = document.getElementById('maintenance-message-display');
+      if (maintMsgEl && message) maintMsgEl.innerText = message;
 
-      if (isStoreUnderMaintenance) {
-        if (maintenanceScreen) maintenanceScreen.classList.remove('hidden');
+      if (active) {
+        if (maintScreen) maintScreen.classList.remove('hidden');
         if (heroSection) heroSection.classList.add('hidden');
         if (catalogSection) catalogSection.classList.add('hidden');
         if (howItWorks) howItWorks.classList.add('hidden');
-        if (cartBtn) cartBtn.classList.add('hidden');
-        if (msgDisplay && customMessage) {
-          msgDisplay.innerText = customMessage;
-        }
+        updateMaintenanceCountdown(endAt);
       } else {
-        if (maintenanceScreen) maintenanceScreen.classList.add('hidden');
+        if (maintScreen) maintScreen.classList.add('hidden');
         if (heroSection) heroSection.classList.remove('hidden');
         if (catalogSection) catalogSection.classList.remove('hidden');
         if (howItWorks) howItWorks.classList.remove('hidden');
-        if (cartBtn) cartBtn.classList.remove('hidden');
+        updateMaintenanceCountdown(null);
       }
     }
 
@@ -536,13 +555,19 @@
         const data = await res.json();
 
         let rawItems = [];
+        let isMaintenance = false;
+        let maintenanceMsg = "";
+
         if (Array.isArray(data)) {
           rawItems = data;
         } else if (data && Array.isArray(data.items)) {
           rawItems = data.items;
           handleAnnouncement(data.announcement, data.showAnnouncement);
-          applyMaintenanceMode(data.maintenanceMode, data.maintenanceMessage);
+          isMaintenance = !!data.maintenanceMode;
+          maintenanceMsg = data.maintenanceMessage || "";
         }
+
+        handleMaintenanceMode(isMaintenance, maintenanceMsg, data && data.maintenanceEndAt);
 
         if (rawItems.length > 0 || Array.isArray(rawItems)) {
           inventory = rawItems.map(item => ({
@@ -571,7 +596,7 @@
       } catch (err) {
         if (!silent) {
           console.error("Error fetching inventory:", err);
-          grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check Google Apps Script deployment permissions.</div>';
+          grid.innerHTML = '<div class="col-span-full py-16 text-center text-red-600 text-xs font-semibold">Failed to load inventory. Check network or permissions.</div>';
         }
       }
     }
@@ -603,22 +628,33 @@
         btn.classList.remove('bg-stone-100', 'text-stone-700');
       }
 
+      const titleEl = document.getElementById('catalog-title');
+      if (titleEl) {
+        if (selectedLocation === 'pasig') titleEl.innerText = "Available in Pasig, Metro Manila";
+        else if (selectedLocation === 'santa maria') titleEl.innerText = "Available in Santa Maria, Ilocos Sur";
+        else titleEl.innerText = "All Available Listings";
+      }
+
       renderCategoryFilters(getFilteredByLocationItems());
       renderProducts(getDisplayedItems());
     }
 
-    function handleCatalogSearch(val) {
-      catalogSearchQuery = (val || '').trim().toLowerCase();
-      const clearBtn = document.getElementById('clear-catalog-search-btn');
-      if (catalogSearchQuery.length > 0) clearBtn.classList.remove('hidden');
-      else clearBtn.classList.add('hidden');
+    // Feature 2: Product Search on Storefront
+    function handleStoreSearch(val) {
+      storeSearchQuery = (val || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-store-search-btn');
+      if (storeSearchQuery.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
       renderProducts(getDisplayedItems());
     }
 
-    function clearCatalogSearch() {
-      document.getElementById('catalog-search-input').value = '';
-      catalogSearchQuery = '';
-      document.getElementById('clear-catalog-search-btn').classList.add('hidden');
+    function clearStoreSearch() {
+      document.getElementById('store-search-input').value = '';
+      storeSearchQuery = '';
+      document.getElementById('clear-store-search-btn').classList.add('hidden');
       renderProducts(getDisplayedItems());
     }
 
@@ -630,17 +666,19 @@
     function getDisplayedItems() {
       let items = getFilteredByLocationItems();
 
+      // Category Filter
       if (selectedCategory !== 'all') {
         items = items.filter(i => (i.category || '').trim().toLowerCase() === selectedCategory.toLowerCase());
       }
 
-      if (catalogSearchQuery.length > 0) {
+      // Live Search Filter
+      if (storeSearchQuery.length > 0) {
         items = items.filter(i => {
           const name = String(i.name || '').toLowerCase();
-          const id = String(i.id || '').toLowerCase();
           const cat = String(i.category || '').toLowerCase();
           const cond = String(i.condition || '').toLowerCase();
-          return name.includes(catalogSearchQuery) || id.includes(catalogSearchQuery) || cat.includes(catalogSearchQuery) || cond.includes(catalogSearchQuery);
+          const id = String(i.id || '').toLowerCase();
+          return name.includes(storeSearchQuery) || cat.includes(storeSearchQuery) || cond.includes(storeSearchQuery) || id.includes(storeSearchQuery);
         });
       }
 
@@ -709,13 +747,10 @@
 
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
-      const countLabel = document.getElementById('catalog-count-label');
-      if (countLabel) countLabel.innerText = items.length;
-
       if (items.length === 0) {
         grid.innerHTML = `
           <div class="col-span-full py-16 text-center text-stone-400 text-xs">
-            ${catalogSearchQuery ? `No items found matching "<b>${catalogSearchQuery}</b>". Try another search keyword!` : 'No items currently available for this selection.'}
+            ${storeSearchQuery ? `No pieces found matching "<b>${storeSearchQuery}</b>". Try another search keyword!` : 'No items currently available for this selection.'}
           </div>
         `;
         return;
@@ -731,69 +766,71 @@
         const remainingStock = Math.max(0, item.stock - cartQty);
         const isSoldOut = item.stock <= 0;
 
-        const hasPromo = item.originalPrice && item.originalPrice > item.price;
-        const discountPct = hasPromo ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) : 0;
+        // Feature 5: Original Price / Discount Calculation
+        const hasDiscount = item.originalPrice && item.originalPrice > item.price;
+        const discountPct = hasDiscount ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) : 0;
 
         return `
-          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col justify-between transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
-            <div>
-              <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
-                <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
-                
-                <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
-                  <div class="flex gap-1.5 items-center">
-                    <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
-                    
-                    ${isSoldOut ? `
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
-                    ` : cartQty > 0 ? (
-                      remainingStock === 0 ? `
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
-                      ` : `
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
-                      `
-                    ) : `
-                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
-                    `}
-                  </div>
+          <div class="item-card bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm flex flex-col transition duration-300 ${isSoldOut ? 'opacity-40 grayscale pointer-events-none' : 'hover:shadow-md'}" data-category="${item.category}" data-location="${item.location}">
+            <div class="aspect-square bg-stone-100 relative overflow-hidden flex items-center justify-center group select-none">
+              <img id="item-img-${item.id}" src="${images[currentIdx]}" alt="${item.name}" class="w-full h-full object-cover transition duration-300">
+
+              <!-- Badges on Image -->
+              <div class="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                <div class="flex gap-1.5 items-center">
+                  <span class="text-[10px] font-mono font-bold bg-stone-900/80 text-white px-2 py-0.5 rounded shadow">#${item.id}</span>
+
+                  ${isSoldOut ? `
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-red-600 text-white">SOLD OUT</span>
+                  ` : cartQty > 0 ? (
+                    remainingStock === 0 ? `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-amber-500 text-white">Max in Bag (${cartQty}/${item.stock})</span>
+                    ` : `
+                      <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-emerald-700 text-white">${remainingStock} left (${cartQty} in bag)</span>
+                    `
+                  ) : `
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded shadow-sm bg-white/90 text-stone-800">${item.stock} in stock</span>
+                  `}
+                </div>
+
+                <div class="flex gap-1 items-center">
                   <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded shadow-sm ${isPasig ? 'bg-blue-600 text-white' : 'bg-amber-600 text-white'}">
                     📍 ${item.location} Hub
                   </span>
-                </div>
-
-                ${hasPromo ? `
-                  <div class="absolute bottom-3 left-3 z-10">
-                    <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-md tracking-wider">
+                  ${hasDiscount ? `
+                    <span class="inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded shadow-sm bg-red-600 text-white animate-pulse">
                       SAVE ${discountPct}%
                     </span>
-                  </div>
-                ` : ''}
-
-                ${hasMultiple ? `
-                  <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
-                    ${currentIdx + 1} / ${images.length}
-                  </span>
-                  <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                  </button>
-                  <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                  </button>
-                  <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
-                    ${images.map((_, i) => `
-                      <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
-                    `).join('')}
-                  </div>
-                ` : ''}
+                  ` : ''}
+                </div>
               </div>
 
-              <div class="p-5">
+              ${hasMultiple ? `
+                <span id="photo-counter-${item.id}" class="absolute top-3 right-3 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-stone-900/75 text-white backdrop-blur shadow z-10">
+                  ${currentIdx + 1} / ${images.length}
+                </span>
+                <button onclick="prevPhoto('${item.id}', ${images.length})" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button onclick="nextPhoto('${item.id}', ${images.length})" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center shadow transition opacity-80 hover:opacity-100 z-10">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+                <div class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
+                  ${images.map((_, i) => `
+                    <button onclick="setPhoto('${item.id}', ${i})" class="w-2 h-2 rounded-full transition ${i === currentIdx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
                 <div class="flex items-center justify-between gap-1">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700">${item.category}</span>
                   <span class="text-[10px] font-semibold text-stone-500">📍 ${item.location}</span>
                 </div>
-                <h3 class="font-bold text-stone-900 text-base mt-1 leading-snug">${item.name}</h3>
-                
+                <h3 class="font-bold text-stone-900 text-base mt-1">${item.name}</h3>
+
                 <div class="flex items-center gap-1.5 mt-2">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Condition:</span>
                   <span class="inline-flex items-center text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
@@ -801,18 +838,18 @@
                   </span>
                 </div>
               </div>
-            </div>
 
-            <!-- Price & Buy Section -->
-            <div class="p-5 pt-0">
-              <div class="pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
-                <div class="flex flex-col">
-                  ${hasPromo ? `
-                    <span class="text-[11px] text-stone-400 line-through leading-none font-medium">₱${Number(item.originalPrice).toLocaleString()}</span>
-                  ` : ''}
-                  <span class="text-lg font-black text-stone-900 leading-tight">₱${Number(item.price).toLocaleString()}</span>
+              <!-- Price & Discount UI -->
+              <div class="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
+                <div>
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-lg font-black text-stone-900">₱${Number(item.price).toLocaleString()}</span>
+                    ${hasDiscount ? `
+                      <span class="text-xs text-stone-400 line-through font-semibold">₱${Number(item.originalPrice).toLocaleString()}</span>
+                    ` : ''}
+                  </div>
                 </div>
-                
+
                 ${isSoldOut ? `
                   <button disabled class="bg-stone-300 text-stone-500 text-xs font-bold px-3.5 py-2 rounded-lg cursor-not-allowed">Sold Out</button>
                 ` : `
@@ -826,7 +863,7 @@
                       <div class="flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 shadow-sm">
                         <button onclick="changeQty('${item.id}', -1)" title="Decrease" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90">&minus;</button>
                         <span class="w-7 text-center font-bold text-xs text-brand-900">${cartQty}</span>
-                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
+                        <button onclick="changeQty('${item.id}', 1)" ${cartQty >= item.stock ? 'disabled' : ''} title="${cartQty >= item.stock ? 'Max available stock reached' : 'Increase'}" class="w-7 h-7 rounded bg-white hover:bg-stone-200 text-stone-800 font-extrabold text-sm flex items-center justify-center transition active:scale-90 ${cartQty >= item.stock ? 'opacity-30 cursor-not-allowed' : ''}">&plus;</button>
                       </div>
                     ` : `
                       <button onclick="addToBag('${item.id}')" class="bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-3 py-2 rounded-lg transition whitespace-nowrap active:scale-95">+ Add to Bag</button>
@@ -946,7 +983,7 @@
       if (!fulfillEl) return;
 
       const isMeetup = fulfillEl.value.includes('Pickup') || fulfillEl.value.includes('Meet-up');
-      
+
       if (isMeetup) {
         if (cashBtn) cashBtn.classList.remove('hidden');
       } else {
@@ -1006,7 +1043,7 @@
       const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       totalDisplay.innerText = `₱${total.toLocaleString()}`;
       paymentDisplay.innerText = `₱${total.toLocaleString()}`;
-      
+
       const cashText = document.getElementById('cash-amount-text');
       if (cashText) cashText.innerText = `₱${total.toLocaleString()}`;
     }
@@ -1157,103 +1194,100 @@
     function closeCart() { document.getElementById('checkout-modal').classList.add('hidden'); }
 
     // =========================================================================
-    // BUYER TRACK ORDER PORTAL
+    // FEATURE 4: BUYER "TRACK MY ORDER" MODAL LOGIC
     // =========================================================================
-    function openTrackOrderModal() {
+    function openTrackModal() {
+      document.getElementById('track-order-id-input').value = '';
+      document.getElementById('track-result-box').classList.add('hidden');
+      document.getElementById('track-result-box').innerHTML = '';
       document.getElementById('track-order-modal').classList.remove('hidden');
     }
 
-    function closeTrackOrderModal() {
+    function closeTrackModal() {
       document.getElementById('track-order-modal').classList.add('hidden');
-      document.getElementById('track-result-box').classList.add('hidden');
-      document.getElementById('track-order-id-input').value = '';
     }
 
-    async function submitTrackOrder(e) {
+    async function searchOrderStatus(e) {
       e.preventDefault();
-      const input = document.getElementById('track-order-id-input').value.trim();
-      const resultBox = document.getElementById('track-result-box');
-      const btn = document.getElementById('track-order-btn');
+      const orderId = document.getElementById('track-order-id-input').value.trim();
+      if (!orderId) return;
 
-      if (!input) return;
-
+      const btn = document.getElementById('track-submit-btn');
+      const origText = btn.innerText;
       btn.disabled = true;
-      btn.innerText = 'Checking...';
+      btn.innerText = "Checking...";
+
+      const resultBox = document.getElementById('track-result-box');
       resultBox.classList.remove('hidden');
-      resultBox.innerHTML = '<div class="text-stone-400 py-3 text-center">Looking up order in database...</div>';
+      resultBox.innerHTML = '<div class="text-center py-4 text-stone-400">Searching order records...</div>';
 
       try {
-        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=trackOrder&orderId=${encodeURIComponent(input)}&_t=${Date.now()}`);
+        const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=trackOrder&orderId=${encodeURIComponent(orderId)}&_t=${Date.now()}`);
         const data = await res.json();
 
-        if (data && data.status === 'success') {
+        if (data.status === 'success') {
           const isConfirmed = data.orderStatus === 'CONFIRMED';
           const isCancelled = data.orderStatus.includes('CANCELLED') || data.orderStatus.includes('EXPIRED');
 
-          let badgeHtml = '';
-          if (isConfirmed) {
-            badgeHtml = '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">✔ CONFIRMED / PREPARING</span>';
-          } else if (isCancelled) {
-            badgeHtml = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-red-100 text-red-800">✖ ${data.orderStatus}</span>`;
-          } else {
-            badgeHtml = '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900">⏱️ RESERVED (PENDING)</span>';
-          }
+          let statusBadge = '';
+          if (isConfirmed) statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200">✔ CONFIRMED &amp; PREPARING</span>';
+          else if (isCancelled) statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-800 border border-red-200">✖ ${data.orderStatus}</span>`;
+          else statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-200">⏱️ AWAITING PAYMENT / MEETUP</span>';
 
           const itemsHtml = (data.items || []).map(i => `
-            <div class="flex justify-between py-1 border-b border-stone-100 last:border-0">
-              <span class="font-medium text-stone-800">${i.name} &times; ${i.qty}</span>
-              <span class="font-mono text-stone-600">₱${Number(i.price * i.qty).toLocaleString()}</span>
+            <div class="flex justify-between py-1 border-b border-stone-100 last:border-0 text-[11px]">
+              <div><b>[ID #${i.id || '-'}]</b> ${i.name}</div>
+              <div class="font-mono">${i.qty} &times; ₱${Number(i.price).toLocaleString()}</div>
             </div>
           `).join('');
 
           resultBox.innerHTML = `
-            <div class="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-2.5">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-stone-900 text-sm">${data.orderId}</span>
-                ${badgeHtml}
-              </div>
-
-              <div class="text-[11px] text-stone-500">
-                Placed on <b>${data.date}</b> &bull; Total: <b class="text-stone-900 font-mono text-xs">₱${Number(data.total).toLocaleString()}</b>
+            <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-2.5">
+              <div class="flex justify-between items-center flex-wrap gap-1">
+                <span class="font-mono font-bold text-stone-900">${data.orderId}</span>
+                ${statusBadge}
               </div>
 
               ${data.trackingNote ? `
-                <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
-                  <span class="font-bold block text-[11px]">📦 Dispatch / Meetup Note:</span>
-                  <div class="mt-0.5 font-bold">${data.trackingNote}</div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 leading-relaxed text-[11px]">
+                  <b>📦 Dispatch / Meetup Note:</b><br>
+                  <span class="font-bold text-blue-950">${data.trackingNote}</span>
                 </div>
               ` : ''}
 
               ${data.comment ? `
-                <div class="p-2.5 bg-red-50 border border-red-200 rounded-xl text-red-800 text-[11px]">
-                  <b>Note:</b> ${data.comment}
+                <div class="p-2.5 bg-red-50 border border-red-200 rounded-xl text-red-900 leading-relaxed text-[11px]">
+                  <b>Seller Comment:</b> ${data.comment}
                 </div>
               ` : ''}
 
-              <div class="pt-2 border-t border-stone-200/60">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1">Ordered Pieces</span>
-                ${itemsHtml}
+              <div class="text-[11px] text-stone-600 space-y-0.5 pt-1 border-t border-stone-200/60">
+                <div><b>Fulfillment:</b> ${data.fulfillment}</div>
+                <div><b>Payment:</b> ${data.paymentMethod}</div>
+                <div><b>Total:</b> <span class="font-extrabold text-stone-900">₱${Number(data.total).toLocaleString()}</span></div>
               </div>
 
-              <div class="pt-2 border-t border-stone-200/60 text-[11px] text-stone-500">
-                <b>Fulfillment:</b> ${data.fulfillment}<br>
-                <b>Payment:</b> ${data.paymentMethod}
+              <div class="pt-1">
+                <span class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Items</span>
+                <div class="bg-white p-2 rounded-xl border border-stone-200">
+                  ${itemsHtml}
+                </div>
               </div>
             </div>
           `;
         } else {
           resultBox.innerHTML = `
-            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center">
-              Order ID "<b>${input}</b>" not found. Please double-check the ID from your receipt.
+            <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-center text-xs">
+              ${data.message || 'Order ID not found. Please double-check your Order ID (e.g. KEG-260228-1234).'}
             </div>
           `;
         }
       } catch (err) {
         console.error(err);
-        resultBox.innerHTML = `<div class="p-3 bg-red-50 text-red-700 rounded-xl text-center">Network error. Please try again later.</div>`;
+        resultBox.innerHTML = '<div class="text-red-600 text-center py-2">Error checking order status.</div>';
       } finally {
         btn.disabled = false;
-        btn.innerText = 'Check';
+        btn.innerText = origText;
       }
     }
 
@@ -1296,14 +1330,10 @@
           deferredPrompt = null;
         });
       } else if (isIos()) {
-        document.getElementById('ios-install-modal').classList.remove('hidden');
+        alert("To install on iPhone: Tap the Share button at the bottom of Safari, then tap 'Add to Home Screen'.");
       } else {
         alert("To install, tap your browser's menu (⋮ or Share) and select 'Install app' or 'Add to Home screen'.");
       }
-    }
-
-    function closeIosInstallModal() {
-      document.getElementById('ios-install-modal').classList.add('hidden');
     }
 
     window.addEventListener('appinstalled', () => {
